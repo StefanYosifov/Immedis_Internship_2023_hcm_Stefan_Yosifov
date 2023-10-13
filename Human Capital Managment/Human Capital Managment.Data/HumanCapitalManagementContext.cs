@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Human_Capital_Managment.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Human_Capital_Managment.Data.Models
+namespace Human_Capital_Managment.Data
 {
     public partial class HumanCapitalManagementContext : DbContext
     {
@@ -16,7 +17,7 @@ namespace Human_Capital_Managment.Data.Models
 
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<Employee?> Employees { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<Payment> Payments { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
