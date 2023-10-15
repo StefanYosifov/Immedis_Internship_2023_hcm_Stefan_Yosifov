@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.23">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,7 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Huamn Capital Management.Constants\Human Capital Management.Constants.csproj" />
+    <ProjectReference Include="..\Huamn Capital Managment.Common\Huamn Capital Managment.Common.csproj" />
+    <ProjectReference Include="..\Human Capital Management.Services\Human Capital Management.Services.csproj" />
     <ProjectReference Include="..\Human Capital Managment.Data\Human Capital Management.Data.csproj" />
+    <ProjectReference Include="..\Human Capital Managment.ViewModels\Human Capital Managment.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

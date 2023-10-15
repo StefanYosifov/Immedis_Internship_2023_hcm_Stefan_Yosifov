@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Human_Capital_Managment.Data.Models
+namespace Human_Capital_Managment.Data.Models2
 {
-    public partial class Status
+    public partial class EmployeeStatus
     {
-        public Status()
+        public EmployeeStatus()
         {
             Employees = new HashSet<Employee>();
         }

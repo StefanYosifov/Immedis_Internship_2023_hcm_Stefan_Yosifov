@@ -1,30 +1,32 @@
-﻿using Human_Capital_Managment.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using Human_Capital_Managment.Data.Models2;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Human_Capital_Managment.Data
 {
-    public partial class HumanCapitalManagementContext : DbContext
+    public partial class ApplicationDbContext : DbContext
     {
-        public HumanCapitalManagementContext()
+        public ApplicationDbContext()
         {
         }
 
-        public HumanCapitalManagementContext(DbContextOptions<HumanCapitalManagementContext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
         }
 
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Employee?> Employees { get; set; } = null!;
+        public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<EmployeeStatus> EmployeeStatuses { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
-        public virtual DbSet<Payment> Payments { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Salary> Salaries { get; set; } = null!;
+        public virtual DbSet<SalaryPayment> SalaryPayments { get; set; } = null!;
         public virtual DbSet<Seniority> Seniorities { get; set; } = null!;
-        public virtual DbSet<Status> Statuses { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -61,8 +63,6 @@ namespace Human_Capital_Managment.Data
 
             modelBuilder.Entity<Department>(entity =>
             {
-                entity.ToTable("Department");
-
                 entity.HasIndex(e => e.DepartmentName, "UQ__Departme__D949CC3442D74B08")
                     .IsUnique();
 
@@ -165,6 +165,18 @@ namespace Human_Capital_Managment.Data
                         });
             });
 
+            modelBuilder.Entity<EmployeeStatus>(entity =>
+            {
+                entity.ToTable("Employee Status");
+
+                entity.HasIndex(e => e.Name, "UQ__Status__737584F6C520FFB4")
+                    .IsUnique();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<Gender>(entity =>
             {
                 entity.ToTable("Gender");
@@ -172,21 +184,6 @@ namespace Human_Capital_Managment.Data
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Payment>(entity =>
-            {
-                entity.Property(e => e.Id)
-                    .HasMaxLength(256)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.EmployeeId)
-                    .HasMaxLength(256)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PaidAmount).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.Reason).HasColumnType("decimal(18, 2)");
             });
 
             modelBuilder.Entity<Position>(entity =>
@@ -232,6 +229,23 @@ namespace Human_Capital_Managment.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<SalaryPayment>(entity =>
+            {
+                entity.ToTable("Salary Payments");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PaidAmount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Reason).HasColumnType("decimal(18, 2)");
+            });
+
             modelBuilder.Entity<Seniority>(entity =>
             {
                 entity.ToTable("Seniority");
@@ -240,18 +254,6 @@ namespace Human_Capital_Managment.Data
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(150)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Status>(entity =>
-            {
-                entity.ToTable("Status");
-
-                entity.HasIndex(e => e.Name, "UQ__Status__737584F6C520FFB4")
-                    .IsUnique();
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 

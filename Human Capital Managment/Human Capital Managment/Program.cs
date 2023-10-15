@@ -1,13 +1,20 @@
 namespace Human_Capital_Managment
 {
+    using Data;
+
     using Huamn_Capital_Management.Constants.Cookies;
+
+    using Huamn_Capital_Managment.Common;
+
+    using Human_Capital_Management.Services.Authentication;
 
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.CookiePolicy;
+    using Microsoft.EntityFrameworkCore;
 
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +29,14 @@ namespace Human_Capital_Managment
                     cookieOpt.Cookie.Name = CookieAuthenticationConstants.CookieName;
                     cookieOpt.LoginPath = CookieAuthenticationConstants.LoginPath;
                     cookieOpt.AccessDeniedPath = CookieAuthenticationConstants.AccessDeniedPath;
+
                 });
-            
-            builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
             var app = builder.Build();
 
@@ -53,7 +65,7 @@ namespace Human_Capital_Managment
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

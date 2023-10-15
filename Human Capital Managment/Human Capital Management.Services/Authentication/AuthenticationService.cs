@@ -1,59 +1,58 @@
 ﻿namespace Human_Capital_Management.Services.Authentication
 {
+    using AutoMapper;
     using Human_Capital_Managment.Data;
-    using Human_Capital_Managment.Data.Models;
+    using Human_Capital_Managment.Data.Models2;
     using Human_Capital_Managment.ViewModels.AuthenticationViewModels;
     using Microsoft.EntityFrameworkCore;
-    using System.Net;
-    using System.Security.Claims;
 
-
-
-    public class AuthenticationService:IAuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
-        private readonly HumanCapitalManagementContext context;
+        private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
 
-        
+        private const int PasswordIterations = 15; // In real world, scale this up to a higher number
+
         public AuthenticationService(
-            HumanCapitalManagementContext context)
+            ApplicationDbContext context,
+            IMapper mapper)
         {
             this.context = context;
-            
+            this.mapper = mapper;
         }
 
 
-        public async Task<bool> Register(RegisterViewModel registerModel)
+        public async Task<Employee?> Register(RegisterViewModel registerModel)
         {
             var findEmployee = await FindEmployeeByEmail(registerModel.Email);
 
-            if (findEmployee == null)
+            if (findEmployee != null)
             {
-                return false;
+                return null;
             }
 
-            
+            string passwordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(registerModel.Password, PasswordIterations);
+
+            var employee = mapper.Map<Employee>(registerModel);
+            employee.PasswordHash = passwordHash;
+            employee.JoinedAt=DateTime.UtcNow;
+
+            await context.Employees.AddAsync(employee);
+            await context.SaveChangesAsync();
+
+            return employee;
         }
 
-        public Task<bool> Login(LoginViewModel loginModel)
+        public async Task<Employee?> Login(LoginViewModel loginModel)
         {
-            throw new NotImplementedException();
-        }
+            var findEmployee = await FindEmployeeByEmail(loginModel.Email);
 
-
-        private async Task SignInUser(string username)
-        {
-            var claims = new List<Claim>
+            if (findEmployee == null || !BCrypt.Net.BCrypt.Verify(loginModel.Password,findEmployee.PasswordHash))
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim("MyCustomClaim", "my claim value")
-            };
+                return null;
+            }
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, Cookie);
-
-            await HttpContex
-
-            
+            return findEmployee;
         }
 
         private async Task<Employee?> FindEmployeeByEmail(string email)

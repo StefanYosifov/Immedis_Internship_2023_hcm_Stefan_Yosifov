@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Human_Capital_Managment.Data.Models
+﻿namespace Human_Capital_Managment.Data.Models2
 {
     public partial class Employee
     {
         public Employee()
         {
+            Id = Guid.NewGuid().ToString();
             Contracts = new HashSet<Contract>();
             Roles = new HashSet<Role>();
         }
@@ -29,9 +27,9 @@ namespace Human_Capital_Managment.Data.Models
 
         public virtual Department? Department { get; set; }
         public virtual Gender? Gender { get; set; }
-        public virtual Payment? Payment { get; set; }
+        public virtual SalaryPayment? Payment { get; set; }
         public virtual Position? Position { get; set; }
-        public virtual Status? Status { get; set; }
+        public virtual EmployeeStatus? Status { get; set; }
         public virtual ICollection<Contract> Contracts { get; set; }
 
         public virtual ICollection<Role> Roles { get; set; }

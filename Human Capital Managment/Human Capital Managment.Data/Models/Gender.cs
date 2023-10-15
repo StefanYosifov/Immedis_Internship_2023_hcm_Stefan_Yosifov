@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Human_Capital_Managment.Data.Models
+namespace Human_Capital_Managment.Data.Models2
 {
     public partial class Gender
     {
