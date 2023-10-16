@@ -7,5 +7,6 @@
 
         Task<UserDetailsRequestModels> GetUserDetailsViewModelOptions();
 
+        Task<bool> SaveUserDetailsOptions(UserDetailsResponseModel registerModel,string userId);
     }
 }

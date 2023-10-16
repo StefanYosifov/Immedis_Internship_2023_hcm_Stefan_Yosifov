@@ -1,22 +1,37 @@
 ﻿namespace Human_Capital_Managment.Controllers
 {
     using System.Diagnostics;
+    using System.Security.Claims;
 
+    using Human_Capital_Management.Services.Home;
+
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using Models;
 
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHomeService service;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            IHomeService service)
         {
-            _logger = logger;
+            this.service = service;
         }
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
         {
+            if (User.Identity.IsAuthenticated == false)
+            {
+                return RedirectToAction("SignIn", "Authentication");
+            }
+
+            if (await service.HasConfirmedData(GetUserId()) == true)
+            {
+                return RedirectToAction("Edit", "UserDetails");
+            }
             return View();
         }
 

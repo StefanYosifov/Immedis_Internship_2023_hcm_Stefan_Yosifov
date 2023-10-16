@@ -4,7 +4,7 @@
     {
 
         public const string CookieName = "Authorization Cookie";
-        public const string LoginPath = "/Auth/Login";
+        public const string LoginPath = "/Auth/SignIn";
         public const string AccessDeniedPath = "/Auth/ForbiddenAccess";
     }
 }

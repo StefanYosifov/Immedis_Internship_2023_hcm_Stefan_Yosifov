@@ -1,7 +1,7 @@
 ﻿@model Human_Capital_Managment.ViewModels.AuthenticationViewModels.RegisterSecondRequestModel
 
 <h2>Register details</h2>
-<form method="post">
+<form method="post" asp-controller="Authentication"asp-action="SignUpDetails">
     <div class="form-group">
         <label asp-for="UserDetailsRequest.PhoneNumber">Phone number:</label>
         <input asp-for="UserDetailsRequest.PhoneNumber" type="text" class="form-control" required>
@@ -12,8 +12,8 @@
         <div class="form-check">
             @foreach (var gender in Model.UserDetailsRequest.Genders)
             {
-                <input asp-for="UserDetailsRequest.Genders" class="form-check-input" type="radio" value="Male">
-                <label asp-for="UserDetailsRequest.Genders" class="form-check-label">@gender</label>
+                <input asp-for="UserDetailsRequest.Genders" class="form-check-input" type="radio" value="@gender.Id">
+                <label asp-for="UserDetailsRequest.Genders" class="form-check-label">@gender.Name</label>
             }
         </div>
         <span asp-validation-for="UserDetailsRequest.Genders" class="text-danger"></span>

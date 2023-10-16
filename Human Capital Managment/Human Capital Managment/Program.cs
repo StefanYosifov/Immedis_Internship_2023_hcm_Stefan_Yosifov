@@ -7,6 +7,7 @@ namespace Human_Capital_Managment
     using Huamn_Capital_Managment.Common;
 
     using Human_Capital_Management.Services.Authentication;
+    using Human_Capital_Management.Services.Home;
     using Human_Capital_Management.Services.UserDetails;
 
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -40,6 +41,8 @@ namespace Human_Capital_Managment
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IUserDetailsService, UserDetailsService>();
+            builder.Services.AddScoped<IHomeService, HomeService>();
+
 
 
             var app = builder.Build();

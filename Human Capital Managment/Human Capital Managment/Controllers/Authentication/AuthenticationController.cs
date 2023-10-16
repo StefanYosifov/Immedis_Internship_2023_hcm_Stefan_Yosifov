@@ -73,14 +73,15 @@
                 return View(registerModel);
             }
 
-            var user = await authService.FindEmployeeByEmail(registerModel.Email);
+            var user = await authService.Register(registerModel);
 
             if (user != null)
             {
                 return View();
             }
 
-            return RedirectToAction("SignUpDetails", "Authentication", registerModel);
+            await AuthenticateUserAndSetupClaims(user);
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -97,7 +98,22 @@
         [HttpPost]
         public async Task<IActionResult> SignUpDetails(RegisterSecondResponseModel registerModel)
         {
-            
+            var createdUser = await authService.Register(registerModel.RegisterViewModel);
+
+            if (createdUser != null)
+            {
+                return View();
+            }
+
+            var createdDetails =
+                await detailsService.SaveUserDetailsOptions(registerModel.UserDetailsViewModel, GetUserId());
+
+            if (createdDetails == false)
+            {
+                return View();
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task AuthenticateUserAndSetupClaims(Employee user)
@@ -105,7 +121,7 @@
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.NameIdentifier, user.Id)
+                new(ClaimTypes.NameIdentifier, user.Id),
             };
 
             var claimsIdentity = new ClaimsIdentity(

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Human_Capital_Managment.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Human_Capital_Managment.Data
+namespace Human_Capital_Managment.Data.Models
 {
-    public partial class ApplicationDbContext : DbContext
+    public partial class HumanCapitalManagementContext : DbContext
     {
-        public ApplicationDbContext()
+        public HumanCapitalManagementContext()
         {
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public HumanCapitalManagementContext(DbContextOptions<HumanCapitalManagementContext> options)
             : base(options)
         {
         }
@@ -37,7 +36,6 @@ namespace Human_Capital_Managment.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HumanCapitalManagement;Integrated Security=true");
             }
         }

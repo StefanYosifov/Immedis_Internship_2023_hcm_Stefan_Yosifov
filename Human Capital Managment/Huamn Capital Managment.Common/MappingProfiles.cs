@@ -17,6 +17,11 @@
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
+            CreateMap<UserDetailsResponseModel,EmployeeDetail>()
+                .ForMember(dest=>dest.EmployeeId,opt=>opt.MapFrom(src=>src.EmployeeId))
+                .ForMember(dest=>dest.GenderId,opt=>opt.MapFrom(src=>src.GenderId))
+                .ForMember(dest=>dest.CountryOfBirthId,opt=>opt.MapFrom(src=>src.CountryOfBirth))
+                .ForMember(dest=>dest.CountryOfResidenceId,opt=>opt.MapFrom(src=>src.CountryOfResidenceId));
         }
 
     }

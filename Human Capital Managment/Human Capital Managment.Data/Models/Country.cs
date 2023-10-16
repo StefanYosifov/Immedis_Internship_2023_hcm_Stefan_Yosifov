@@ -1,7 +1,8 @@
-﻿namespace Human_Capital_Managment.Data.Models
-{
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Human_Capital_Managment.Data.Models
+{
     public partial class Country
     {
         public Country()
@@ -12,6 +13,7 @@
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
+        public string Iso { get; set; } = null!;
 
         public virtual ICollection<EmployeeDetail> EmployeeDetailCountryOfBirths { get; set; }
         public virtual ICollection<EmployeeDetail> EmployeeDetailCountryOfResidences { get; set; }

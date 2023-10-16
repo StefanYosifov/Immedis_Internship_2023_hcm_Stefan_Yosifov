@@ -1,7 +1,8 @@
-﻿namespace Human_Capital_Managment.Data.Models
-{
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Human_Capital_Managment.Data.Models
+{
     public partial class Position
     {
         public Position()

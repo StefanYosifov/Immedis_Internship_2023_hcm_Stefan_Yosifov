@@ -6,6 +6,7 @@
 
     public class UserDetailsResponseModel
     {
+        [Required] public string EmployeeId { get; set; } = null!;
 
         [Required]
         [StringLength(UserDetailsConstants.PhoneNumberLength,MinimumLength = UserDetailsConstants.PhoneNumberLength)]
