@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Human_Capital_Managment.Data.Models2
+﻿namespace Human_Capital_Managment.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Role
     {
         public Role()

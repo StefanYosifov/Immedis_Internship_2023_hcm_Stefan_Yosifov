@@ -1,0 +1,46 @@
+﻿@model Human_Capital_Managment.ViewModels.AuthenticationViewModels.RegisterSecondRequestModel
+
+<h2>Register details</h2>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="UserDetailsRequest.PhoneNumber">Phone number:</label>
+        <input asp-for="UserDetailsRequest.PhoneNumber" type="text" class="form-control" required>
+        <span asp-validation-for="UserDetailsRequest.PhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserDetailsRequest.Genders">Gender:</label>
+        <div class="form-check">
+            @foreach (var gender in Model.UserDetailsRequest.Genders)
+            {
+                <input asp-for="UserDetailsRequest.Genders" class="form-check-input" type="radio" value="Male">
+                <label asp-for="UserDetailsRequest.Genders" class="form-check-label">@gender</label>
+            }
+        </div>
+        <span asp-validation-for="UserDetailsRequest.Genders" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserDetailsRequest.CountriesOfBirth">Country Of Birth:</label>
+        <div class="row"></div>
+        <select class="custom-select my-1 mr-sm-2" asp-for="UserDetailsRequest.CountriesOfBirth" required>
+            <option value="">Select a country</option>
+            @foreach (var country in Model.UserDetailsRequest.CountriesOfBirth)
+            {
+                <option value="@country.Id">@country.Name</option>
+            }
+        </select>
+        <span asp-validation-for="UserDetailsRequest.CountriesOfBirth" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserDetailsRequest.CountriesOfResidence">Country Of Residence:</label>
+        <div class="row"></div>
+        <select class="custom-select my-1 mr-sm-2" asp-for="UserDetailsRequest.CountriesOfResidence">
+            <option value="" disabled>Select a country</option>
+            @foreach (var country in Model.UserDetailsRequest.CountriesOfResidence)
+            {
+                <option value="@country.Id">@country.Name</option>
+            }
+        </select>
+        <span asp-validation-for="UserDetailsRequest.CountriesOfResidence" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

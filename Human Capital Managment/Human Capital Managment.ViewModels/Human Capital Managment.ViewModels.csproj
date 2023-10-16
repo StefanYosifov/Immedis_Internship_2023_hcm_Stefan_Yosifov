@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Huamn Capital Management.Constants\Human Capital Management.Constants.csproj" />
+    <ProjectReference Include="..\Human Capital Managment.Data\Human Capital Management.Data.csproj" />
+  </ItemGroup>
+
 </Project>

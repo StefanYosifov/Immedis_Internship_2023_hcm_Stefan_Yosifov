@@ -1,8 +1,10 @@
 ﻿namespace Huamn_Capital_Managment.Common
 {
     using AutoMapper;
-    using Human_Capital_Managment.Data.Models2;
+
+    using Human_Capital_Managment.Data.Models;
     using Human_Capital_Managment.ViewModels.AuthenticationViewModels;
+    using Human_Capital_Managment.ViewModels.UserDetailViewModels;
 
     public class MappingProfiles : Profile
     {

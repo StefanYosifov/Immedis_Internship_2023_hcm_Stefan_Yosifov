@@ -7,6 +7,7 @@ namespace Human_Capital_Managment
     using Huamn_Capital_Managment.Common;
 
     using Human_Capital_Management.Services.Authentication;
+    using Human_Capital_Management.Services.UserDetails;
 
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.CookiePolicy;
@@ -36,7 +37,10 @@ namespace Human_Capital_Managment
 
             builder.Services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IUserDetailsService, UserDetailsService>();
+
 
             var app = builder.Build();
 

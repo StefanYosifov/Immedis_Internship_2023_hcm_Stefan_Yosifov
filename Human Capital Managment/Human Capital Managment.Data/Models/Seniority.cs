@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Human_Capital_Managment.Data.Models2
+﻿namespace Human_Capital_Managment.Data.Models
 {
     public partial class Seniority
     {

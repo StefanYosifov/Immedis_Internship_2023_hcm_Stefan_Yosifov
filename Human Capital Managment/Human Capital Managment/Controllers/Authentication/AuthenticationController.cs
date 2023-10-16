@@ -1,12 +1,14 @@
 ﻿namespace Human_Capital_Managment.Controllers.Authentication
 {
-    using Data.Models2;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Claims;
 
-    using Microsoft.AspNetCore.Authorization;
+    using Human_Capital_Management.Services.UserDetails;
+
+    using Human_Capital_Managment.Data.Models;
 
     using ViewModels.AuthenticationViewModels;
     using IAuthenticationService = Human_Capital_Management.Services.Authentication.IAuthenticationService;
@@ -15,17 +17,22 @@
     [AllowAnonymous]
     public class AuthenticationController : BaseController
     {
-        private readonly IAuthenticationService service;
+        private readonly IAuthenticationService authService;
+        private readonly IUserDetailsService detailsService;
 
-        public AuthenticationController(IAuthenticationService service)
+        public AuthenticationController(
+            IAuthenticationService authService,
+            IUserDetailsService detailsService)
         {
-            this.service = service;
+            this.authService = authService;
+            this.detailsService = detailsService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> SignIn()
+        public IActionResult SignIn()
         {
-            return View();
+            var loginView = new LoginViewModel();
+            return View(loginView);
         }
 
 
@@ -37,7 +44,7 @@
                 return View(loginModel);
             }
 
-            var user = await service.Login(loginModel);
+            var user = await authService.Login(loginModel);
 
             if (user == null)
             {
@@ -51,9 +58,10 @@
 
 
         [HttpGet]
-        public async Task<IActionResult> SignUp()
+        public IActionResult SignUp()
         {
-            return View();
+            var registerView = new RegisterViewModel();
+            return View(registerView);
         }
 
 
@@ -65,16 +73,31 @@
                 return View(registerModel);
             }
 
-            var user = await service.Register(registerModel);
+            var user = await authService.FindEmployeeByEmail(registerModel.Email);
 
-            if (user == null)
+            if (user != null)
             {
                 return View();
             }
 
-            await AuthenticateUserAndSetupClaims(user);
+            return RedirectToAction("SignUpDetails", "Authentication", registerModel);
+        }
 
-            return RedirectToAction("Index", "Home");
+        [HttpGet]
+        public async Task<IActionResult> SignUpDetails(RegisterViewModel registerModel)
+        {
+            var secondRegisterModel = new RegisterSecondRequestModel()
+            {
+                RegisterViewModel = registerModel,
+                UserDetailsRequest = await detailsService.GetUserDetailsViewModelOptions()
+            };
+            return View(secondRegisterModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignUpDetails(RegisterSecondResponseModel registerModel)
+        {
+            
         }
 
         private async Task AuthenticateUserAndSetupClaims(Employee user)

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Human_Capital_Managment.Data.Models2;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Human_Capital_Managment.Data
 {
+    using Models;
+
     public partial class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext()
@@ -18,11 +16,16 @@ namespace Human_Capital_Managment.Data
         }
 
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
+        public virtual DbSet<ContractAction> ContractActions { get; set; } = null!;
+        public virtual DbSet<ContractHistory> ContractHistories { get; set; } = null!;
+        public virtual DbSet<Country> Countries { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<EmployeeDetail> EmployeeDetails { get; set; } = null!;
         public virtual DbSet<EmployeeStatus> EmployeeStatuses { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
+        public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Salary> Salaries { get; set; } = null!;
         public virtual DbSet<SalaryPayment> SalaryPayments { get; set; } = null!;
@@ -59,6 +62,45 @@ namespace Human_Capital_Managment.Data
                     .HasForeignKey<Contract>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Contracts_Salaries");
+            });
+
+            modelBuilder.Entity<ContractAction>(entity =>
+            {
+                entity.HasIndex(e => e.Name, "UQ__Contract__737584F6A9F1F9ED")
+                    .IsUnique();
+
+                entity.Property(e => e.Name).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<ContractHistory>(entity =>
+            {
+                entity.ToTable("ContractHistory");
+
+                entity.Property(e => e.ChangedBy)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContractId)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Action)
+                    .WithMany(p => p.ContractHistories)
+                    .HasForeignKey(d => d.ActionId)
+                    .HasConstraintName("FK__ContractH__Actio__1209AD79");
+
+                entity.HasOne(d => d.Contract)
+                    .WithMany(p => p.ContractHistories)
+                    .HasForeignKey(d => d.ContractId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContractHistory_Contracts");
+            });
+
+            modelBuilder.Entity<Country>(entity =>
+            {
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Department>(entity =>
@@ -104,6 +146,10 @@ namespace Human_Capital_Managment.Data
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
+                entity.Property(e => e.EmployeeDetailsId)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -129,10 +175,18 @@ namespace Human_Capital_Managment.Data
                     .HasForeignKey(d => d.DepartmentId)
                     .HasConstraintName("FK__Employees__Depar__29572725");
 
-                entity.HasOne(d => d.Gender)
-                    .WithMany(p => p.Employees)
-                    .HasForeignKey(d => d.GenderId)
-                    .HasConstraintName("FK__Employees__Gende__46E78A0C");
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Employee)
+                    .HasForeignKey<Employee>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Employees_Employee Details");
+
+                entity.HasOne(d => d.Id1)
+                    .WithOne(p => p.EmployeeId1)
+                    .HasPrincipalKey<Project>(p => p.ManagerId)
+                    .HasForeignKey<Employee>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Employees_Projects");
 
                 entity.HasOne(d => d.Payment)
                     .WithMany(p => p.Employees)
@@ -143,6 +197,11 @@ namespace Human_Capital_Managment.Data
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.PositionId)
                     .HasConstraintName("FK_Employees_Positions");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.EmployeeProjects)
+                    .HasForeignKey(d => d.ProjectId)
+                    .HasConstraintName("FK_Employees_Projects1");
 
                 entity.HasOne(d => d.Status)
                     .WithMany(p => p.Employees)
@@ -163,6 +222,39 @@ namespace Human_Capital_Managment.Data
 
                             j.IndexerProperty<string>("EmployeeId").HasMaxLength(256).IsUnicode(false);
                         });
+            });
+
+            modelBuilder.Entity<EmployeeDetail>(entity =>
+            {
+                entity.HasKey(e => e.EmployeeId)
+                    .HasName("PK__Employee__3214EC07FDB28C97");
+
+                entity.ToTable("Employee Details");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.CountryOfBirth)
+                    .WithMany(p => p.EmployeeDetailCountryOfBirths)
+                    .HasForeignKey(d => d.CountryOfBirthId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Employee Details_Countries");
+
+                entity.HasOne(d => d.CountryOfResidence)
+                    .WithMany(p => p.EmployeeDetailCountryOfResidences)
+                    .HasForeignKey(d => d.CountryOfResidenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Employee Details_Countries1");
+
+                entity.HasOne(d => d.Gender)
+                    .WithMany(p => p.EmployeeDetails)
+                    .HasForeignKey(d => d.GenderId)
+                    .HasConstraintName("FK_Employee Details_Gender");
             });
 
             modelBuilder.Entity<EmployeeStatus>(entity =>
@@ -206,6 +298,22 @@ namespace Human_Capital_Managment.Data
 
                             j.IndexerProperty<int>("PositionId").ValueGeneratedOnAdd();
                         });
+            });
+
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.HasIndex(e => e.ManagerId, "UQ__Projects__3BA2AAE0991F1BDD")
+                    .IsUnique();
+
+                entity.Property(e => e.Description).IsUnicode(false);
+
+                entity.Property(e => e.ManagerId)
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Role>(entity =>

@@ -2,7 +2,7 @@
 {
     using AutoMapper;
     using Human_Capital_Managment.Data;
-    using Human_Capital_Managment.Data.Models2;
+    using Human_Capital_Managment.Data.Models;
     using Human_Capital_Managment.ViewModels.AuthenticationViewModels;
     using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +24,11 @@
 
         public async Task<Employee?> Register(RegisterViewModel registerModel)
         {
+            if (registerModel.ConfirmPassword != registerModel.Password)
+            {
+                return null;
+            }
+
             var findEmployee = await FindEmployeeByEmail(registerModel.Email);
 
             if (findEmployee != null)
@@ -55,7 +60,8 @@
             return findEmployee;
         }
 
-        private async Task<Employee?> FindEmployeeByEmail(string email)
+        //Changed to public, due to its necessity in the controller class
+        public async Task<Employee?> FindEmployeeByEmail(string email)
         {
             return await this.context.Employees
                 .FirstOrDefaultAsync(e => e.Email.ToLower() == email.ToLower());

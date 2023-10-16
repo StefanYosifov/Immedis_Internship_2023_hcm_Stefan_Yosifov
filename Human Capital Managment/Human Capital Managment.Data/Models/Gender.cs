@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Human_Capital_Managment.Data.Models2
+﻿namespace Human_Capital_Managment.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Gender
     {
         public Gender()
         {
-            Employees = new HashSet<Employee>();
+            EmployeeDetails = new HashSet<EmployeeDetail>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<EmployeeDetail> EmployeeDetails { get; set; }
     }
 }
