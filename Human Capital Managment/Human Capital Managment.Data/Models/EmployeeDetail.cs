@@ -14,6 +14,5 @@ namespace Human_Capital_Managment.Data.Models
         public virtual Country CountryOfBirth { get; set; } = null!;
         public virtual Country CountryOfResidence { get; set; } = null!;
         public virtual Gender? Gender { get; set; }
-        public virtual Employee? Employee { get; set; }
     }
 }

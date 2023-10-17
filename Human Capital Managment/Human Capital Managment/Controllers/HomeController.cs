@@ -28,10 +28,6 @@
                 return RedirectToAction("SignIn", "Authentication");
             }
 
-            if (await service.HasConfirmedData(GetUserId()) == true)
-            {
-                return RedirectToAction("Edit", "UserDetails");
-            }
             return View();
         }
 

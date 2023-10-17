@@ -11,10 +11,10 @@
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
 
-        private const int PasswordIterations = 15; // In real world, scale this up to a higher number
+        private const int PasswordIterations = 12; // In real world, scale this up to a higher number
 
         public AuthenticationService(
-            ApplicationDbContext context,
+           ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context;
@@ -52,7 +52,8 @@
         {
             var findEmployee = await FindEmployeeByEmail(loginModel.Email);
 
-            if (findEmployee == null || !BCrypt.Net.BCrypt.Verify(loginModel.Password,findEmployee.PasswordHash))
+            var verifyPasswordMatch = BCrypt.Net.BCrypt.EnhancedVerify(loginModel.Password, findEmployee.PasswordHash);
+            if (findEmployee == null || verifyPasswordMatch==false)
             {
                 return null;
             }

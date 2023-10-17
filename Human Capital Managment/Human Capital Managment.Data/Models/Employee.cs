@@ -7,7 +7,7 @@ namespace Human_Capital_Managment.Data.Models
     {
         public Employee()
         {
-            Id=Guid.NewGuid().ToString();
+            this.Id=Guid.NewGuid().ToString();
             Contracts = new HashSet<Contract>();
             InverseManager = new HashSet<Employee>();
             Roles = new HashSet<Role>();
@@ -29,8 +29,6 @@ namespace Human_Capital_Managment.Data.Models
         public string? ManagerId { get; set; }
 
         public virtual Department? Department { get; set; }
-        public virtual Project Id1 { get; set; } = null!;
-        public virtual EmployeeDetail IdNavigation { get; set; } = null!;
         public virtual Employee? Manager { get; set; }
         public virtual SalaryPayment? Payment { get; set; }
         public virtual Position? Position { get; set; }

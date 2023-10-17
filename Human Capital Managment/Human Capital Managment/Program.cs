@@ -31,7 +31,6 @@ namespace Human_Capital_Managment
                     cookieOpt.Cookie.Name = CookieAuthenticationConstants.CookieName;
                     cookieOpt.LoginPath = CookieAuthenticationConstants.LoginPath;
                     cookieOpt.AccessDeniedPath = CookieAuthenticationConstants.AccessDeniedPath;
-
                 });
 
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
@@ -61,6 +60,8 @@ namespace Human_Capital_Managment
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapRazorPages();
 
             app.UseCookiePolicy(new CookiePolicyOptions()
             {

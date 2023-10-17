@@ -37,7 +37,6 @@ namespace Human_Capital_Managment.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HumanCapitalManagement;Integrated Security=true");
             }
         }
@@ -173,19 +172,6 @@ namespace Human_Capital_Managment.Data
                     .HasForeignKey(d => d.DepartmentId)
                     .HasConstraintName("FK__Employees__Depar__29572725");
 
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Employee)
-                    .HasForeignKey<Employee>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Employees_Employee Details");
-
-                entity.HasOne(d => d.Id1)
-                    .WithOne(p => p.EmployeeId1)
-                    .HasPrincipalKey<Project>(p => p.ManagerId)
-                    .HasForeignKey<Employee>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Employees_Projects");
-
                 entity.HasOne(d => d.Manager)
                     .WithMany(p => p.InverseManager)
                     .HasForeignKey(d => d.ManagerId)
@@ -202,7 +188,7 @@ namespace Human_Capital_Managment.Data
                     .HasConstraintName("FK_Employees_Positions");
 
                 entity.HasOne(d => d.Project)
-                    .WithMany(p => p.EmployeeProjects)
+                    .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.ProjectId)
                     .HasConstraintName("FK_Employees_Projects1");
 
@@ -305,14 +291,7 @@ namespace Human_Capital_Managment.Data
 
             modelBuilder.Entity<Project>(entity =>
             {
-                entity.HasIndex(e => e.ManagerId, "UQ__Projects__3BA2AAE0991F1BDD")
-                    .IsUnique();
-
                 entity.Property(e => e.Description).IsUnicode(false);
-
-                entity.Property(e => e.ManagerId)
-                    .HasMaxLength(256)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)

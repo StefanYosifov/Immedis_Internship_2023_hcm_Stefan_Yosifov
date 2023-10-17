@@ -4,8 +4,6 @@
 
     using Microsoft.AspNetCore.Mvc;
 
-    using ViewModels.UserDetailViewModels;
-
     public class UserDetailsController : BaseController
     {
         private readonly IUserDetailsService service;

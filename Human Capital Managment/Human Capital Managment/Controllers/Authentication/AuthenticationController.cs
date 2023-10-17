@@ -75,7 +75,7 @@
 
             var user = await authService.Register(registerModel);
 
-            if (user != null)
+            if (user == null)
             {
                 return View();
             }

@@ -1,25 +1,18 @@
 ﻿namespace Human_Capital_Management.Services.UserDetails
 {
-    using System.Security.Claims;
-
     using AutoMapper;
-
-    using Huamn_Capital_Managment.Common.Extensions;
-
-    using Human_Capital_Managment.Data;
     using Human_Capital_Managment.Data.Models;
-    using Human_Capital_Managment.ViewModels.AuthenticationViewModels;
     using Human_Capital_Managment.ViewModels.UserDetailViewModels;
 
     using Microsoft.EntityFrameworkCore;
 
     public class UserDetailsService:IUserDetailsService
     {
-        private readonly ApplicationDbContext context;
+        private readonly Human_Capital_Managment.Data.ApplicationDbContext context;
         private readonly IMapper mapper;
 
         public UserDetailsService(
-            ApplicationDbContext context, 
+            Human_Capital_Managment.Data.ApplicationDbContext context, 
             IMapper mapper)
         {
             this.context = context;

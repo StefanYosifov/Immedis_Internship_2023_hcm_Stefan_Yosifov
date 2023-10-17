@@ -7,16 +7,14 @@ namespace Human_Capital_Managment.Data.Models
     {
         public Project()
         {
-            EmployeeProjects = new HashSet<Employee>();
+            Employees = new HashSet<Employee>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public byte[]? Image { get; set; }
         public string? Description { get; set; }
-        public string ManagerId { get; set; } = null!;
 
-        public virtual Employee? EmployeeId1 { get; set; }
-        public virtual ICollection<Employee> EmployeeProjects { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }
