@@ -3,17 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33927.249
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management", "Human Capital Managment\Human Capital Management.csproj", "{E84EF7DE-2E3B-4178-A42A-FB5931B31857}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Human Capital Management", "Human Capital Managment\Human Capital Management.csproj", "{E84EF7DE-2E3B-4178-A42A-FB5931B31857}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management.Data", "Human Capital Managment.Data\Human Capital Management.Data.csproj", "{607E629A-BB15-45B9-AEB2-FC6BE8987463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Human Capital Management.Data", "Human Capital Managment.Data\Human Capital Management.Data.csproj", "{607E629A-BB15-45B9-AEB2-FC6BE8987463}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management.Constants", "Huamn Capital Management.Constants\Human Capital Management.Constants.csproj", "{E3447E03-E72B-47CA-A2CB-26F85BC5CCAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Human Capital Management.Constants", "Huamn Capital Management.Constants\Human Capital Management.Constants.csproj", "{E3447E03-E72B-47CA-A2CB-26F85BC5CCAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management.Services", "Human Capital Management.Services\Human Capital Management.Services.csproj", "{EF7C36F0-30D5-44F0-A35F-A50E0AE1EE43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Human Capital Management.Services", "Human Capital Management.Services\Human Capital Management.Services.csproj", "{EF7C36F0-30D5-44F0-A35F-A50E0AE1EE43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Managment.ViewModels", "Human Capital Managment.ViewModels\Human Capital Managment.ViewModels.csproj", "{46A62E8F-C2F6-4A72-B257-3845B1988C7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Human Capital Managment.ViewModels", "Human Capital Managment.ViewModels\Human Capital Managment.ViewModels.csproj", "{46A62E8F-C2F6-4A72-B257-3845B1988C7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huamn Capital Managment.Common", "Huamn Capital Managment.Common\Huamn Capital Managment.Common.csproj", "{2CA4A086-9DA0-4E40-911C-D7E748C8752F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Huamn Capital Managment.Common", "Huamn Capital Managment.Common\Huamn Capital Managment.Common.csproj", "{2CA4A086-9DA0-4E40-911C-D7E748C8752F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web App", "Web App", "{A68F9EF0-2D17-4375-B090-CF3C5E2F722E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web API", "Web API", "{85865166-0085-4D16-8DAB-21DD38D8C61D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management API", "Human Capital Management API\Human Capital Management API.csproj", "{84CA5204-A86B-45F6-B60B-19BA9F2F16C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Capital Management API.Services", "Huamn Capital Management API.Services\Human Capital Management API.Services.csproj", "{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +53,27 @@ Global
 		{2CA4A086-9DA0-4E40-911C-D7E748C8752F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CA4A086-9DA0-4E40-911C-D7E748C8752F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CA4A086-9DA0-4E40-911C-D7E748C8752F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84CA5204-A86B-45F6-B60B-19BA9F2F16C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84CA5204-A86B-45F6-B60B-19BA9F2F16C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84CA5204-A86B-45F6-B60B-19BA9F2F16C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84CA5204-A86B-45F6-B60B-19BA9F2F16C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E84EF7DE-2E3B-4178-A42A-FB5931B31857} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{607E629A-BB15-45B9-AEB2-FC6BE8987463} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{E3447E03-E72B-47CA-A2CB-26F85BC5CCAF} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{EF7C36F0-30D5-44F0-A35F-A50E0AE1EE43} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{46A62E8F-C2F6-4A72-B257-3845B1988C7A} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{2CA4A086-9DA0-4E40-911C-D7E748C8752F} = {A68F9EF0-2D17-4375-B090-CF3C5E2F722E}
+		{84CA5204-A86B-45F6-B60B-19BA9F2F16C5} = {85865166-0085-4D16-8DAB-21DD38D8C61D}
+		{B13494CF-51AD-458C-A50E-9AEE0ABEC1D4} = {85865166-0085-4D16-8DAB-21DD38D8C61D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {330FEE39-6DEA-4829-B3D8-5CD40B6EDE50}

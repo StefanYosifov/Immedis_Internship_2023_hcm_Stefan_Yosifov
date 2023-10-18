@@ -5,7 +5,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Human_Capital_Managment</RootNamespace>
+    <UserSecretsId>5fece121-9e37-4d93-a596-66e70f405775</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Area\**" />
+    <Content Remove="Area\**" />
+    <EmbeddedResource Remove="Area\**" />
+    <None Remove="Area\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -23,6 +31,10 @@
     <ProjectReference Include="..\Human Capital Management.Services\Human Capital Management.Services.csproj" />
     <ProjectReference Include="..\Human Capital Managment.Data\Human Capital Management.Data.csproj" />
     <ProjectReference Include="..\Human Capital Managment.ViewModels\Human Capital Managment.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\HR Area\View\" />
   </ItemGroup>
 
 </Project>

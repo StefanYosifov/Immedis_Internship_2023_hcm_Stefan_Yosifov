@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Human Capital Managment.Data\Human Capital Management.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>

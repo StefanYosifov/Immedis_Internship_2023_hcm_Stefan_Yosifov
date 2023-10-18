@@ -14,16 +14,16 @@
             this.service = service;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> MyProjects()
-        {
-            var getProjects = await service.GetAllMyProjects(GetUserId());
-            return View(getProjects);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> MyProjects()
+        //{
+        //    var getProjects = await service.GetAllMyProjects(GetUserId());
+        //    return View(getProjects);
+        //}
 
-        public async Task<IActionResult> MyTeamProjects()
-        {
-
-        }
+        //public async Task<IActionResult> MyTeamProjects()
+        //{
+        //    return null;
+        //}
     }
 }

@@ -20,7 +20,6 @@ namespace Human_Capital_Managment
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddMvc();
@@ -70,8 +69,9 @@ namespace Human_Capital_Managment
             });
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                name: "areas",
+                pattern: "/{area:exists}/{controller=Home}/{action=Index}/{id?}"
+            );
 
             await app.RunAsync();
         }
