@@ -1,0 +1,15 @@
+﻿@model HCM.Models.ViewModels.Identity.LoginViewModel
+<h2>Login</h2>
+<form method="post" asp-action="SignIn">
+    <div>
+        <label asp-for="LoginParameter">Username or Email:</label>
+        <input asp-for="LoginParameter" type="text" id="Username" />
+    </div>
+    <div>
+        <label asp-for="Password">Password:</label>
+        <input asp-for="Password" type="password" id="Password" />
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
