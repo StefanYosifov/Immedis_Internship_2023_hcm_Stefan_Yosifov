@@ -1,4 +1,7 @@
 using HCM.API.Identity.Identity.Services;
+using HCM.API.Services.Services.Employee.Services;
+using HCM.API.Services.Services.Identity.Services;
+using HCM.Common.AutoMapper;
 using HCM.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +15,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

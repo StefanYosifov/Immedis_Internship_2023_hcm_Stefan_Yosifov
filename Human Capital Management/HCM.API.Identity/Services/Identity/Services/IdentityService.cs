@@ -1,5 +1,7 @@
 ﻿namespace HCM.API.Identity.Identity.Services
 {
+    using API.Services.Services.Identity.Services;
+
     using Data;
     using Data.Models;
 

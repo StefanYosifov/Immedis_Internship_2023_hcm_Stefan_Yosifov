@@ -1,4 +1,4 @@
-﻿namespace HCM.API.Identity.Identity
+﻿namespace HCM.API.Services.Services.Identity
 {
     using Data.Models;
 
@@ -9,10 +9,9 @@
 
     using Services;
 
-    [ApiController]
     [AllowAnonymous]
     [Route("/identity")]
-    public class IdentityController : Controller
+    public class IdentityController : ApiController
     {
         private readonly IIdentityService service;
 
@@ -24,7 +23,8 @@
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(LoginViewModel model)
         {
-            var result=await service.SignIn(model);
+            var result = await service.SignIn(model);
+
             if (result == null)
             {
                 return BadRequest();
