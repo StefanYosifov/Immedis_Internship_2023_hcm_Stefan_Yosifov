@@ -10,7 +10,7 @@ namespace HCM.Data.Models
             Employees = new HashSet<Employee>();
         }
 
-        public byte Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public byte? DepartmentId { get; set; }
 

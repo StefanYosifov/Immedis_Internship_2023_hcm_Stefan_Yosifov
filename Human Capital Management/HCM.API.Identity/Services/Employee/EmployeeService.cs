@@ -1,22 +1,22 @@
-﻿namespace HCM.API.Services.Services.Employee.Services
+﻿namespace HCM.API.Services.Services.Employee
 {
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
 
     using Common;
-
-    using Data;
     using Data.Models;
 
     using Microsoft.EntityFrameworkCore;
 
     using Models.ViewModels.Countries;
-    using Models.ViewModels.Department;
+    using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
     using Models.ViewModels.Employees.Enum;
     using Models.ViewModels.Genders;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
+
+    using ApplicationDbContext = Data.ApplicationDbContext;
 
     public class EmployeeService : IEmployeeService
     {
@@ -25,16 +25,17 @@
         private readonly IMapper mapper;
 
         public EmployeeService(
-            ApplicationDbContext context, 
+            ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
         }
 
-        public async Task<Pagination<EmployeeTableModel>> GetEmployeeTable(int id,EmployeeQueryTableFilters query)
+        public async Task<Pagination<EmployeeTableModel>> GetEmployeeTable(int id, EmployeeQueryTableFilters query)
         {
-            IQueryable<Employee> employeeTable = context.Employees;
+            IQueryable<Employee> employeeTable = context.Employees
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(query.SearchEmployeeName))
             {
@@ -62,13 +63,13 @@
                 EmployeeTableSortEnum.LastNameDeccending => employeeTable.OrderByDescending(e => e.LastName),
                 EmployeeTableSortEnum.UsernameAccending => employeeTable.OrderBy(e => e.Username),
                 EmployeeTableSortEnum.UsernameDeccending => employeeTable.OrderByDescending(e => e.Username),
-                EmployeeTableSortEnum.Youngest => employeeTable.OrderBy(e => e.BirthDate), 
-                EmployeeTableSortEnum.Oldest => employeeTable.OrderByDescending(e => e.BirthDate), 
+                EmployeeTableSortEnum.Youngest => employeeTable.OrderBy(e => e.BirthDate),
+                EmployeeTableSortEnum.Oldest => employeeTable.OrderByDescending(e => e.BirthDate),
                 EmployeeTableSortEnum.DepartmentNameAccending => employeeTable.OrderBy(e => e.Department.Name),
                 EmployeeTableSortEnum.DepartmentDeccending => employeeTable.OrderByDescending(e => e.Department.Name),
                 EmployeeTableSortEnum.PositionNameAccending => employeeTable.OrderBy(e => e.Position.Name),
                 EmployeeTableSortEnum.PositionDeccending => employeeTable.OrderByDescending(e => e.Position.Name),
-                _ => employeeTable 
+                _ => employeeTable
             };
 
 
@@ -94,31 +95,9 @@
                 .ToArrayAsync();
         }
 
-        public async Task<ICollection<DepartmentViewModel>> GetDepartments()
+        public Task<EmployeeCreateModel> GetEmployeeCreationOptions()
         {
-            return await context.Departments
-                .ProjectTo<DepartmentViewModel>(mapper.ConfigurationProvider)
-                .ToArrayAsync();
-        }
-
-        public async Task<ICollection<PositionViewModel>> GetPositionsByDepartmentId(int id)
-        {
-            return await context.Positions
-                .Where(p => p.DepartmentId == id)
-                .ProjectTo<PositionViewModel>(mapper.ConfigurationProvider)
-                .ToArrayAsync();
-        }
-
-        public async Task<ICollection<SeniorityViewModel>> GetSenioritiesByPositionId(int id)
-        {
-            return await context.PositionSeniorities
-                .Where(s=>s.PositionId==id)
-                .Select(s=>new SeniorityViewModel()
-                {
-                    Id = s.SeniorityId,
-                    Name = s.Seniority!.Name
-                })
-                .ToArrayAsync();
+            throw new NotImplementedException();
         }
 
         public Task<bool> CreateEmployee()

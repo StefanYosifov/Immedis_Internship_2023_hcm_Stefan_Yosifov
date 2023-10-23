@@ -19,10 +19,10 @@ namespace HCM.Data.Models
         public string? LastName { get; set; }
         public DateTime? BirthDate { get; set; }
         public string? PhoneNumber { get; set; }
-        public byte? NationalityId { get; set; }
+        public int? NationalityId { get; set; }
         public byte? GenderId { get; set; }
         public byte? DepartmentId { get; set; }
-        public byte? PositionId { get; set; }
+        public int? PositionId { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }

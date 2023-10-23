@@ -1,0 +1,128 @@
+﻿@using HCM.Models.ViewModels.Employees
+@model IEnumerable<HCM.Models.ViewModels.Employees.EmployeeTableModel>
+
+
+
+<div class="container-fluid m-5">
+
+    <form id="myForm" class="flex" method="get" asp-action="Index">
+        <div class="row">
+            <div class="col-md-2">
+                <label><b>Search username</b></label>
+                <input name="SearchEmployeeName" class="form-control" />
+            </div>
+
+            <div class="col-md-2">
+                <label for="genders"><b>Genders</b></label>
+                <select class="form-control" id="genders" name="genders"></select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="departments"><b>Departments</b></label>
+                <select class="form-control" id="departments" name="departmentId"></select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="countries"><b>Country</b></label>
+                <select class="form-control" id="countries" name="countries"></select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="sort"><b>Sort by</b></label>
+                <select class="form-control" id="sort" name="sort"></select>
+            </div>
+
+            <button style="width:8%">Submit</button>
+        </div>
+    </form>
+
+    <h1>@Model.Count()</h1>
+    <h1>Hello</h1>
+
+    <div>
+        <span>Create employee</span>
+        <button>Create</button>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Department Name</th>
+                <th>Position Name</th>
+                <th>Seniority</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.EmployeeId</td>
+                    <td>@employee.EmployeeUserName</td>
+                    <td>@employee.EmployeeFirstName</td>
+                    <td>@employee.EmployeeLastName</td>
+                    <td>@employee.EmployeeAge</td>
+                    <td>@employee.EmployeeDepartmentName</td>
+                    <td>@employee.EmployeePositionName</td>
+                    <td>@employee.EmployeeSeniority</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Options","Employee")",
+                data: "{}",
+                success: function (data) {
+
+                    console.log(data);
+
+
+                    var sDepartments = '<option value="-1">Please Select a Department</option>';
+                    var departments = data.departments;
+                    for (var i = 0; i < departments.length; i++) {
+                        sDepartments += '<option value="' + departments[i].departmentId + '">' + departments[i].name + '</option>';
+                    }
+                    $("#departments").html(sDepartments);
+
+                    // Populate Genders dropdown
+                    var sGenders = '<option value="-1">Please Select a Gender</option>';
+                    var genders = data.genders;
+                    for (var i = 0; i < genders.length; i++) {
+                        sGenders += '<option value="' + genders[i].id + '">' + genders[i].name + '</option>';
+                    }
+                    $("#genders").html(sGenders);
+
+                    // Populate Counties dropdown
+                    var sCounties = '<option value="-1">Please Select a County</option>';
+                    var counties = data.counties;
+                    for (var i = 0; i < counties.length; i++) {
+                        sCounties += '<option value="' + counties[i].id + '">' + counties[i].name + '</option>';
+                    }
+                    $("#countries").html(sCounties);
+
+                    // Populate Sort dropdown
+                    var sSort = '<option value="-1">Please Select a Sort Option</option>';
+                    var sortOptions = data.sort;
+                    for (var i = 0; i < sortOptions.length; i++) {
+                        sSort += '<option value="' + i + '">' + sortOptions[i] + '</option>';
+                    }
+                    $("#sort").html(sSort);
+                },
+
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
+    </script>
+}

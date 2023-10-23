@@ -1,15 +1,24 @@
 ﻿@model HCM.Models.ViewModels.Identity.LoginViewModel
-<h2>Login</h2>
-<form method="post" asp-action="SignIn">
-    <div>
-        <label asp-for="LoginParameter">Username or Email:</label>
-        <input asp-for="LoginParameter" type="text" id="Username" />
+
+<div class="container w-50">
+    <div class="m-xxl-5 justify-content-sm-center align-items-center shadow-lg w-75">
+        <div class="row card border p-5 align-items-center ">
+            <h5 class="align-content-center">Login</h5>
+            <form method="post" asp-action="SignIn" class="py-2">
+                <div class="">
+                    <label asp-for="LoginParameter" class="form-label">Email or Username:</label>
+                    <div class="row"></div>
+                    <input asp-for="LoginParameter" type="text" id="Username" class="w-100 rounded form-text form-control-lg" />
+                </div>
+                <div class="mt-2">
+                    <label asp-for="Password" class="form-label">Password:</label>
+                    <div class="row"></div>
+                    <input asp-for="Password" type="password" id="Password" class="w-100 rounded form-text form-control-lg" />
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="w-100 rounded form-control-lg text-light form-text" style="background-color:#ef5b25">Login</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div>
-        <label asp-for="Password">Password:</label>
-        <input asp-for="Password" type="password" id="Password" />
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-</form>
+</div>

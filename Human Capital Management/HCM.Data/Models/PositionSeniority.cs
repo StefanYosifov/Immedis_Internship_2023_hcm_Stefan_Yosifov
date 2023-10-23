@@ -5,7 +5,7 @@ namespace HCM.Data.Models
 {
     public partial class PositionSeniority
     {
-        public byte? PositionId { get; set; }
+        public int? PositionId { get; set; }
         public byte? SeniorityId { get; set; }
 
         public virtual Position? Position { get; set; }

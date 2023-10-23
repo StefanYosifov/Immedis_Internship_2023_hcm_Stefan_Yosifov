@@ -25,7 +25,7 @@
 
         public IdentityController()
         {
-            this.client = new RestClient(ApplicationURLConstants.API_BASE_URL);
+            this.client = new RestClient(ApplicationAPIConstants.API_BASE_URL);
         }
 
         [HttpGet]

@@ -1,0 +1,114 @@
+﻿@using HCM.Common.Constants
+@model HCM.Models.ViewModels.Employees.EmployeeCreateModel
+
+<div class="container">
+    <h2>Create Employee</h2>
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label><b>Email</b></label>
+            <input type="email" class="form-control" id="Email" asp-for="Email" required>
+        </div>
+        <div class="form-group">
+            <label><b>Firstname</b></label>
+            <input type="text" class="form-control" id="FirstName" asp-for="FirstName" required>
+        </div>
+        <div class="form-group">
+            <label><b>Lastname</b></label>
+            <input type="text" class="form-control" id="LastName" asp-for="LastName" required>
+        </div>
+        <div class="form-group">
+            <label><b>Birth Date</b></label>
+            <input type="date" class="form-control" id="BirthDate" min="@DateTime.Today.Year-@ValidationConstants.EmployeeConstants.MaxEmployeeAge"
+                   max="@DateTime.Today.Year-@ValidationConstants.EmployeeConstants.MinEmployeeAge" asp-for="BirthDate">
+        </div>
+        <div class="form-group">
+            <label><b>Phone number</b></label>
+            <input type="tel" class="form-control" id="PhoneNumber" asp-for="PhoneNumber" required>
+        </div>
+        <div class="form-group">
+            <label><b>Nationality</b></label>
+            <select class="form-control" id="Options.Countries" asp-for="Options.Countries">
+                @foreach (var country in Model.Options.Countries)
+                {
+                    <option value="@country.Id">@country.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label><b>Gender</b></label>
+            <select class="form-control" id="Options.Genders" asp-for="Options.Genders">
+                @foreach (var gender in Model.Options.Genders)
+                {
+                    <option value="@gender.Id">@gender.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label><b>Department</b></label>
+            <select class="form-control departments" id="Options.Departments" asp-for="Options.Departments">
+                @foreach (var department in Model.Options.Departments)
+                {
+                    <option value="@department.DepartmentId">@department.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Options.Positions">Position</label>
+            <select class="form-control positions" id="Options.Positions" asp-for="Options.Positions">
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Options.Seniority">Seniority</label>
+            <select class="form-control seniorities" id="Options.Seniority" asp-for="Options.Seniority">
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+
+
+@section Scripts
+    {
+    <script>
+        let selectedDepartmentId = 1;
+        let selectedPositionId = 1;
+        console.log('asd');
+
+        $(document).ready(function () {
+            $(".departments").on('click', function () {
+                selectedDepartmentId = $('.departments').find(":selected").val();
+                $.ajax({
+                    type: "GET",
+                    url: "https://localhost:7153/departments/positions/" + selectedDepartmentId,
+                    data: {},
+                    success: function (data) {
+                        let arguments = "";
+                        for (let i = 0; i < data.length; i++) {
+                            arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                        $(".positions").html(arguments);
+                    },
+                });
+            });
+
+            $(".positions").on('click', function () {
+                selectedPositionId = $('.positions').find(":selected").val();
+                $.ajax({
+                    type: "GET",
+                    url: "https://localhost:7153/departments/seniorities/" + selectedPositionId,
+                    data: {},
+                    success: function (data) {
+                        console.log(data);
+                        let arguments = "";
+                        for (let i = 0; i < data.length; i++) {
+                            arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                        $(".seniorities").html(arguments);
+                    },
+                });
+            });
+        });
+    </script>
+
+
+}

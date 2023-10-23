@@ -1,13 +1,12 @@
-﻿namespace HCM.API.Services.Services.Identity
+﻿namespace HCM.API.Services.Controllers
 {
-    using Data.Models;
-
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using Models.ViewModels.Identity;
 
     using Services;
+    using Services.Identity.Services;
 
     [AllowAnonymous]
     [Route("/identity")]

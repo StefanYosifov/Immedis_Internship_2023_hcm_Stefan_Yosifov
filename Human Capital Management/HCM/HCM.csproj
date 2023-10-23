@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HCM.Common.AutoMapper\HCM.Common.AutoMapper.csproj" />
     <ProjectReference Include="..\HCM.Common.Constants\HCM.Common.Constants.csproj" />
+    <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />
     <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
     <ProjectReference Include="..\HCM.Models.ViewModels\HCM.Models.ViewModels.csproj" />
   </ItemGroup>

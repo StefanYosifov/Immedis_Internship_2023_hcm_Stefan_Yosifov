@@ -1,0 +1,58 @@
+﻿
+<form id="myForm">
+    <label for="d"><b>Departments</b></label>
+    <select class="form-control" id="d" name="d"></select>
+</form>
+
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="countyDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown button
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="countyDropdownButton" id="countyDropdown">
+        <!-- Data from AJAX response will be inserted here -->
+    </ul>
+</div>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="departmentDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown button
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="departmentsDropdown" id="departmentsDropdown">
+        <!-- Data from AJAX response will be inserted here -->
+    </ul>
+</div>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="genderDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown button
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="genderDropdownButton" id="genderDropdown">
+        <!-- Data from AJAX response will be inserted here -->
+    </ul>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Options","Employee")",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Department</option>';
+                    console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i].departments.id);
+                        s += '<option value="' + data[i].Departments.Id + '">' + data[i].Departments.Name + '</option>';
+                    }
+                    $("#departmentsDropdown").html(s);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
+    </script>
+}

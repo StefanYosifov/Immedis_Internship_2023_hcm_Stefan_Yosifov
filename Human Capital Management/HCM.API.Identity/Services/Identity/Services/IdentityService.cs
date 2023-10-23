@@ -1,13 +1,12 @@
-﻿namespace HCM.API.Identity.Identity.Services
+﻿namespace HCM.API.Services.Services.Identity.Services
 {
-    using API.Services.Services.Identity.Services;
-
-    using Data;
     using Data.Models;
+
+    using HCM.Models.ViewModels.Identity;
 
     using Microsoft.EntityFrameworkCore;
 
-    using Models.ViewModels.Identity;
+    using ApplicationDbContext = Data.ApplicationDbContext;
 
     public class IdentityService : IIdentityService
     {
