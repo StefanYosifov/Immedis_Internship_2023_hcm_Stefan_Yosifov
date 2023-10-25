@@ -1,11 +1,11 @@
 ﻿@using HCM.Models.ViewModels.Employees
-@model IEnumerable<HCM.Models.ViewModels.Employees.EmployeeTableModel>
+@model HCM.Models.ViewModels.Employees.EmployeeTableModel
 
 
 
 <div class="container-fluid m-5">
 
-    <form id="myForm" class="flex" method="get" asp-action="Index">
+    <form id="myForm" class="flex" method="get" asp-controller="Employee" asp-action="All" asp-route-id="@Model.CurrentPage">
         <div class="row">
             <div class="col-md-2">
                 <label><b>Search username</b></label>
@@ -14,7 +14,7 @@
 
             <div class="col-md-2">
                 <label for="genders"><b>Genders</b></label>
-                <select class="form-control" id="genders" name="genders"></select>
+                <select class="form-control" id="genders" name="genderId"></select>
             </div>
 
             <div class="col-md-2">
@@ -24,54 +24,94 @@
 
             <div class="col-md-2">
                 <label for="countries"><b>Country</b></label>
-                <select class="form-control" id="countries" name="countries"></select>
+                <select class="form-control" id="countries" name="nationalityId"></select>
             </div>
 
             <div class="col-md-2">
                 <label for="sort"><b>Sort by</b></label>
-                <select class="form-control" id="sort" name="sort"></select>
+                <select class="form-control" id="sort" name="Sort"></select>
             </div>
 
             <button style="width:8%">Submit</button>
         </div>
     </form>
 
-    <h1>@Model.Count()</h1>
+    <h1>@Model.TotalPages</h1>
     <h1>Hello</h1>
 
     <div>
         <span>Create employee</span>
         <button>Create</button>
     </div>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Employee ID</th>
-                <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Age</th>
-                <th>Department Name</th>
-                <th>Position Name</th>
-                <th>Seniority</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var employee in Model)
-            {
-                <tr>
-                    <td>@employee.EmployeeId</td>
-                    <td>@employee.EmployeeUserName</td>
-                    <td>@employee.EmployeeFirstName</td>
-                    <td>@employee.EmployeeLastName</td>
-                    <td>@employee.EmployeeAge</td>
-                    <td>@employee.EmployeeDepartmentName</td>
-                    <td>@employee.EmployeePositionName</td>
-                    <td>@employee.EmployeeSeniority</td>
-                </tr>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link">Previous</a>
+            </li>
+
+            @{
+                int loopUntil = Model.CurrentPage + 3;
+
+                for (int i = Model.CurrentPage - 2; i < loopUntil; i++)
+                {
+                    if (i <= 0 || i > Model.TotalPages)
+                    {
+                        continue;
+                    }
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a asp-controller="Employee" asp-action="All" asp-route-id="@i" class="page-link">@i</a>
+                    </li>
+                }
             }
-        </tbody>
-    </table>
+            <li class="page-item">
+                <a class="page-link">Next</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="table-responsive me-5">
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="col-2">Employee ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Age</th>
+                    <th>Department Name</th>
+                    <th>Position Name</th>
+                    <th>Seniority</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model.Employees!)
+                {
+                    <tr>
+                        <td>@employee.EmployeeId</td>
+                        <td>@employee.EmployeeUserName</td>
+                        <td>@employee.EmployeeFirstName</td>
+                        <td>@employee.EmployeeLastName</td>
+                        <td>@employee.EmployeeAge</td>
+                        <td>@employee.EmployeeDepartmentName</td>
+                        <td>@employee.EmployeePositionName</td>
+                        <td>@employee.EmployeeSeniority</td>
+                        <td>
+                            <button
+                                type="button"
+                                class="btn btn-link btn-rounded btn-sm fw-bold"
+                                data-mdb-ripple-color="dark"
+                            >
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
 </div>
 
 @section Scripts

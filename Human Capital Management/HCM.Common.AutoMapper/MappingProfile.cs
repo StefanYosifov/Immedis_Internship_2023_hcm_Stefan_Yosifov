@@ -36,7 +36,7 @@
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<Employee, EmployeeTableModel>()
+            CreateMap<Employee, EmployeeTableDataModel>()
                 .ForMember(dest => dest.EmployeeUserName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeAge,

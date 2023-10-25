@@ -1,5 +1,9 @@
-﻿namespace HCM.Controllers.Employee
+﻿// ReSharper disable InconsistentNaming
+namespace HCM.Controllers.Employee
 {
+    using System.Net;
+    using System.Security.Claims;
+
     using Common;
 
     using HCM.Common.Constants;
@@ -19,13 +23,28 @@
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int id, [FromQuery]EmployeeQueryTableFilters query)
+        public async Task<IActionResult> All(int id, [FromQuery]EmployeeQueryTableFilters query)
         {
             var request = new RestRequest($"/employees/{id}");
             request.AddHeader("Accept", "application/json");
-            request.AddJsonBody(query);
 
-            var response = await client.ExecuteAsync<IList<EmployeeTableModel>>(request);
+
+            string? DepartmentId = query.DepartmentId.ToString();
+            string? SearchEmployeeName = query.SearchEmployeeName;
+            string? GenderId=query.GenderId.ToString();
+            string? PositionId=query.PositionId.ToString();
+            string? SeniorityId=query.SeniorityId.ToString();
+            string? Sort = query.Sort.ToString();
+
+            request.AddQueryParameter(nameof(SearchEmployeeName),SearchEmployeeName);
+            request.AddQueryParameter(nameof(GenderId), GenderId);
+            request.AddQueryParameter(nameof(DepartmentId),DepartmentId);
+            request.AddQueryParameter(nameof(PositionId),PositionId);
+            request.AddQueryParameter(nameof(SeniorityId), SeniorityId);
+            request.AddQueryParameter(nameof(Sort), Sort);
+
+
+            var response = await client.ExecuteAsync<EmployeeTableModel>(request);
 
             if (response.IsSuccessful)
             {
@@ -33,7 +52,7 @@
                 return View(employees);
             }
 
-            return BadRequest();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -56,10 +75,10 @@
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var request = new RestRequest("/employees/create");
+            var request = new RestRequest("/employees/getCreate");
             request.AddHeader("Accept", "application/json");
 
-            var response = await client.ExecuteGetAsync<EmployeeCreateModel>(request);
+            var response = await client.ExecuteGetAsync<EmployeeCreateRequestModel>(request);
 
             if (response.IsSuccessful)
             {
@@ -67,14 +86,24 @@
                 return View(data);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("All");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(int id)
+        public async Task<IActionResult> Create(EmployeeCreateResponseModel requestModel)
         {
-            return null;
+            var request = new RestRequest("/employees/postCreate",Method.Post);
+            request.AddHeader("Accept", "application/json");
+            request.AddBody(requestModel);
 
+            var response = await client.ExecuteAsync<bool>(request);
+
+            if (response.Data==true)
+            {
+                return RedirectToAction("All");
+            }
+
+            return RedirectToAction("Create","Employee");
         }
     }
 }

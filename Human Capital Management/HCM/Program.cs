@@ -5,6 +5,7 @@ using HCM.Data;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         cookieOpt.LoginPath = CookieAuthenticationConstants.LoginPath;
         cookieOpt.AccessDeniedPath = CookieAuthenticationConstants.AccessDeniedPath;
     });
+
 
 builder.Services.AddAutoMapper(typeof(Profile));
 

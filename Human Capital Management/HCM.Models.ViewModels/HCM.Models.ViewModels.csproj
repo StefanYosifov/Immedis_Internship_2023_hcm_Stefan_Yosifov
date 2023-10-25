@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HCM.Common.Constants\HCM.Common.Constants.csproj" />
+    <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />
+    <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
+  </ItemGroup>
+
 </Project>

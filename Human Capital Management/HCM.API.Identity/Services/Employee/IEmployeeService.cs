@@ -9,14 +9,16 @@
     public interface IEmployeeService
     {
 
-        Task<Pagination<EmployeeTableModel>> GetEmployeeTable(int id, EmployeeQueryTableFilters query);
+        Task<EmployeeTableModel> GetEmployeeTable(int id, EmployeeQueryTableFilters query);
 
         Task<ICollection<CountryViewModel>> GetCountries();
 
         Task<ICollection<GenderViewModel>> GetGenders();
 
-        Task<EmployeeCreateModel> GetEmployeeCreationOptions();
+        Task<EmployeeCreateRequestModel> GetEmployeeCreationOptions();
 
-        Task<bool> CreateEmployee();
+        Task<bool> CreateEmployee(EmployeeCreateResponseModel requestModel);
+
+        Task<string> CreateFileFromEmployees(IFormFile file);
     }
 }

@@ -20,9 +20,9 @@
         private readonly IGenderService genderService;
         private readonly ICountryService countryService;
         public EmployeeController(
-            IEmployeeService service, 
-            IDepartmentService departmentService, 
-            IGenderService genderService, 
+            IEmployeeService service,
+            IDepartmentService departmentService,
+            IGenderService genderService,
             ICountryService countryService)
         {
             this.service = service;
@@ -62,16 +62,16 @@
                 Genders = await genderService.GetGenders(),
                 Counties = await countryService.GetCountries(),
                 Departments = await departmentService.GetDepartments(),
-                Sort = (string[]) Enum.GetNames(typeof(EmployeeTableSortEnum))
+                Sort = (string[])Enum.GetNames(typeof(EmployeeTableSortEnum))
             };
 
             return Ok(options);
         }
 
-        [HttpGet("create")]
+        [HttpGet("getCreate")]
         public async Task<IActionResult> GetEmployeeCreationOptions()
         {
-            var employeeCreationModel = new EmployeeCreateModel()
+            var employeeCreationModel = new EmployeeCreateRequestModel()
             {
                 Options = new EmployeeCreateDropDownOptions()
                 {
@@ -82,6 +82,34 @@
             };
 
             return Ok(employeeCreationModel);
+        }
+
+        [HttpPost("postCreate")]
+        public async Task<IActionResult> CreateEmployee([FromBody] EmployeeCreateResponseModel requestModel)
+        {
+            try
+            {
+                var result = await service.CreateEmployee(requestModel);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("postCreateFile")]
+        public async Task<IActionResult> CreateEmployeesFromFile([FromForm] IFormFile file)
+        {
+            try
+            {
+                var result = await service.CreateFileFromEmployees(file);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

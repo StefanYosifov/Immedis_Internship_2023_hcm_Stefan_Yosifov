@@ -1,25 +1,50 @@
 ﻿@using HCM.Common.Constants
-@model HCM.Models.ViewModels.Employees.EmployeeCreateModel
+@model HCM.Models.ViewModels.Employees.EmployeeCreateRequestModel
 
 <div class="container">
     <h2>Create Employee</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fileModal">
+        Open Modal
+    </button>
+
+    <!-- The Modal -->
+    <div class="modal" id="fileModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload a File</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" id="fileInput">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <form asp-action="Create" method="post">
         <div class="form-group">
             <label><b>Email</b></label>
-            <input type="email" class="form-control" id="Email" asp-for="Email" required>
+            <input name="email" type="email" class="form-control" id="Email" asp-for="Email" required>
         </div>
         <div class="form-group">
             <label><b>Firstname</b></label>
-            <input type="text" class="form-control" id="FirstName" asp-for="FirstName" required>
+            <input name="firstname" type="text" class="form-control" id="FirstName" asp-for="FirstName" required>
         </div>
         <div class="form-group">
             <label><b>Lastname</b></label>
-            <input type="text" class="form-control" id="LastName" asp-for="LastName" required>
+            <input name="lastname" type="text" class="form-control" id="LastName" asp-for="LastName" required>
         </div>
         <div class="form-group">
             <label><b>Birth Date</b></label>
-            <input type="date" class="form-control" id="BirthDate" min="@DateTime.Today.Year-@ValidationConstants.EmployeeConstants.MaxEmployeeAge"
-                   max="@DateTime.Today.Year-@ValidationConstants.EmployeeConstants.MinEmployeeAge" asp-for="BirthDate">
+            <input name="birthDate" type="date" class="form-control" id="BirthDate" value="@DateTime.Today.AddYears(-20).ToString("yyyy-MM-dd")"
+                   min="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MaxEmployeeAge).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MinEmployeeAge).ToString("yyyy-MM-dd")" asp-for="BirthDate">
+
         </div>
         <div class="form-group">
             <label><b>Phone number</b></label>
@@ -27,7 +52,7 @@
         </div>
         <div class="form-group">
             <label><b>Nationality</b></label>
-            <select class="form-control" id="Options.Countries" asp-for="Options.Countries">
+            <select name="NationalityId" class="form-control" id="Options.Countries" asp-for="Options.Countries">
                 @foreach (var country in Model.Options.Countries)
                 {
                     <option value="@country.Id">@country.Name</option>
@@ -36,7 +61,7 @@
         </div>
         <div class="form-group">
             <label><b>Gender</b></label>
-            <select class="form-control" id="Options.Genders" asp-for="Options.Genders">
+            <select name="GenderId" class="form-control" id="Options.Genders" asp-for="Options.Genders">
                 @foreach (var gender in Model.Options.Genders)
                 {
                     <option value="@gender.Id">@gender.Name</option>
@@ -45,7 +70,7 @@
         </div>
         <div class="form-group">
             <label><b>Department</b></label>
-            <select class="form-control departments" id="Options.Departments" asp-for="Options.Departments">
+            <select name="DepartmentId" class="form-control departments" id="Options.Departments" asp-for="Options.Departments">
                 @foreach (var department in Model.Options.Departments)
                 {
                     <option value="@department.DepartmentId">@department.Name</option>
@@ -54,12 +79,12 @@
         </div>
         <div class="form-group">
             <label for="Options.Positions">Position</label>
-            <select class="form-control positions" id="Options.Positions" asp-for="Options.Positions">
+            <select name="PositionId" class="form-control positions" id="Options.Positions" asp-for="Options.Positions">
             </select>
         </div>
         <div class="form-group">
             <label for="Options.Seniority">Seniority</label>
-            <select class="form-control seniorities" id="Options.Seniority" asp-for="Options.Seniority">
+            <select name="SeniorityId" class="form-control seniorities" id="Options.Seniority" asp-for="Options.Seniority">
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
@@ -107,6 +132,36 @@
                     },
                 });
             });
+
+
+            $("#uploadButton").click(function () {
+                console.log('click');
+                var fileInput = $("#fileInput")[0];
+                if (fileInput.files.length > 0) {
+                    var file = fileInput.files[0];
+
+                    var formData = new FormData();
+                    formData.append("file", file);
+
+                    $.ajax({
+                        url: "https://localhost:7153/employees/postCreateFile",
+                        type: "POST",
+                        data: formData,
+                        processData: false, // Prevent jQuery from processing data
+                        contentType: false, // Set content type to false
+                        success: function (response) {
+                            // Handle success response here
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    });
+                }
+
+                $("#fileModal").modal("hide");
+            });
+
+
         });
     </script>
 

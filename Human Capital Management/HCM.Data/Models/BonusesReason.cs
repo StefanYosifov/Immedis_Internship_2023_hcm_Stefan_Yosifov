@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace HCM.Data.Models
 {
-    public partial class Seniority
+    public partial class BonusesReason
     {
-        public Seniority()
+        public BonusesReason()
         {
-            Employees = new HashSet<Employee>();
+            Bonuses = new HashSet<Bonuse>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Bonuse> Bonuses { get; set; }
     }
 }
