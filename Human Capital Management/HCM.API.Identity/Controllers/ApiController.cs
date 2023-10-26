@@ -1,4 +1,4 @@
-﻿namespace HCM.API.Services.Services
+﻿namespace HCM.API.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
 

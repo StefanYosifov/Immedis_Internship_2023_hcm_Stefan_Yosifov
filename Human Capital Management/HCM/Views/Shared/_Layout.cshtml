@@ -51,6 +51,10 @@
                         <div class="sidebar-header">
                             <h3>Human Capital Management</h3>
                             <strong>Welcome @User.FindFirstValue(ClaimTypes.Name)</strong>
+                            @if (User.IsInRole("HR"))
+                            {
+                                <strong>You are in HR role</strong>
+                            }
                         </div>
 
                         <ul class="list-unstyled components">
@@ -65,9 +69,6 @@
                                     </li>
                                     <li>
                                         @Html.ActionLink("Create","Create","Employee")
-                                    </li>
-                                    <li>
-                                        <a href="#">Home 3</a>
                                     </li>
                                 </ul>
                             </li>
@@ -105,9 +106,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="@Url.Action("SignOut","Identity")">
                                     <i class="fas fa-paper-plane"></i>
-                                    Contact
+                                    Logout
                                 </a>
                             </li>
                         </ul>

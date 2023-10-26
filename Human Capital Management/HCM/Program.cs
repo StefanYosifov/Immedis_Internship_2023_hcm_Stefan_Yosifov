@@ -1,12 +1,11 @@
 using AutoMapper;
-
-using HCM.Common.Constants;
 using HCM.Data;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +14,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMvc();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(cookieOpt =>
-    {
-        cookieOpt.Cookie.Name = CookieAuthenticationConstants.Name;
-        cookieOpt.LoginPath = CookieAuthenticationConstants.LoginPath;
-        cookieOpt.AccessDeniedPath = CookieAuthenticationConstants.AccessDeniedPath;
-    });
-
-
 builder.Services.AddAutoMapper(typeof(Profile));
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "auth";
+        options.AccessDeniedPath = "/Forbidden/";
+    });
 
 var app = builder.Build();
 

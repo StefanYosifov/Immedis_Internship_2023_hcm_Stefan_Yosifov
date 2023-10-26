@@ -10,6 +10,7 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.24" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.23">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +24,9 @@
   <ItemGroup>
     <ProjectReference Include="..\HCM.Common.AutoMapper\HCM.Common.AutoMapper.csproj" />
     <ProjectReference Include="..\HCM.Common.Constants\HCM.Common.Constants.csproj" />
+    <ProjectReference Include="..\HCM.Common.Manager\HCM.Common.Manager.csproj" />
     <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />
+    <ProjectReference Include="..\HCM.Core.Services\HCM.Core.Services.csproj" />
     <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
     <ProjectReference Include="..\HCM.Models.ViewModels\HCM.Models.ViewModels.csproj" />
   </ItemGroup>

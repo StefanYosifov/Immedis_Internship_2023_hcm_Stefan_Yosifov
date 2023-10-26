@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
-    public partial class Role
+    public class Role
     {
         public Role()
         {
-            Employees = new HashSet<Employee>();
+            EmployeeRoles = new HashSet<EmployeeRoles>();
         }
 
         public byte Id { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<EmployeeRoles> EmployeeRoles { get; set; }
     }
 }

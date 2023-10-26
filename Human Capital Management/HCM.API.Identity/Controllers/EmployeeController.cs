@@ -1,16 +1,16 @@
-﻿namespace HCM.API.Services.Controllers
+﻿namespace HCM.API.Controllers
 {
-    using Microsoft.AspNetCore.Mvc;
+    using System;
+
+    using Core.Services.Countries;
+    using Core.Services.Department;
+    using Core.Services.Employee;
+    using Core.Services.Gender;
 
     using Models.ViewModels.Employees;
-    using Models.ViewModels.Employees.Enum;
+    using HCM.Models.ViewModels.Employees.Enum;
 
-    using Services;
-    using Services.Countries;
-    using Services.Department;
-    using Services.Employee;
-    using Services.Gender;
-    using System;
+    using Microsoft.AspNetCore.Mvc;
 
     [Route("/employees")]
     public class EmployeeController : ApiController
@@ -109,6 +109,20 @@
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("edit/{employeeId}")]
+        public async Task<IActionResult> EditEmployee(string employeeId)
+        {
+            try
+            {
+                var result = await service.GetEmployeeToEdit(employeeId);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
             }
         }
     }

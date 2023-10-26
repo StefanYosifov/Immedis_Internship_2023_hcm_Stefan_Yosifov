@@ -4,7 +4,7 @@
     <div class="m-xxl-5 justify-content-sm-center align-items-center shadow-lg w-75">
         <div class="row card border p-5 align-items-center ">
             <h5 class="align-content-center">Login</h5>
-            <form method="post" asp-action="SignIn" class="py-2">
+            <form id="loginForm" class="py-2">
                 <div class="">
                     <label asp-for="LoginParameter" class="form-label">Email or Username:</label>
                     <div class="row"></div>
@@ -16,9 +16,43 @@
                     <input asp-for="Password" type="password" id="Password" class="w-100 rounded form-text form-control-lg" />
                 </div>
                 <div class="mt-4">
-                    <button type="submit" class="w-100 rounded form-control-lg text-light form-text" style="background-color:#ef5b25">Login</button>
+                    <button type="button" id="loginButton" class="w-100 rounded form-control-lg text-light form-text" style="background-color:#ef5b25">Login</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("loginButton").addEventListener("click", function() {
+        // Get the form data
+        var formData = {
+            LoginParameter: document.getElementById("Username").value,
+            Password: document.getElementById("Password").value
+        };
+
+        // Send an AJAX post request
+        $.ajax({
+            type: "POST",
+            url: "https://localhost:7039/identity/SignIn",
+            data: formData,
+            success: function (data) {
+                console.log(data);
+                alert(data);
+                localStorage.setItem('Authorization', data);
+
+                // Include the JWT token in the Authorization header
+                $.ajaxSetup({
+                    headers: {
+                        'Authorization': 'Bearer ' + data
+                    }
+                });
+
+                window.location.href = "/home";
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

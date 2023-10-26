@@ -1,8 +1,10 @@
-﻿namespace HCM.API.Services.Services.File
+﻿namespace HCM.Common.Helper
 {
     using System.Text;
 
-    public class FileService
+    using Microsoft.AspNetCore.Http;
+
+    public class FileHelper
     {
         public static async Task<string> ReadAsStringAsync(IFormFile file)
         {

@@ -5,11 +5,17 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
 
+    using Microsoft.AspNetCore.Authorization;
+
     public class HomeController : BaseController
     {
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Identity");
+            }
             return View();
         }
 

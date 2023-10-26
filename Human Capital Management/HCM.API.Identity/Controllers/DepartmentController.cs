@@ -1,11 +1,8 @@
-﻿namespace HCM.API.Services.Controllers
+﻿namespace HCM.API.Controllers
 {
-    using Common.Constants;
+    using Core.Services.Department;
 
     using Microsoft.AspNetCore.Mvc;
-
-    using Services;
-    using Services.Department;
 
     [Route("/departments")]
     public class DepartmentController : ApiController

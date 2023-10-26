@@ -21,13 +21,14 @@ namespace HCM.Data
         {
         }
 
+        public virtual DbSet<EmployeeRoles> EmployeeRoles { get; set; }
         public virtual DbSet<Bonuse> Bonuses { get; set; } = null!;
         public virtual DbSet<BonusesReason> BonusesReasons { get; set; } = null!;
         public virtual DbSet<Country> Countries { get; set; } = null!;
         public virtual DbSet<Deduction> Deductions { get; set; } = null!;
         public virtual DbSet<DeductionReason> DeductionReasons { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<Employee?> Employees { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<Payroll> Payrolls { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
@@ -46,6 +47,14 @@ namespace HCM.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EmployeeRoles>(entity =>
+            {
+                entity.HasKey(k => new
+                {
+                    k.EmployeeId, k.RoleId
+                });
+            });
+
             modelBuilder.Entity<Bonuse>(entity =>
             {
                 entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
@@ -197,20 +206,9 @@ namespace HCM.Data
                     .HasForeignKey(d => d.SeniorityId)
                     .HasConstraintName("FK__Employees__Senio__3E52440B");
 
-                entity.HasMany(d => d.Roles)
-                    .WithMany(p => p.Employees)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "EmployeeRole",
-                        l => l.HasOne<Role>().WithMany().HasForeignKey("RoleId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeR__RoleI__4222D4EF"),
-                        r => r.HasOne<Employee>().WithMany().HasForeignKey("EmployeeId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeR__Emplo__412EB0B6"),
-                        j =>
-                        {
-                            j.HasKey("EmployeeId", "RoleId").HasName("PK__Employee__C27FE3F02E3555AF");
-
-                            j.ToTable("EmployeeRoles");
-
-                            j.IndexerProperty<string>("EmployeeId").HasMaxLength(450).IsUnicode(false);
-                        });
+                entity.HasMany(d => d.EmployeeRoles)
+                    .WithOne(p => p.Employee)
+                    .HasForeignKey(e=>e.EmployeeId);
             });
 
             modelBuilder.Entity<Gender>(entity =>

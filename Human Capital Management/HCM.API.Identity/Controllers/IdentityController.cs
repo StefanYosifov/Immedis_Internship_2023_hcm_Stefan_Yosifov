@@ -1,15 +1,13 @@
-﻿namespace HCM.API.Services.Controllers
+﻿namespace HCM.API.Controllers
 {
+    using HCM.Core.Services.Identity;
+    using HCM.Models.ViewModels.Identity;
+
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using Models.ViewModels.Identity;
-
-    using Services;
-    using Services.Identity.Services;
-
     [AllowAnonymous]
-    [Route("/identity")]
+    [Route("/authorize")]
     public class IdentityController : ApiController
     {
         private readonly IIdentityService service;
@@ -24,12 +22,13 @@
         {
             var result = await service.SignIn(model);
 
-            if (result == null)
+            if (!result.isValid)
             {
                 return BadRequest();
             }
 
             return Ok(result);
+
         }
     }
 }

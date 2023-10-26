@@ -6,14 +6,14 @@
     {
         public Employee()
         {
-            this.Id=Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid().ToString();
             Bonuses = new HashSet<Bonuse>();
             Deductions = new HashSet<Deduction>();
             Payrolls = new HashSet<Payroll>();
-            Roles = new HashSet<Role>();
+            EmployeeRoles = new HashSet<EmployeeRoles>();
         }
 
-        public string Id { get; set; } = null!;
+        public string Id { get; set; }
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
@@ -41,6 +41,6 @@
         public virtual ICollection<Deduction> Deductions { get; set; }
         public virtual ICollection<Payroll> Payrolls { get; set; }
 
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<EmployeeRoles> EmployeeRoles { get; set; }
     }
 }

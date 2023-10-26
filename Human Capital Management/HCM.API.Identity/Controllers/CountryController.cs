@@ -1,9 +1,8 @@
-﻿namespace HCM.API.Services.Controllers
+﻿namespace HCM.API.Controllers
 {
-    using Microsoft.AspNetCore.Mvc;
+    using Core.Services.Countries;
 
-    using Services;
-    using Services.Countries;
+    using Microsoft.AspNetCore.Mvc;
 
     [Route("countries")]
     public class CountryController : ApiController
