@@ -1,0 +1,4 @@
+﻿namespace HCM.Common.Manager
+{
+   
+}

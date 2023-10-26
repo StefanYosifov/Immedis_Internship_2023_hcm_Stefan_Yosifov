@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HCM.Common.AutoMapper\HCM.Common.AutoMapper.csproj" />
+    <ProjectReference Include="..\HCM.Common.Manager\HCM.Common.Manager.csproj" />
+    <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />
+    <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
+    <ProjectReference Include="..\HCM.Models.ViewModels\HCM.Models.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>
