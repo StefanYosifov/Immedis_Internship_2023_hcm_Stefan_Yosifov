@@ -18,7 +18,7 @@
         {
             if (typeof(TRequest) == typeof(RestGetRequest))
             {
-                return (TRequest)(new RestGetRequest(this.url, restClient) as IRestRequest);
+                return (TRequest)(new RestGetRequest(url, restClient) as IRestRequest);
             }
             //else if (typeof(TRequest) == typeof(PostRequest))
             //{

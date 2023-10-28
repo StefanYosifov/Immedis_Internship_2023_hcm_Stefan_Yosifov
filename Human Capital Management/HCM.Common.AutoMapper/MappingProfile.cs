@@ -42,11 +42,11 @@
                 .ForMember(dest => dest.EmployeeUserName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeAge,
-                    opt => opt.MapFrom(src => (int)Math.Abs(DateTime.UtcNow.Year - src.BirthDate.Value.Year)))
+                    opt => opt.MapFrom(src => (int)Math.Abs(DateTime.UtcNow.Year - src.BirthDate!.Value.Year)))
                 .ForMember(dest => dest.EmployeeFirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.EmployeeLastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.EmployeeDepartmentName, opt => opt.MapFrom(src => src.Department.Name))
-                .ForMember(dest => dest.EmployeePositionName, opt => opt.MapFrom(src => src.Position.Name));
+                .ForMember(dest => dest.EmployeeDepartmentName, opt => opt.MapFrom(src => src.Department!.Name))
+                .ForMember(dest => dest.EmployeePositionName, opt => opt.MapFrom(src => src.Position!.Name));
 
             CreateMap<Employee, EmployeeGetEditModel>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))

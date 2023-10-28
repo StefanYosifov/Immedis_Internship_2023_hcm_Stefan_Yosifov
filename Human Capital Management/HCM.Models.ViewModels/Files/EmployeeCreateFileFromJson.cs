@@ -10,7 +10,7 @@
         {
             string data = Encoding.UTF8.GetString(fileContent);
             var employees = JsonSerializer.Deserialize<List<Employee>>(data);
-            return employees;
+            return employees!;
         }
     }
 }

@@ -113,17 +113,32 @@
         }
 
         [HttpGet("edit/{employeeId}")]
-        public async Task<IActionResult> EditEmployee(string employeeId)
+        public async Task<IActionResult> GetEmployeeToEdit(string employeeId)
         {
             try
             {
                 var result = await service.GetEmployeeToEdit(employeeId);
                 return Ok(result);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest();
             }
         }
+
+        [HttpPut("edit/{employeeId}")]
+        public async Task<IActionResult> EditEmployee(string employeeId, EmployeeSendEditModel model)
+        {
+            try
+            {
+                var result = await service.EditEmployee(employeeId, model);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        
     }
 }

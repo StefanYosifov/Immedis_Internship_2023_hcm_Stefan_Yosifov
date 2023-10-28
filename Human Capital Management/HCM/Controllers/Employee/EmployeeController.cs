@@ -2,22 +2,13 @@
 namespace HCM.Controllers.Employee
 {
     using Common.Requests;
-
-    using HCM.Common.Constants;
     using Microsoft.AspNetCore.Mvc;
-
     using Models.ViewModels.Employees;
-
     using RestSharp;
+    using System.Security.Claims;
 
-    public class EmployeeController : Controller
+    public class EmployeeController : BaseController
     {
-        private readonly RestClient client;
-
-        public EmployeeController()
-        {
-            this.client = new RestClient(ApplicationAPIConstants.API_BASE_URL);
-        }
 
         [HttpGet]
         public async Task<IActionResult> All(int id, [FromQuery] EmployeeQueryTableFilters query)
@@ -105,15 +96,25 @@ namespace HCM.Controllers.Employee
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit([FromRoute]string id)
+        public async Task<IActionResult> Edit([FromRoute] string id)
         {
-
-            var request = new RestRequestBuilder($"/employees/edit/{id}")
+            
+            var request = new RestRequestBuilder($"/employees/edit/{id}",
+                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
+                .AddAuthentication()
                 .Build();
 
 
-            var response = await this.client.ExecuteGetAsync<EmployeeGetEditModel>(request);
+            Console.WriteLine(ClaimTypes.Role);
+            Console.WriteLine(User.IsInRole("HR"));
+            Console.WriteLine(User.IsInRole("Admin"));
+            Console.WriteLine(User);
+
+
+            
+            
+            var response = await client.ExecuteGetAsync<EmployeeGetEditModel>(request);
 
             if (response.IsSuccessful)
             {
@@ -121,6 +122,27 @@ namespace HCM.Controllers.Employee
             }
 
             return RedirectToAction("All", "Employee");
+        }
+
+
+        [HttpPut("MVC/employees/edit/{employeeId}")]
+        public async Task<IActionResult> Edit(string employeeId, EmployeeSendEditModel model)
+        {
+            var request = new RestRequestBuilder($"/employees/edit/{employeeId}",
+                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                .SetMethod(Method.Put)
+                .AddAuthentication()
+                .AddBody(model)
+                .Build();
+
+            var response = await client.ExecutePutAsync(request);
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Content);
+            }
+
+            return BadRequest();
+
         }
     }
 }

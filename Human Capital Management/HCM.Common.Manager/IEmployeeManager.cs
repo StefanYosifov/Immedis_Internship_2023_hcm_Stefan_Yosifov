@@ -1,8 +1,8 @@
 ﻿namespace HCM.Common.Manager
 {
-    using System.Runtime.CompilerServices;
-
     using Data.Models;
+
+    using Models.ViewModels.Roles;
 
     public interface IEmployeeManager
     {
@@ -18,5 +18,9 @@
         string GetUserId();
 
         string GetUserName();
+
+        string GetJwtToken();
+
+        bool IsInRole(RolesEnum rolesEnum);
     }
 }

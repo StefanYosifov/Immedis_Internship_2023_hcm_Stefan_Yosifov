@@ -1,7 +1,5 @@
 ﻿namespace HCM.Models.ViewModels.Employees
 {
-    using Common;
-
     public class EmployeeTableModel
     {
         

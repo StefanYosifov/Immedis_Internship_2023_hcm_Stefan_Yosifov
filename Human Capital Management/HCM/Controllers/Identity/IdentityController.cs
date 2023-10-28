@@ -1,9 +1,5 @@
 ﻿namespace HCM.Controllers.Identity
 {
-    using System.Net;
-
-    using Common.Constants;
-    using Data.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
@@ -11,17 +7,10 @@
     using Models.ViewModels.Identity;
     using RestSharp;
     using System.Security.Claims;
-    using System.Net.Http.Headers;
 
     [AllowAnonymous]
     public class IdentityController : BaseController
     {
-        private readonly RestClient client;
-
-        public IdentityController()
-        {
-            this.client = new RestClient(ApplicationAPIConstants.API_BASE_URL);
-        }
 
         [HttpGet]
         public IActionResult SignIn()
@@ -51,8 +40,7 @@
 
             if (response.IsSuccessStatusCode)
             {
-                HttpContext.Request.Headers.Authorization = responseData.JwtToken;
-                await AuthenticateUserAndSetupClaims(responseData.Employee);
+                await AuthenticateUserAndSetupClaims(responseData.JwtToken, responseData.Employee);
                 return Ok(responseData.JwtToken);
             }
 
@@ -69,37 +57,40 @@
 
 
 
-        private async Task AuthenticateUserAndSetupClaims(Employee user)
+        private async Task AuthenticateUserAndSetupClaims(string token, EmployeeResponse user)
         {
-            // Would be better to move this logic to the service
-            var userRoles = user.EmployeeRoles
-                .Where(er => er.EmployeeId == user.Id)
-                .Select(er => er.Role.Name);
 
+            
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.NameIdentifier, user.Id),
-                new(ClaimTypes.Name,$"{user.FirstName} {user.LastName}"),
+                new(ClaimTypes.Name,user.Username),
+                new(ClaimTypes.Authentication,token),
             };
 
-            foreach (var userRole in userRoles)
+            foreach (var userRole in user.Roles)
             {
-                claims.Append(new Claim(ClaimTypes.Role, userRole));
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
             }
-
 
             var claimsIdentity = new ClaimsIdentity(
                 claims,
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
+
+            var authProperties = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(10),
+                IsPersistent = true,
+                IssuedUtc = DateTimeOffset.UtcNow,
+                RedirectUri = Url.Action("Index", "Home"),
+            };
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
-                new AuthenticationProperties()
-                {
-                    IsPersistent = true
-                });
+                authProperties);
         }
     }
 }

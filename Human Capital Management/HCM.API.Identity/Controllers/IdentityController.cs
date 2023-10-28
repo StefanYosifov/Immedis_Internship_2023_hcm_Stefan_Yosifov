@@ -1,7 +1,7 @@
 ﻿namespace HCM.API.Controllers
 {
-    using HCM.Core.Services.Identity;
-    using HCM.Models.ViewModels.Identity;
+    using Core.Services.Identity;
+    using Models.ViewModels.Identity;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

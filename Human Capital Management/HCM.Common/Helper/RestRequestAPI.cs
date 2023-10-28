@@ -5,7 +5,7 @@
     public class RestRequestAPI
     {
 
-        public RestRequestAPI(string url, RestSharp.Method method)
+        public RestRequestAPI(string url, Method method)
         {
             request = new RestRequest(url, method);
         }

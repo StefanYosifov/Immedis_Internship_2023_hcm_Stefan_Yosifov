@@ -1,6 +1,5 @@
 using HCM.Common;
 using HCM.Common.AutoMapper;
-using HCM.Common.Constants;
 using HCM.Common.Manager;
 using HCM.Core.Services.Countries;
 using HCM.Core.Services.Department;
@@ -33,14 +32,15 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins(ApplicationAPIConstants.MVC_BASE_URL)
-                .WithMethods("GET","POST","PUT","DELETE");
+            policy.WithOrigins("https://localhost:7039")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 
 builder.Services.Configure<FormOptions>(opt =>
 {
-    opt.ValueCountLimit = int.MaxValue; 
+    opt.ValueCountLimit = int.MaxValue;
     opt.ValueLengthLimit = 1024 * 1024 * 100;
 });
 
@@ -66,4 +66,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

@@ -1,49 +1,54 @@
 ﻿namespace HCM.Core.Services.Employee
 {
-    using System.Text;
-
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-
-    using Common;
+    using BCrypt.Net;
     using Common.Constants;
+    using Common.Helper;
     using Common.Manager;
+    using Countries;
+    using Data;
 
-    using Data.Models;
-    using HCM.Common.Helper;
+    using Department;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
     using Models.ViewModels.Employees.Enum;
     using Models.ViewModels.Files;
     using Models.ViewModels.Genders;
+    using Models.ViewModels.Roles;
+    using System.Text;
 
-    using ApplicationDbContext = Data.ApplicationDbContext;
+    using Data.Models;
 
     public class EmployeeService : IEmployeeService
     {
-
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
+        private readonly ICountryService countryService;
+        private readonly IDepartmentService departmentService;
         private readonly IEmployeeManager employeeManager;
+        private readonly IMapper mapper;
 
         public EmployeeService(
             ApplicationDbContext context,
             IMapper mapper,
-            IEmployeeManager employeeManager)
+            IEmployeeManager employeeManager,
+            IDepartmentService departmentService,
+            ICountryService countryService)
         {
             this.context = context;
             this.mapper = mapper;
             this.employeeManager = employeeManager;
+            this.departmentService = departmentService;
+            this.countryService = countryService;
         }
 
         public async Task<EmployeeTableModel> GetEmployeeTable(int page, EmployeeQueryTableFilters query)
         {
-            IQueryable<Employee?> employeeTable = context.Employees
+            var employeeTable = context.Employees
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(query.SearchEmployeeName))
@@ -86,14 +91,12 @@
                 _ => employeeTable
             };
 
-
             var totalPages = (int)Math.Ceiling(
-                (decimal)(await employeeTable.CountAsync()) / ValidationConstants.PaginationConstants.ItemsPerPage);
+                (decimal)await employeeTable.CountAsync() / ValidationConstants.PaginationConstants.ItemsPerPage);
 
             var mappedTable = new EmployeeTableModel();
 
-            var employeesData = employeeTable.
-                ProjectTo<EmployeeTableDataModel>(mapper.ConfigurationProvider);
+            var employeesData = employeeTable.ProjectTo<EmployeeTableDataModel>(mapper.ConfigurationProvider);
 
             var pagination = await Pagination<EmployeeTableDataModel>
                 .CreateAsync(employeesData, page, ValidationConstants.PaginationConstants.ItemsPerPage);
@@ -110,10 +113,8 @@
             mappedTable.TotalPages = totalPages;
             mappedTable.Employees = paginatedResult;
 
-
             return mappedTable;
         }
-
 
         public async Task<ICollection<CountryViewModel>> GetCountries()
         {
@@ -138,7 +139,7 @@
         {
             var random = new Random();
 
-            var employee = new Employee()
+            var employee = new Employee
             {
                 FirstName = model.Firstname,
                 LastName = model.Lastname,
@@ -152,8 +153,9 @@
                 SeniorityId = model.SeniorityId,
                 CreatedOn = DateTime.UtcNow,
                 CreatedBy = "name",
-                Username = model.Firstname[..2] + model.Lastname[..3] + random.Next(0, 999), //Compiler suggestion replacing .SubString(0,2)
-                PasswordHash = GenerateRandomPassword(random.Next(8, 15), random),
+                Username = model.Firstname[..2] + model.Lastname[..3] +
+                           random.Next(0, 999), //Compiler suggestion replacing .SubString(0,2)
+                PasswordHash = GenerateRandomPassword(random.Next(8, 15), random)
             };
 
             await context.Employees.AddAsync(employee);
@@ -179,21 +181,21 @@
             await context.Employees.AddRangeAsync(employees);
             await context.SaveChangesAsync();
 
-
             return "Success";
         }
 
         public async Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId)
         {
-
             var currentUserId = employeeManager.GetUserId();
 
-            if (employeeId != currentUserId)
+            Console.WriteLine(employeeManager.IsInRole(RolesEnum.HR));
+
+            if (employeeId != currentUserId && employeeManager.IsInRole(RolesEnum.HR) == false)
             {
                 throw new ArgumentException("Invalid user");
             }
 
-            var findEmployee = await employeeManager.GetEmployee();
+            var findEmployee = await context.Employees.FindAsync(employeeId);
 
             var mappedEmployeeDetails = mapper.Map<EmployeeGetEditModel>(findEmployee);
 
@@ -201,23 +203,44 @@
                 .ProjectTo<DepartmentViewModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
 
+            mappedEmployeeDetails.Positions =
+                await departmentService.GetPositionsByDepartmentId(mappedEmployeeDetails.DepartmentId);
+
+            mappedEmployeeDetails.Senioritys =
+                await departmentService.GetSenioritiesByPositionId(mappedEmployeeDetails.PositionId);
+
+            mappedEmployeeDetails.Nationalities = await countryService.GetCountries();
+
             return mappedEmployeeDetails;
+        }
+
+        public async Task<string> EditEmployee(string employeeId, EmployeeSendEditModel model)
+        {
+            var findEmployee = await context.Employees.FindAsync(employeeId);
+
+            if (findEmployee == null)
+            {
+                throw new InvalidOperationException("An error occured, couldn't find Employee");
+            }
+
+            context.Entry(findEmployee).CurrentValues.SetValues(model);
+            await context.SaveChangesAsync();
+            return "Successfully edited the employee";
         }
 
         private string GenerateRandomPassword(int length, Random random)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            string validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*?_-";
+            var validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*?_-";
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
-                char generatedChar = validChars[random.Next(0, validChars.Length)];
+                var generatedChar = validChars[random.Next(0, validChars.Length)];
                 sb.Append(generatedChar);
             }
 
-            return BCrypt.Net.BCrypt.HashPassword(sb.ToString());
+            return BCrypt.HashPassword(sb.ToString());
         }
-
     }
 }

@@ -1,11 +1,10 @@
 ﻿namespace HCM.Controllers.Home
 {
-    using HCM.Controllers;
-    using HCM.Models;
+    using Controllers;
+    using Models;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
-
-    using Microsoft.AspNetCore.Authorization;
 
     public class HomeController : BaseController
     {

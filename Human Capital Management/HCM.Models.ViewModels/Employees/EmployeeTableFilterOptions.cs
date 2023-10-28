@@ -12,9 +12,9 @@
     {
         public EmployeeTableFilterOptions()
         {
-            this.Departments = new HashSet<DepartmentViewModel>();
-            this.Genders = new HashSet<GenderViewModel>();
-            this.Counties = new HashSet<CountryViewModel>();
+            Departments = new HashSet<DepartmentViewModel>();
+            Genders = new HashSet<GenderViewModel>();
+            Counties = new HashSet<CountryViewModel>();
         }
 
         public ICollection<DepartmentViewModel> Departments { get; set; }

@@ -8,21 +8,22 @@
         private readonly string resource;
         private Method method;
         private readonly string contentType;
-        private object body;
         private readonly RestRequest request;
+        private readonly string? jwtToken;
 
-        public RestRequestBuilder(string resource)
+        public RestRequestBuilder(string resource, string? token)
         {
             this.resource = resource;
-            this.method = Method.Get;
-            this.contentType = "application/json";
-            this.request = new RestRequest(this.resource);
+            jwtToken = token;
+            method = Method.Get;
+            contentType = "application/json";
+            request = new RestRequest(this.resource);
         }
 
         public RestRequestBuilder SetMethod(Method method)
         {
             this.method = method;
-            this.request.Method = method;
+            request.Method = method;
             return this;
         }
 
@@ -42,9 +43,15 @@
             return this;
         }
 
-        public RestRequestBuilder AddJsonBody(object body)
+        public RestRequestBuilder AddAuthentication()
         {
-            this.body = body;
+            request.AddHeader("Authorization", $"Bearer {jwtToken}");
+            return this;
+        }
+
+        public RestRequestBuilder AddBody(object body)
+        {
+            request.AddBody(body);
             return this;
         }
 
@@ -53,7 +60,6 @@
             if (method == Method.Post || method == Method.Put)
             {
                 request.AddHeader("Content-Type", contentType);
-                request.AddBody(body);
             }
 
             return request;

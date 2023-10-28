@@ -8,9 +8,9 @@
     {
         public EmployeeCreationalOptions()
         {
-            this.Genders = new HashSet<GenderViewModel>();
-            this.Countries = new HashSet<CountryViewModel>();
-            this.Departments = new HashSet<DepartmentViewModel>();
+            Genders = new HashSet<GenderViewModel>();
+            Countries = new HashSet<CountryViewModel>();
+            Departments = new HashSet<DepartmentViewModel>();
         }
 
 

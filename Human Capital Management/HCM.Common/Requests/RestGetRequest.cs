@@ -10,7 +10,7 @@
         public RestGetRequest(string baseUrl, RestClient client)
         {
             this.client = client;
-            this.request = new RestRequest(baseUrl);
+            request = new RestRequest(baseUrl);
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authentication", $"Bearer");

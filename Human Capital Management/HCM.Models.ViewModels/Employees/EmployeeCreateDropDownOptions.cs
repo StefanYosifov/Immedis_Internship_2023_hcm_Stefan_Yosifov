@@ -13,9 +13,9 @@
     {
         public EmployeeCreateDropDownOptions()
         {
-            this.Departments = new HashSet<DepartmentViewModel>();
-            this.Genders = new HashSet<GenderViewModel>();
-            this.Countries = new HashSet<CountryViewModel>();
+            Departments = new HashSet<DepartmentViewModel>();
+            Genders = new HashSet<GenderViewModel>();
+            Countries = new HashSet<CountryViewModel>();
         }
 
         public ICollection<CountryViewModel> Countries { get; set; }

@@ -97,13 +97,18 @@
                         <td>@employee.EmployeePositionName</td>
                         <td>@employee.EmployeeSeniority</td>
                         <td>
-                            <button
-                                type="button"
-                                class="btn btn-link btn-rounded btn-sm fw-bold"
-                                data-mdb-ripple-color="dark"
-                            >
-                                Edit
-                            </button>
+                            <div class="btn-group dropstart">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">   
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Separated link</a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 }

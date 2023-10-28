@@ -22,5 +22,7 @@
         Task<string> CreateFileFromEmployees(IFormFile file);
 
         Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId);
+
+        Task<string> EditEmployee(string employeeId,EmployeeSendEditModel model);
     }
 }

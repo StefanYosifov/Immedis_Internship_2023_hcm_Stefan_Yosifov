@@ -1,12 +1,12 @@
 ﻿namespace HCM.Common.Manager
 {
-    using System.Security.Claims;
-
-    using HCM.Data;
-    using HCM.Data.Models;
-
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
+    using Models.ViewModels.Roles;
+    using System.Security.Claims;
+
+    using Data;
+    using Data.Models;
 
     public class EmployeeManager : IEmployeeManager
     {
@@ -17,8 +17,8 @@
         public EmployeeManager(IHttpContextAccessor httpContext,
             ApplicationDbContext context)
         {
+            user = httpContext.HttpContext.User;
             this.context = context;
-            user = httpContext.HttpContext!.User;
         }
 
 
@@ -31,18 +31,23 @@
         public async Task<Employee?> FindEmployeeByEmail(string email)
         {
             return (await context.Employees
+                .Include(e => e.EmployeeRoles)
                 .FirstOrDefaultAsync(e => e.Email == email));
         }
 
         public async Task<Employee?> FindEmployeeByUsername(string username)
         {
             return (await context.Employees
+                .Include(e => e.EmployeeRoles)
                 .FirstOrDefaultAsync(e => string.Equals(e.Username, username, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         public async Task<Employee?> FindEmployeeByUsernameOrPassword(string data)
         {
-            return await context.Employees.FirstOrDefaultAsync(e =>
+            return await context.Employees
+                .Include(e => e.EmployeeRoles)
+                .ThenInclude(er => er.Role)
+                .FirstOrDefaultAsync(e =>
                 e.Email == data || e.Username == data);
         }
 
@@ -54,6 +59,16 @@
         string IEmployeeManager.GetUserName()
         {
             return user.FindFirstValue(ClaimTypes.Name);
+        }
+
+        public string GetJwtToken()
+        {
+            return user.FindFirstValue(ClaimTypes.Authentication);
+        }
+
+        public bool IsInRole(RolesEnum role)
+        {
+            return user.IsInRole(role.ToString());
         }
     }
 

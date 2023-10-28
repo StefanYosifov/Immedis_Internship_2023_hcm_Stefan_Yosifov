@@ -9,6 +9,7 @@
     using System.Security.Claims;
     using System.Text;
 
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
 
     using ApplicationDbContext = Data.ApplicationDbContext;
@@ -31,7 +32,9 @@
 
         public async Task<Response> SignIn(LoginViewModel model)
         {
-            var findEmployee = await employeeManager.FindEmployeeByUsernameOrPassword(model.LoginParameter);
+
+            var findEmployee = await employeeManager
+                .FindEmployeeByUsernameOrPassword(model.LoginParameter);
 
             if (findEmployee == null)
             {
@@ -63,21 +66,28 @@
 
             var token = GetToken(authClaims);
 
-            return GetResponse(token, findEmployee, authClaims);
+            return GetResponse(token, findEmployee);
         }
 
 
 
 
-        private Response GetResponse(JwtSecurityToken token, Employee user, IList<Claim> claims)
+        private Response GetResponse(JwtSecurityToken token, Employee user)
         {
-            var response = new Response();
-
-            response.JwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-            response.Employee = user;
-            foreach (var claim in claims)
+            var response = new Response
             {
-                response.Claims[claim.Type] = claim.Value;
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                Employee = new EmployeeResponse()
+                {
+                    Username = user.Username,
+                    Email = user.Email,
+                    Id = user.Id,
+                }
+            };
+
+            foreach (var role in user.EmployeeRoles)
+            {
+                response.Employee.Roles.Add(role.Role.Name);
             }
 
             return response;
