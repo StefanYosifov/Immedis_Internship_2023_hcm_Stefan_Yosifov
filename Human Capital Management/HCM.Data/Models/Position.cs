@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Position
     {
         public Position()
@@ -12,7 +11,7 @@ namespace HCM.Data.Models
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public byte? DepartmentId { get; set; }
+        public int? DepartmentId { get; set; }
 
         public virtual Department? Department { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }

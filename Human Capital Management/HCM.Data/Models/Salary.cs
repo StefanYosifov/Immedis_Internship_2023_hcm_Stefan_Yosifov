@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
+    using System;
+
     public partial class Salary
     {
         public string EmployeeId { get; set; } = null!;

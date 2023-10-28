@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
     public partial class PositionSeniority
     {

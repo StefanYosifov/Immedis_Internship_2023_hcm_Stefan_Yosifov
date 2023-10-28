@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Seniority
     {
         public Seniority()

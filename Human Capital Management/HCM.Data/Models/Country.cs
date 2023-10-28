@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HCM.Data.Models
+﻿namespace HCM.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Country
     {
         public Country()
         {
+            Departments = new HashSet<Department>();
             Employees = new HashSet<Employee>();
         }
 
@@ -14,6 +14,7 @@ namespace HCM.Data.Models
         public string Name { get; set; } = null!;
         public string Iso { get; set; } = null!;
 
+        public virtual ICollection<Department> Departments { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
     }
 }

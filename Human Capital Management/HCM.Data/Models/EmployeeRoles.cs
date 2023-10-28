@@ -4,16 +4,15 @@
 
     public class EmployeeRoles
     {
-
         [ForeignKey(nameof(Employee))]
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; } = null!;
 
-        public Employee Employee { get; set; }
+        public Employee Employee { get; set; } = null!;
 
         [ForeignKey(nameof(Role))]
-        public byte RoleId { get; set; }
+        public int RoleId { get; set; }
 
-        public Role Role { get; set; }
+        public Role Role { get; set; } = null!;
 
     }
 }

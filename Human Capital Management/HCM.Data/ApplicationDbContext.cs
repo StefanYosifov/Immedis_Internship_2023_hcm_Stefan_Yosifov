@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using HCM.Data.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace HCM.Data
 {
-    using System.Security.Claims;
+    using Models;
 
-    using History_and_Audit;
+    using Task = Models.Task;
 
     public partial class ApplicationDbContext : DbContext
     {
@@ -21,27 +17,30 @@ namespace HCM.Data
         {
         }
 
-        public virtual DbSet<EmployeeRoles> EmployeeRoles { get; set; }
+        public virtual DbSet<AuditLog> AuditLogs { get; set; } = null!;
         public virtual DbSet<Bonuse> Bonuses { get; set; } = null!;
         public virtual DbSet<BonusesReason> BonusesReasons { get; set; } = null!;
         public virtual DbSet<Country> Countries { get; set; } = null!;
         public virtual DbSet<Deduction> Deductions { get; set; } = null!;
         public virtual DbSet<DeductionReason> DeductionReasons { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Employee?> Employees { get; set; } = null!;
+        public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<Payroll> Payrolls { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
         public virtual DbSet<PositionSeniority> PositionSeniorities { get; set; } = null!;
+        public virtual DbSet<Priority> Priorities { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Salary> Salaries { get; set; } = null!;
         public virtual DbSet<Seniority> Seniorities { get; set; } = null!;
+        public virtual DbSet<Status> Statuses { get; set; } = null!;
+        public virtual DbSet<Task> Tasks { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=_HCM;Integrated Security=true");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HCM;Integrated Security=true");
             }
         }
 
@@ -51,8 +50,35 @@ namespace HCM.Data
             {
                 entity.HasKey(k => new
                 {
-                    k.EmployeeId, k.RoleId
+                    k.RoleId, k.EmployeeId
                 });
+            });
+
+
+            modelBuilder.Entity<AuditLog>(entity =>
+            {
+                entity.ToTable("AuditLog");
+
+                entity.Property(e => e.Action)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Changes).IsUnicode(false);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EntityName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Timestamp).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.AuditLogs)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK__AuditLog__Employ__628FA481");
             });
 
             modelBuilder.Entity<Bonuse>(entity =>
@@ -66,12 +92,17 @@ namespace HCM.Data
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Bonuses)
                     .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("FK__Bonuses__Employe__4CA06362");
+                    .HasConstraintName("FK__Bonuses__Employe__4E88ABD4");
+
+                entity.HasOne(d => d.Payroll)
+                    .WithMany(p => p.Bonuses)
+                    .HasForeignKey(d => d.PayrollId)
+                    .HasConstraintName("FK__Bonuses__Payroll__5070F446");
 
                 entity.HasOne(d => d.Reason)
                     .WithMany(p => p.Bonuses)
                     .HasForeignKey(d => d.ReasonId)
-                    .HasConstraintName("FK__Bonuses__ReasonI__4D94879B");
+                    .HasConstraintName("FK__Bonuses__ReasonI__4F7CD00D");
             });
 
             modelBuilder.Entity<BonusesReason>(entity =>
@@ -83,10 +114,10 @@ namespace HCM.Data
 
             modelBuilder.Entity<Country>(entity =>
             {
-                entity.HasIndex(e => e.Name, "UQ__Countrie__737584F67BEBB877")
+                entity.HasIndex(e => e.Name, "UQ__Countrie__737584F6F093C58F")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Iso, "UQ__Countrie__C4979A2326001EEB")
+                entity.HasIndex(e => e.Iso, "UQ__Countrie__C4979A23F94C38A1")
                     .IsUnique();
 
                 entity.Property(e => e.Iso)
@@ -110,12 +141,17 @@ namespace HCM.Data
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Deductions)
                     .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("FK__Deduction__Emplo__52593CB8");
+                    .HasConstraintName("FK__Deduction__Emplo__5535A963");
+
+                entity.HasOne(d => d.Payroll)
+                    .WithMany(p => p.DeductionsNavigation)
+                    .HasForeignKey(d => d.PayrollId)
+                    .HasConstraintName("FK__Deduction__Payro__571DF1D5");
 
                 entity.HasOne(d => d.Reason)
                     .WithMany(p => p.Deductions)
                     .HasForeignKey(d => d.ReasonId)
-                    .HasConstraintName("FK__Deduction__Reaso__534D60F1");
+                    .HasConstraintName("FK__Deduction__Reaso__5629CD9C");
             });
 
             modelBuilder.Entity<DeductionReason>(entity =>
@@ -127,22 +163,29 @@ namespace HCM.Data
 
             modelBuilder.Entity<Department>(entity =>
             {
-                entity.HasIndex(e => e.Name, "UQ__Departme__737584F67BB7840D")
+                entity.HasIndex(e => e.Name, "UQ__Departme__737584F63994BC10")
                     .IsUnique();
 
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.ImageUrl)
+                    .IsUnicode(false)
+                    .HasColumnName("ImageURL");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.Country)
+                    .WithMany(p => p.Departments)
+                    .HasForeignKey(d => d.CountryId)
+                    .HasConstraintName("FK__Departmen__Count__2E1BDC42");
             });
 
             modelBuilder.Entity<Employee>(entity =>
             {
-                entity.HasIndex(e => e.Username, "UQ__Employee__536C85E412B8D60E")
+                entity.HasIndex(e => e.Username, "UQ__Employee__536C85E49A202DC1")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Employee__A9D10534D67152A7")
+                entity.HasIndex(e => e.Email, "UQ__Employee__A9D10534B0647F87")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -184,31 +227,30 @@ namespace HCM.Data
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.DepartmentId)
-                    .HasConstraintName("FK__Employees__Depar__3C69FB99");
+                    .HasConstraintName("FK__Employees__Depar__3E52440B");
 
                 entity.HasOne(d => d.Gender)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.GenderId)
-                    .HasConstraintName("FK__Employees__Gende__3B75D760");
+                    .HasConstraintName("FK__Employees__Gende__3D5E1FD2");
 
                 entity.HasOne(d => d.Nationality)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.NationalityId)
-                    .HasConstraintName("FK__Employees__Natio__3A81B327");
+                    .HasConstraintName("FK__Employees__Natio__3C69FB99");
 
                 entity.HasOne(d => d.Position)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.PositionId)
-                    .HasConstraintName("FK__Employees__Posit__3D5E1FD2");
+                    .HasConstraintName("FK__Employees__Posit__3F466844");
 
                 entity.HasOne(d => d.Seniority)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.SeniorityId)
-                    .HasConstraintName("FK__Employees__Senio__3E52440B");
+                    .HasConstraintName("FK__Employees__Senio__403A8C7D");
 
                 entity.HasMany(d => d.EmployeeRoles)
-                    .WithOne(p => p.Employee)
-                    .HasForeignKey(e=>e.EmployeeId);
+                    .WithOne(er => er.Employee);
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -224,11 +266,7 @@ namespace HCM.Data
             {
                 entity.ToTable("Payroll");
 
-                entity.Property(e => e.PayrollId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("PayrollID");
-
-                entity.Property(e => e.Bonuses).HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Deductions).HasColumnType("decimal(10, 2)");
 
@@ -237,19 +275,23 @@ namespace HCM.Data
                     .IsUnicode(false)
                     .HasColumnName("EmployeeID");
 
-                entity.Property(e => e.PayrollDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
 
-                entity.Property(e => e.SalaryAmount).HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.NetPay).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Salary).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.StartDate).HasColumnType("date");
 
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Payrolls)
                     .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("FK__Payroll__Employe__47DBAE45");
+                    .HasConstraintName("FK__Payroll__Employe__49C3F6B7");
             });
 
             modelBuilder.Entity<Position>(entity =>
             {
-                entity.HasIndex(e => e.Name, "UQ__Position__737584F6779EDA1A")
+                entity.HasIndex(e => e.Name, "UQ__Position__737584F6E748174C")
                     .IsUnique();
 
                 entity.Property(e => e.Name)
@@ -259,7 +301,7 @@ namespace HCM.Data
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.Positions)
                     .HasForeignKey(d => d.DepartmentId)
-                    .HasConstraintName("FK__Positions__Depar__30F848ED");
+                    .HasConstraintName("FK__Positions__Depar__31EC6D26");
             });
 
             modelBuilder.Entity<PositionSeniority>(entity =>
@@ -271,20 +313,29 @@ namespace HCM.Data
                 entity.HasOne(d => d.Position)
                     .WithMany()
                     .HasForeignKey(d => d.PositionId)
-                    .HasConstraintName("FK__PositionS__Posit__6D0D32F4");
+                    .HasConstraintName("FK__PositionS__Posit__36B12243");
 
                 entity.HasOne(d => d.Seniority)
                     .WithMany()
                     .HasForeignKey(d => d.SeniorityId)
-                    .HasConstraintName("FK__PositionS__Senio__6E01572D");
+                    .HasConstraintName("FK__PositionS__Senio__37A5467C");
+            });
+
+            modelBuilder.Entity<Priority>(entity =>
+            {
+                entity.ToTable("Priority");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.PriorityName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.HasIndex(e => e.Name, "UQ__Roles__737584F616672FD9")
+                entity.HasIndex(e => e.Name, "UQ__Roles__737584F666D3D7C5")
                     .IsUnique();
-
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -294,7 +345,7 @@ namespace HCM.Data
             modelBuilder.Entity<Salary>(entity =>
             {
                 entity.HasKey(e => e.EmployeeId)
-                    .HasName("PK__Salaries__7AD04FF1643206C2");
+                    .HasName("PK__Salaries__7AD04FF1C6629CBB");
 
                 entity.Property(e => e.EmployeeId)
                     .HasMaxLength(450)
@@ -309,14 +360,14 @@ namespace HCM.Data
                     .WithOne(p => p.Salary)
                     .HasForeignKey<Salary>(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Salaries__Employ__44FF419A");
+                    .HasConstraintName("FK__Salaries__Employ__46E78A0C");
             });
 
             modelBuilder.Entity<Seniority>(entity =>
             {
                 entity.ToTable("Seniority");
 
-                entity.HasIndex(e => e.Name, "UQ__Seniorit__737584F66551E8DE")
+                entity.HasIndex(e => e.Name, "UQ__Seniorit__737584F65FD7EA16")
                     .IsUnique();
 
                 entity.Property(e => e.Name)
@@ -324,39 +375,57 @@ namespace HCM.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.ToTable("Status");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.StatusName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Task>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Description).HasColumnType("text");
+
+                entity.Property(e => e.DueDate).HasColumnType("date");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false)
+                    .HasColumnName("EmployeeID");
+
+                entity.Property(e => e.PriorityId).HasColumnName("PriorityID");
+
+                entity.Property(e => e.StatusId).HasColumnName("StatusID");
+
+                entity.Property(e => e.TaskName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK__Tasks__EmployeeI__5FB337D6");
+
+                entity.HasOne(d => d.Priority)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.PriorityId)
+                    .HasConstraintName("FK__Tasks__PriorityI__5DCAEF64");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.StatusId)
+                    .HasConstraintName("FK__Tasks__StatusID__5EBF139D");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {
-            AuditLog();
-
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void AuditLog()
-        {
-            var today = DateTime.UtcNow;
-            var creatorUserName = ClaimTypes.Name;
-
-            foreach (var item in ChangeTracker.Entries().Where(e => e.Entity is IEntity))
-            {
-                if (item.Entity is IEntity entity)
-                {
-                    if (item.State == EntityState.Added)
-                    {
-                        entity.CreatedOn = today;
-                        entity.CreatedBy = creatorUserName;
-                    }
-                    else if (item.State == EntityState.Modified)
-                    {
-                        entity.ModifiedOn = today;
-                        entity.ModifiedBy = creatorUserName;
-                    }
-                }
-            }
-        }
     }
 }
