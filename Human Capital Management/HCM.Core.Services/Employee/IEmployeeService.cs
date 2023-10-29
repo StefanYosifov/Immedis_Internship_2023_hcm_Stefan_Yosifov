@@ -19,7 +19,7 @@
 
         Task<bool> CreateEmployee(EmployeeCreateResponseModel requestModel);
 
-        Task<string> CreateFileFromEmployees(IFormFile file);
+        Task<string> CreateFileFromEmployees(EmployeeFileInternalDTO file);
 
         Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId);
 

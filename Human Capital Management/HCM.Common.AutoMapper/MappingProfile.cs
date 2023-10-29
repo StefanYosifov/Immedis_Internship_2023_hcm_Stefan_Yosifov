@@ -60,6 +60,17 @@
                 .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId));
 
 
+            CreateMap<Department, DepartmentGetAllModel>()
+                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DepartmentCountry, opt => opt.MapFrom(src => src.Country.Name))
+                .ForMember(dest => dest.DepartmentEmployeeCount, opt => opt
+                    .MapFrom(src => src.Employees.Count(e => e.DepartmentId == src.Id)))
+                    .ForMember(dest => dest.DepartmentImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+                    .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
+                    .ForMember(dest => dest.DepartmentTotalEmployeeCapacity,
+                        opt => opt.MapFrom(src => src.MaxPeopleCount));
+
+
         }
     }
 }

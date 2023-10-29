@@ -1,5 +1,8 @@
 ﻿namespace HCM.Common.Requests
 {
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
+
     using RestSharp;
 
     public class RestRequestBuilder
@@ -7,7 +10,7 @@
 
         private readonly string resource;
         private Method method;
-        private readonly string contentType;
+        private string contentType;
         private readonly RestRequest request;
         private readonly string? jwtToken;
 
@@ -52,6 +55,22 @@
         public RestRequestBuilder AddBody(object body)
         {
             request.AddBody(body);
+            return this;
+        }
+
+
+        public RestRequestBuilder AddFile(IFormFile file)
+        {
+            byte[] fileBytes;
+    
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                fileBytes = memoryStream.ToArray();
+            }
+
+            this.contentType = file.ContentType;
+            request.AddFile(file.Name, fileBytes, Path.GetFileName(file.Name),contentType);
             return this;
         }
 

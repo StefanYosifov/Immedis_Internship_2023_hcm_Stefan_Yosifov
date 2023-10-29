@@ -2,6 +2,7 @@
 namespace HCM.Controllers.Employee
 {
     using Common.Requests;
+    using HCM.Common.Helper;
     using Microsoft.AspNetCore.Mvc;
     using Models.ViewModels.Employees;
     using RestSharp;
@@ -95,6 +96,40 @@ namespace HCM.Controllers.Employee
             return RedirectToAction("Create", "Employee");
         }
 
+        [HttpPost("MVC/employees/postCreate")]
+        public async Task<IActionResult> CreateEmployeeFromFile(IFormFile file)
+        {
+            var getFileExtension = Path.GetExtension(file.FileName);
+            var convertIntoByteArr = await FileHelper.ReadAsByteArrAsync(file);
+
+            EmployeeFileInternalDTO fileToSend = new EmployeeFileInternalDTO()
+            {
+                File = convertIntoByteArr,
+                Extension = getFileExtension
+            };
+
+            if (fileToSend.File.Length == 0)
+            {
+                return BadRequest("Empty file");
+            }
+
+            var request = new RestRequestBuilder("/employees/postCreateFile",
+                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                .SetMethod(Method.Post)
+                .AddAuthentication()
+                .AddBody(fileToSend)
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Created("",response.Content);
+            }
+
+            return BadRequest(response.Data);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
@@ -105,15 +140,6 @@ namespace HCM.Controllers.Employee
                 .AddAuthentication()
                 .Build();
 
-
-            Console.WriteLine(ClaimTypes.Role);
-            Console.WriteLine(User.IsInRole("HR"));
-            Console.WriteLine(User.IsInRole("Admin"));
-            Console.WriteLine(User);
-
-
-            
-            
             var response = await client.ExecuteGetAsync<EmployeeGetEditModel>(request);
 
             if (response.IsSuccessful)
@@ -135,7 +161,7 @@ namespace HCM.Controllers.Employee
                 .AddBody(model)
                 .Build();
 
-            var response = await client.ExecutePutAsync(request);
+            var response = await client.ExecutePutAsync<string>(request);
             if (response.IsSuccessful)
             {
                 return Ok(response.Content);

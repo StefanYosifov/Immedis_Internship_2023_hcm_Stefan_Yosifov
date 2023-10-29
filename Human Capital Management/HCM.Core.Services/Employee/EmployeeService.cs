@@ -8,10 +8,8 @@
     using Common.Manager;
     using Countries;
     using Data;
-
+    using Data.Models;
     using Department;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
@@ -21,8 +19,6 @@
     using Models.ViewModels.Genders;
     using Models.ViewModels.Roles;
     using System.Text;
-
-    using Data.Models;
 
     public class EmployeeService : IEmployeeService
     {
@@ -164,19 +160,11 @@
             return true;
         }
 
-        public async Task<string> CreateFileFromEmployees([FromForm] IFormFile file)
+        public async Task<string> CreateFileFromEmployees(EmployeeFileInternalDTO file)
         {
-            if (file.Length == 0)
-            {
-                throw new ArgumentException("No data");
-            }
-
-            var getFileExtension = Path.GetExtension(file.FileName);
-            var convertIntoByteArr = await FileHelper.ReadAsByteArrAsync(file);
-
             var factory = new CreateEmployeeFileFactory();
-            var fileFromFactory = factory.CreateEmployeeFile(getFileExtension);
-            var employees = fileFromFactory.ProcessFile(convertIntoByteArr);
+            var fileFromFactory = factory.CreateEmployeeFile(file.Extension);
+            var employees = fileFromFactory.ProcessFile(file.File);
 
             await context.Employees.AddRangeAsync(employees);
             await context.SaveChangesAsync();

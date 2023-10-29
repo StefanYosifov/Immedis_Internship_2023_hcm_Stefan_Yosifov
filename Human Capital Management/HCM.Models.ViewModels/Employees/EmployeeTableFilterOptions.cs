@@ -4,8 +4,6 @@
 
     using Departments;
 
-    using Enum;
-
     using Genders;
 
     public class EmployeeTableFilterOptions

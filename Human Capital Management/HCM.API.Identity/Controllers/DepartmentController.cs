@@ -4,6 +4,8 @@
 
     using Microsoft.AspNetCore.Mvc;
 
+    using Models.ViewModels.Departments;
+
     [Route("/departments")]
     public class DepartmentController : ApiController
     {
@@ -37,6 +39,29 @@
             var seniorities = await service.GetSenioritiesByPositionId(positionId);
 
             return Ok(seniorities);
+        }
+
+        [HttpGet("options")]
+        public async Task<IActionResult> GetDepartmentsSortOptions()
+        {
+            var sortOptions = await service.GetAllQueryFilters();
+            return Ok(sortOptions);
+        }
+
+        [HttpGet("all/main")]
+        public async Task<IActionResult> GetAllDepartments([FromQuery]DepartmentSendQueryFilters query)
+        {
+            try
+            {
+                var departments = await service.GetAllDepartments(query);
+                return Ok(departments);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
     }
 }

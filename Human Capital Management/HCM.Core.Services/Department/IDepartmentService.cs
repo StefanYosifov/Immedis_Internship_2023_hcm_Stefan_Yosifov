@@ -11,5 +11,9 @@
         Task<ICollection<PositionViewModel>> GetPositionsByDepartmentId(int id);
 
         Task<ICollection<SeniorityViewModel>> GetSenioritiesByPositionId(int id);
+
+        Task<ICollection<DepartmentGetAllModel>> GetAllDepartments(DepartmentSendQueryFilters query);
+
+        Task<DepartmentGetAllQueryFilters> GetAllQueryFilters();
     }
 }

@@ -97,6 +97,7 @@
     <script>
         let selectedDepartmentId = 1;
         let selectedPositionId = 1;
+        let token = "Bearer " + localStorage.getItem("Authorization")
         console.log('asd');
 
         $(document).ready(function () {
@@ -123,9 +124,10 @@
                     url: "https://localhost:7153/departments/seniorities/" + selectedPositionId,
                     data: {},
                     success: function (data) {
-                        console.log(data);
+                        console.log(data.Countries);
                         let arguments = "";
                         for (let i = 0; i < data.length; i++) {
+                            console.log(data[i].name);
                             arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
                         }
                         $(".seniorities").html(arguments);
@@ -144,13 +146,25 @@
                     formData.append("file", file);
 
                     $.ajax({
-                        url: "https://localhost:7153/employees/postCreateFile",
+                        url: "https://localhost:7153/MVC/employees/postCreate",
                         type: "POST",
                         data: formData,
-                        processData: false, // Prevent jQuery from processing data
-                        contentType: false, // Set content type to false
-                        success: function (response) {
-                            // Handle success response here
+                        processData: false, 
+                        contentType: false,
+                        headers: { "Authorization": token },
+                        success: function (data) {
+                            Toastify({
+                                text: data,
+                                duration: 3000,
+                                newWindow: true,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
+                                stopOnFocus: true,
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                                },
+                            }).showToast();
                         },
                         error: function (err) {
                             console.log(err);

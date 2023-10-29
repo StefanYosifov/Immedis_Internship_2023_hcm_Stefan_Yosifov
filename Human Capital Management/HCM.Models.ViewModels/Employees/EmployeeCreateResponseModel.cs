@@ -36,7 +36,7 @@
             public byte GenderId { get; set; } 
 
             [Required]
-            public byte DepartmentId { get; set; }
+            public int DepartmentId { get; set; }
 
             [Required]
             public int PositionId { get; set; }

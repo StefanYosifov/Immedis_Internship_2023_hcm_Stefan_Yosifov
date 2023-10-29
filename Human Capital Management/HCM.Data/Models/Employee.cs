@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
 
-    public partial class Employee
+    using History_and_Audit;
+
+    public partial class Employee : IEntity
     {
         public Employee()
         {

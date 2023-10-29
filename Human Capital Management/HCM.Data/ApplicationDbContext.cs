@@ -2,6 +2,9 @@
 
 namespace HCM.Data
 {
+    using System.Security.Claims;
+
+    using HCM.Data.History_and_Audit;
     using Models;
 
     using Task = Models.Task;
@@ -50,7 +53,8 @@ namespace HCM.Data
             {
                 entity.HasKey(k => new
                 {
-                    k.RoleId, k.EmployeeId
+                    k.RoleId,
+                    k.EmployeeId
                 });
             });
 
@@ -426,6 +430,38 @@ namespace HCM.Data
             OnModelCreatingPartial(modelBuilder);
         }
 
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+        {
+            AuditSave();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        private void AuditSave()
+        {
+            var currentTime = DateTime.UtcNow;
+            var userName = ClaimTypes.Name;
+
+
+            foreach (var item in ChangeTracker
+                         .Entries().Where(e => e.Entity is IEntity))
+            {
+                if (item.Entity is IEntity entity)
+                {
+                    if (item.State == EntityState.Added)
+                    {
+                        entity.CreatedOn = currentTime;
+                        entity.CreatedBy = userName;
+                    }
+                    else if (item.State == EntityState.Modified)
+                    {
+                        entity.ModifiedOn = currentTime;
+                        entity.ModifiedBy = userName!;
+                    }
+                }
+            }
+        }
     }
 }

@@ -99,7 +99,7 @@
         }
 
         [HttpPost("postCreateFile")]
-        public async Task<IActionResult> CreateEmployeesFromFile([FromForm] IFormFile file)
+        public async Task<IActionResult> CreateEmployeesFromFile(EmployeeFileInternalDTO file)
         {
             try
             {

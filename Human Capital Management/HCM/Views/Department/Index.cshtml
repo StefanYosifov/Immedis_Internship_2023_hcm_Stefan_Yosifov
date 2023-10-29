@@ -1,0 +1,155 @@
+﻿
+<div class="m-1">
+    <div class="navbar">
+        <div class="row">
+            <form id="query">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="textInput">Search for Department:</label>
+                        <input type="text" class="form-control" id="textInput" placeholder="Enter text">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label name="countries" for="selectOption1">Select an option:</label>
+                        <select id="countries" name="countries" class="form-control" id="selectOption1">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="selectOption2">Select an option:</label>
+                        <select id="sort" name="sort" class="form-control" id="selectOption2">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto">Search</a></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="card shadow-lg min-vh-100">
+        <div class="card w-25 rounded border shadow ms-3 my-3 border-top border-dark">
+            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Marketing</div>
+            <img class="card-img-top" src="https://technoroll.org/wp-content/uploads/2020/11/Why-your-IT-department-usually-knows-best.jpg" />
+            <div class="card-body p-4">
+                <div class="text-center">
+                    <h5 class="fw-bolder">Marketing</h5>
+                </div>
+                <p class="text-center mt-1">Varna, Bulgaria</p>
+            </div>
+            <div class="card-footer">
+                <small>12 employees</small>
+                <small>Total capacity 15</small>
+                <small>Bulgaria</small>
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Details</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (false)
+{
+    <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        let token = "Bearer " + localStorage.getItem("Authorization");
+
+        function populateDropdown(dropdown, data) {
+            let arguments = "";
+            for (let i = 0; i < data.length; i++) {
+                arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+            }
+            $("#" + dropdown).html(arguments);
+        }
+
+        $(document).ready(function () {
+
+            $.ajax({
+                url: 'https://localhost:7153/departments/MVC/options',
+                type: 'GET',
+                headers: { "Authorization": token },
+                success: function (data) {
+
+                    let arr = JSON.parse(data);
+                    console.log(arr);
+
+                    let arguments = "";
+                    for (let i = 0; i < arr.countries.length; i++) {
+                        arguments += '<option value="' + arr.countries[i].id + '">' + arr.countries[i].name + '</option>';
+                    }
+                    $("#countries").html(arguments);
+
+                    arguments = "";
+                    for (let i = 0; i < arr.sort.length; i++) {
+                        arguments += '<option value="' + arr.sort[i] + '">' + arr.sort[i] + '</option>';
+                    }
+                    $("#sort").html(arguments);
+
+                },
+                error: function (xhr, status, error) {
+                    // Handle any errors
+                }
+            });
+
+
+            $.ajax({
+                url: 'https://localhost:7153/departments/MVC/all/main',
+                type: 'GET',
+                headers: { "Authorization": token },
+                success: function (data) {
+                    let arr = JSON.parse(data);
+                    let container = $('#departmentContainer');
+
+                    arr.forEach(function (department) {
+                        let card = $('.card-template').clone().removeClass('card-template').addClass('new-card');
+
+                        card.find('.badge').text(department.name);
+                        card.find('img').attr('src', department.imageUrl);
+                        card.find('.fw-bolder').text(department.name);
+                        card.find('.mt-1').text(department.location);
+                        card.find('.card-footer small:eq(0)').text(department.employees + ' employees');
+                        card.find('.card-footer small:eq(1)').text('Total capacity ' + department.capacity);
+                        card.find('.card-footer small:eq(2)').text(department.country);
+
+                        container.append(card);
+                    });
+                    console.log(arr);
+                },
+                error: function (xhr, status, error) {
+                    // Handle any errors
+                }
+            });
+
+            $('#query').submit(function (event) {
+                event.preventDefault();
+
+                // Get the form data.
+                var formData = {
+                    searchText: $('#textInput').val(),
+                    selectOption1: $('#selectOption1').val(),
+                    selectOption2: $('#selectOption2').val()
+                };
+
+
+                $.post('your-api-url-here', formData, function (response) {
+                    console.log(response);
+                });
+            });
+        });
+    </script>
+}

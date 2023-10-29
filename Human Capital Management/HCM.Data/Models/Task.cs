@@ -11,7 +11,6 @@
         public int? PriorityId { get; set; }
         public int? StatusId { get; set; }
         public string? EmployeeId { get; set; }
-
         public virtual Employee? Employee { get; set; }
         public virtual Priority? Priority { get; set; }
         public virtual Status? Status { get; set; }
