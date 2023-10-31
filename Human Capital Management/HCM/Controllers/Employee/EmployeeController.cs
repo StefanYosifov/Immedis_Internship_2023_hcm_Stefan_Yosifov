@@ -2,11 +2,13 @@
 namespace HCM.Controllers.Employee
 {
     using Common.Requests;
-    using HCM.Common.Helper;
+
     using Microsoft.AspNetCore.Mvc;
     using Models.ViewModels.Employees;
     using RestSharp;
     using System.Security.Claims;
+
+    using Common.Helpers;
 
     public class EmployeeController : BaseController
     {

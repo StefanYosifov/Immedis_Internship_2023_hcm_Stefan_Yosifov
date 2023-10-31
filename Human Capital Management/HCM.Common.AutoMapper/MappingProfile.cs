@@ -70,6 +70,12 @@
                     .ForMember(dest => dest.DepartmentTotalEmployeeCapacity,
                         opt => opt.MapFrom(src => src.MaxPeopleCount));
 
+            CreateMap<Position, DepartmentGetPositionsModel>()
+                .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.EmployeesWithPositionCount, opt => opt.MapFrom(src =>
+                    src.Employees.Count(e => e.DepartmentId == src.DepartmentId && e.PositionId == src.Id)
+                ));
 
         }
     }

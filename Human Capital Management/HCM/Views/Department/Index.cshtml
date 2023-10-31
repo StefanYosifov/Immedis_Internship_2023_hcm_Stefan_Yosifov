@@ -1,61 +1,38 @@
 ﻿
-<div class="m-1">
-    <div class="navbar">
-        <div class="row">
-            <form id="query">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="textInput">Search for Department:</label>
-                        <input type="text" class="form-control" id="textInput" placeholder="Enter text">
-                    </div>
+<div class="m-3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <form id="query" class="d-flex">
+                <div class="form-group">
+                    <label for="textInput" class="mr-2">Search for Department:</label>
+                    <input name="Search" type="text" class="form-control" id="textInput" placeholder="Enter text">
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label name="countries" for="selectOption1">Select an option:</label>
-                        <select id="countries" name="countries" class="form-control" id="selectOption1">
-                        </select>
-                    </div>
+                <div class="form-group mx-3">
+                    <label for="countries" class="mr-2">Select an option:</label>
+                    <select id="countries" name="CountryId" class="form-control" id="selectOption1">
+                        <!-- Add your select options here -->
+                    </select>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="selectOption2">Select an option:</label>
-                        <select id="sort" name="sort" class="form-control" id="selectOption2">
-                        </select>
-                    </div>
+                <div class="form-group mx-3">
+                    <label for="sort" class="mr-2">Select an option:</label>
+                    <select id="sort" name="Sort" class="form-control" id="selectOption2">
+                        <!-- Add your select options here -->
+                    </select>
                 </div>
-                <div class="col-md-2 p-4 pt-0 border-top-0 bg-transparent">
-                    <div class="text-center"><a class="btn btn-outline-dark mt-auto">Search</a></div>
+                <div class="form-group mx-3">
+                    <a id="formSearch" class="btn btn-dark">Search</a>
                 </div>
             </form>
         </div>
-    </div>
+    </nav>
 
-
-
-
-
-
-    <div class="card shadow-lg min-vh-100">
-        <div class="card w-25 rounded border shadow ms-3 my-3 border-top border-dark">
-            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Marketing</div>
-            <img class="card-img-top" src="https://technoroll.org/wp-content/uploads/2020/11/Why-your-IT-department-usually-knows-best.jpg" />
-            <div class="card-body p-4">
-                <div class="text-center">
-                    <h5 class="fw-bolder">Marketing</h5>
-                </div>
-                <p class="text-center mt-1">Varna, Bulgaria</p>
-            </div>
-            <div class="card-footer">
-                <small>12 employees</small>
-                <small>Total capacity 15</small>
-                <small>Bulgaria</small>
-                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Details</a></div>
-                </div>
-            </div>
+    <div class="container mt-4">
+        <div id="departmentContainer" class="row">
+            <!-- Your department content here -->
         </div>
     </div>
 </div>
+
 
 
 @if (false)
@@ -68,19 +45,50 @@
     <script type="text/javascript">
 
         let token = "Bearer " + localStorage.getItem("Authorization");
+        let container = $('#departmentContainer');
 
-        function populateDropdown(dropdown, data) {
-            let arguments = "";
-            for (let i = 0; i < data.length; i++) {
-                arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-            }
-            $("#" + dropdown).html(arguments);
-        }
+        function FillDepartmentContainer(departments) {
+            container.empty();
+            departments.forEach(function (department) {
+                console.log(department);
+                let departmentCard = $('<div class="card col-md-3 mb-3 mx-5"></div>');
+
+                let departmentImage = $('<img class="card-img-top" src="' + department.departmentImageUrl + '" />');
+
+                let badge = $('<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">' + department.departmentName + '</div>');
+
+                let departmentName = $('<h5 class="fw-bolder">' + department.departmentName + '</h5>');
+
+                let departmentLocation = $('<p class="text-center mt-1">' + department.location + '</p>');
+
+                let departmentFooter = $('<div class="card-footer"></div>');
+
+                let employeeCount = $('<small>' + department.departmentEmployeeCount + ' employees</small>');
+
+                let capacity = $('<small>Total capacity ' + department.departmentTotalEmployeeCapacity + '</small>');
+
+                let country = $('<small>' + department.departmentCountry + '</small>');
+
+                let detailsButton = $(`<div class="card-footer p-4 pt-0 border-top-0 bg-transparent"><div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/departments/details/2">Details</a></div></div>`);
+
+
+                departmentCard.append(departmentImage);
+                departmentCard.append(badge);
+                departmentCard.append(departmentName);
+                departmentCard.append(departmentLocation);
+                departmentFooter.append(employeeCount);
+                departmentFooter.append(capacity);
+                departmentFooter.append(country);
+                departmentFooter.append(detailsButton);
+                departmentCard.append(departmentFooter);
+
+                container.append(departmentCard);
+            });
+        };
 
         $(document).ready(function () {
-
             $.ajax({
-                url: 'https://localhost:7153/departments/MVC/options',
+                url: 'https://localhost:7153/departments/options',
                 type: 'GET',
                 headers: { "Authorization": token },
                 success: function (data) {
@@ -102,53 +110,61 @@
 
                 },
                 error: function (xhr, status, error) {
-                    // Handle any errors
                 }
             });
 
-
             $.ajax({
-                url: 'https://localhost:7153/departments/MVC/all/main',
+                url: 'https://localhost:7153/departments/all/main',
                 type: 'GET',
                 headers: { "Authorization": token },
                 success: function (data) {
-                    let arr = JSON.parse(data);
-                    let container = $('#departmentContainer');
+                    console.log(data);
+                    let departments = JSON.parse(data);
+                    console.log(departments);
 
-                    arr.forEach(function (department) {
-                        let card = $('.card-template').clone().removeClass('card-template').addClass('new-card');
-
-                        card.find('.badge').text(department.name);
-                        card.find('img').attr('src', department.imageUrl);
-                        card.find('.fw-bolder').text(department.name);
-                        card.find('.mt-1').text(department.location);
-                        card.find('.card-footer small:eq(0)').text(department.employees + ' employees');
-                        card.find('.card-footer small:eq(1)').text('Total capacity ' + department.capacity);
-                        card.find('.card-footer small:eq(2)').text(department.country);
-
-                        container.append(card);
-                    });
-                    console.log(arr);
+                    FillDepartmentContainer(departments);
                 },
                 error: function (xhr, status, error) {
                     // Handle any errors
                 }
             });
 
-            $('#query').submit(function (event) {
-                event.preventDefault();
+            $("#formSearch").click(function () {
+                const department = $("#textInput").val();
+                const country = $("#countries").val();
+                const sort = $("#sort").val();
 
-                // Get the form data.
-                var formData = {
-                    searchText: $('#textInput').val(),
-                    selectOption1: $('#selectOption1').val(),
-                    selectOption2: $('#selectOption2').val()
-                };
+                const baseUrl = 'https://localhost:7153/departments/all/main';
+                const queryParams = [];
 
+                if (department) {
+                    queryParams.push(`Search=${department}`);
+                }
+                if (country) {
+                    queryParams.push(`CountryId=${country}`);
+                }
+                if (sort) {
+                    queryParams.push(`Sort=${sort}`);
+                }
 
-                $.post('your-api-url-here', formData, function (response) {
-                    console.log(response);
-                });
+                if (queryParams.length > 0) {
+                    const urlWithParams = `${baseUrl}?${queryParams.join("&")}`;
+                    const currentUrl = `https://localhost:7039/departments?${queryParams.join("&")}`;
+                    window.history.pushState({}, '', currentUrl);
+                    $.ajax({
+                        url: urlWithParams,
+                        type: 'GET',
+                        headers: { "Authorization": token },
+                        success: function (data) {
+                            let departments = JSON.parse(data);
+                            console.log(`change`);
+                            FillDepartmentContainer(departments);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle any errors
+                        }
+                    });
+                }
             });
         });
     </script>

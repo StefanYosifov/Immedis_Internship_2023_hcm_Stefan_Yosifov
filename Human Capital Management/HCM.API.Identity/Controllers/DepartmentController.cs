@@ -2,11 +2,12 @@
 {
     using Core.Services.Department;
 
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using Models.ViewModels.Departments;
 
-    [Route("/departments")]
+    [Route("/api/departments")]
     public class DepartmentController : ApiController
     {
         private readonly IDepartmentService service;
@@ -49,7 +50,7 @@
         }
 
         [HttpGet("all/main")]
-        public async Task<IActionResult> GetAllDepartments([FromQuery]DepartmentSendQueryFilters query)
+        public async Task<IActionResult> GetAllDepartments([FromQuery] DepartmentSendQueryFilters query)
         {
             try
             {
@@ -61,6 +62,53 @@
             {
                 Console.WriteLine(e.Message);
                 throw;
+            }
+        }
+
+        [Authorize]
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> GetDepartmentDetails(int id)
+        {
+            try
+            {
+                var department = await service.GetDepartmentDetailsById(id);
+                return Ok(department);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+
+        [HttpPost("api/positions/add")]
+        public async Task<IActionResult> AddPositionToDepartment(DepartmentAddPosition model)
+        {
+            try
+            {
+                var result = await service.AddPositionToDepartmentById(model);
+                return Created("asd",result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+
+        [HttpDelete("api/positions/remove")]
+        public async Task<IActionResult> RemovePositionFromDepartment(DepartmentRemovePosition model)
+        {
+            try
+            {
+                var result=await service.RemovePositionFromDepartmentById(model);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
         }
     }

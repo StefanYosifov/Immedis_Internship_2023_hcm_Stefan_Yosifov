@@ -50,7 +50,7 @@
             <div class="row">
                 <div class="col-auto">
                     <nav id="sidebar" class="sidebar-header">
-                        <div class="sidebar-header">
+                        <div class="sidebar-header border border-bottom">
                             <h3>Human Capital Management</h3>
                             <strong>Welcome @User.FindFirstValue(ClaimTypes.Name)</strong>
                             @if (User.IsInRole("HR"))
@@ -58,7 +58,6 @@
                                 <strong>You are in HR role</strong>
                             }
                         </div>
-
                         <ul class="list-unstyled components">
                             <li class="active">
                                 <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
@@ -96,7 +95,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="@Url.Action("Index","Department")">
                                     <i class="fas fa-image"></i>
                                     Employees
                                 </a>
@@ -199,19 +198,19 @@
     }
 
     #sidebar {
-        background: #121212;
+        background: #4e73df;
         color: #fff;
         transition: all 0.3s;
     }
 
         #sidebar .sidebar-header {
             padding: 20px;
-            background: #373737;
+            background: #4e73df;
         }
 
         #sidebar ul.components {
             padding: 20px 0;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid #f8f9fc;
         }
 
         #sidebar ul p {
@@ -223,22 +222,23 @@
             padding: 10px;
             font-size: 1.1em;
             display: block;
+            color: #f8f9fc
         }
 
             #sidebar ul li a:hover {
                 color: #7386D5;
-                background: #252525;
+                background: #4e73df;
             }
 
         #sidebar ul li.active > a, a[aria-expanded="true"] {
             color: #fff;
-            background: #202020;
+            background: #4e73df;
         }
 
     ul ul a {
         font-size: 0.9em !important;
         padding-left: 30px !important;
-        background: #151515;
+        background: #f8f9fc;
     }
 
     }

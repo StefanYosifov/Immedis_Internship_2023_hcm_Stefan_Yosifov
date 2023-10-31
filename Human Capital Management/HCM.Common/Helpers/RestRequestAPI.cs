@@ -1,4 +1,4 @@
-﻿namespace HCM.Common.Helper
+﻿namespace HCM.Common.Helpers
 {
     using RestSharp;
 

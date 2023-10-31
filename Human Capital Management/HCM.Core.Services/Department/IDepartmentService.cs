@@ -15,5 +15,15 @@
         Task<ICollection<DepartmentGetAllModel>> GetAllDepartments(DepartmentSendQueryFilters query);
 
         Task<DepartmentGetAllQueryFilters> GetAllQueryFilters();
+
+        Task<DepartmentDetailsViewModel> GetDepartmentDetailsById(int id);
+
+        Task<ICollection<DepartmentGetPositionsModel>> GetPositionsInTheDepartmentById(int id);
+
+        Task<ICollection<PositionViewModel>> GetAvailablePositionsToAddToDepartmentById(int id);
+
+        Task<string> AddPositionToDepartmentById(DepartmentAddPosition model);
+
+        Task<string> RemovePositionFromDepartmentById(DepartmentRemovePosition model);
     }
 }

@@ -1,5 +1,7 @@
 ﻿namespace HCM.Controllers
 {
+    using System.Security.Claims;
+
     using Common.Constants;
 
     using Microsoft.AspNetCore.Authorization;
@@ -11,5 +13,11 @@
     public abstract class BaseController : Controller
     {
         protected readonly RestClient client = new(ApplicationAPIConstants.API_BASE_URL);
+
+        protected string GetAuthenticationClaim()
+        {
+            return HttpContext.User.FindFirstValue(ClaimTypes.Authentication);
+        }
     }
+
 }

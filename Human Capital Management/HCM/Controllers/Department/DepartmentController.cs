@@ -23,10 +23,10 @@
             return View();
         }
 
-        [HttpGet("MVC/positions/{departmentId}")]
+        [HttpGet("positions/{departmentId}")]
         public async Task<IActionResult> GetPositionsByDepartmentId([FromRoute] int departmentId)
         {
-            var request = new RestRequestBuilder($"/departments/positions/{departmentId}",
+            var request = new RestRequestBuilder($"/api/departments/positions/{departmentId}",
                     HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
                 .AddAuthentication()
@@ -42,10 +42,10 @@
             return BadRequest();
         }
 
-        [HttpGet("MVC/seniorities/{positionId}")]
+        [HttpGet("seniorities/{positionId}")]
         public async Task<IActionResult> GetSenioritiesByPositionId(int positionId)
         {
-            var request = new RestRequestBuilder($"/departments/seniorities/{positionId}",
+            var request = new RestRequestBuilder($"/api/departments/seniorities/{positionId}",
                     HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
                 .AddAuthentication()
@@ -62,10 +62,10 @@
             return BadRequest();
         }
 
-        [HttpGet("MVC/all/main")]
-        public async Task<IActionResult> GetAllDepartments(DepartmentSendQueryFilters query)
+        [HttpGet("all/main")]
+        public async Task<IActionResult> GetAllDepartments([FromRoute] DepartmentSendQueryFilters query)
         {
-            var request = new RestRequestBuilder("/departments/all/main", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+            var request = new RestRequestBuilder("/api/departments/all/main", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
                 .AddParameter(query.Search, query.CountryId.ToString(), query.Sort.ToString())
                 .AddAuthentication()
@@ -81,10 +81,10 @@
             return BadRequest();
         }
 
-        [HttpGet("MVC/options")]
+        [HttpGet("options")]
         public async Task<IActionResult> GetDepartmentsFilterOptions()
         {
-            var request=new RestRequestBuilder("/departments/options",HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+            var request = new RestRequestBuilder("/api/departments/options", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -97,6 +97,65 @@
             }
 
             return BadRequest();
+        }
+
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var request = new RestRequestBuilder($"/api/departments/details/{id}", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            
+            var response = await client.ExecuteGetAsync<DepartmentDetailsViewModel>(request);
+
+            if (response.IsSuccessful)
+            {
+                return View(response.Data);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("positions/add")]
+        public async Task<IActionResult> AddPositionToDepartment([FromBody] DepartmentAddPosition model)
+        {
+            var request = new RestRequestBuilder("/api/departments/positions/add",
+                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpDelete("positions/remove")]
+        public async Task<IActionResult> RemovePositionFromDepartment([FromBody] DepartmentRemovePosition model)
+        {
+            var request = new RestRequestBuilder("/api/departments/positions/remove",
+                HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                .SetMethod(Method.Delete)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
         }
 
     }

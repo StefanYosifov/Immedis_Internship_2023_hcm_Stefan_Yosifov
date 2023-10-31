@@ -8,6 +8,8 @@
     using RestSharp;
     using System.Security.Claims;
 
+    using Task = System.Threading.Tasks.Task;
+
     [AllowAnonymous]
     public class IdentityController : BaseController
     {
@@ -15,7 +17,7 @@
         [HttpGet]
         public IActionResult SignIn()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -36,7 +38,6 @@
 
             var response = await client.ExecuteAsync<Response>(request);
             var responseData = response.Data;
-
 
             if (response.IsSuccessStatusCode)
             {
@@ -86,6 +87,7 @@
                 IssuedUtc = DateTimeOffset.UtcNow,
                 RedirectUri = Url.Action("Index", "Home"),
             };
+
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,

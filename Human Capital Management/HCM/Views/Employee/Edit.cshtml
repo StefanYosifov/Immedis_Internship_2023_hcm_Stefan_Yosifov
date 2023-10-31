@@ -308,7 +308,7 @@
 
 @section Scripts
     {
-    <script  type="text/javascript" >
+    <script type="text/javascript">
         $(document).ready(function () {
 
             let token = "Bearer " + localStorage.getItem("Authorization")
@@ -318,7 +318,7 @@
                 $("#SeniorityId").val('');
 
                 let selectedDepartmentId = $(this).val();
-                let url = " https://localhost:7153/MVC/departments/positions/" + selectedDepartmentId;
+                let url = " https://localhost:7153/departments/positions/" + selectedDepartmentId;
                 console.log(url);
 
                 $.ajax({
@@ -339,7 +339,7 @@
                 $("#SeniorityId").val('');
 
                 let selectedPositionId = $(this).val();
-                let url = "https://localhost:7153/MVC/departments/seniorities/" + selectedPositionId;
+                let url = "https://localhost:7153/departments/seniorities/" + selectedPositionId;
                 console.log(url);
 
                 $.ajax({
@@ -374,8 +374,8 @@
                             duration: 3000,
                             newWindow: true,
                             close: true,
-                            gravity: "top", 
-                            position: "right", 
+                            gravity: "top",
+                            position: "right",
                             stopOnFocus: true,
                             style: {
                                 background: "linear-gradient(to right, #00b09b, #96c93d)",

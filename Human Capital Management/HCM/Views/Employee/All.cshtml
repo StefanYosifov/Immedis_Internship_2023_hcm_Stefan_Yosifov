@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-2">
                 <label><b>Search username</b></label>
-                <input name="SearchEmployeeName" class="form-control" />
+                <input name="SearchEmployeeName" class="form-control bg-light border-0 small" />
             </div>
 
             <div class="col-md-2">
@@ -36,84 +36,82 @@
         </div>
     </form>
 
-    <h1>@Model.TotalPages</h1>
-    <h1>Hello</h1>
-
-    <div>
-        <span>Create employee</span>
-        <button>Create</button>
-    </div>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link">Previous</a>
-            </li>
-
-            @{
-                int loopUntil = Model.CurrentPage + 3;
-
-                for (int i = Model.CurrentPage - 2; i < loopUntil; i++)
-                {
-                    if (i <= 0 || i > Model.TotalPages)
-                    {
-                        continue;
-                    }
-                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                        <a asp-controller="Employee" asp-action="All" asp-route-id="@i" class="page-link">@i</a>
-                    </li>
-                }
-            }
-            <li class="page-item">
-                <a class="page-link">Next</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="table-responsive me-5">
-
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th class="col-2">Employee ID</th>
-                    <th>Username</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Age</th>
-                    <th>Department Name</th>
-                    <th>Position Name</th>
-                    <th>Seniority</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var employee in Model.Employees!)
-                {
+    <div class="card shadow mb-4 mt-5 me-5">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
                     <tr>
-                        <td>@employee.EmployeeId</td>
-                        <td>@employee.EmployeeUserName</td>
-                        <td>@employee.EmployeeFirstName</td>
-                        <td>@employee.EmployeeLastName</td>
-                        <td>@employee.EmployeeAge</td>
-                        <td>@employee.EmployeeDepartmentName</td>
-                        <td>@employee.EmployeePositionName</td>
-                        <td>@employee.EmployeeSeniority</td>
-                        <td>
-                            <div class="btn-group dropstart">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">   
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                                </ul>
-                            </div>
-                        </td>
+                        <th class="col-2">Employee ID</th>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Department Name</th>
+                        <th>Position Name</th>
+                        <th>Seniority</th>
+                        <th>Actions</th>
                     </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var employee in Model.Employees!)
+                    {
+                        <tr>
+                            <td>@employee.EmployeeId</td>
+                            <td>@employee.EmployeeUserName</td>
+                            <td>@employee.EmployeeFirstName</td>
+                            <td>@employee.EmployeeLastName</td>
+                            <td>@employee.EmployeeAge</td>
+                            <td>@employee.EmployeeDepartmentName</td>
+                            <td>@employee.EmployeePositionName</td>
+                            <td>@employee.EmployeeSeniority</td>
+                            <td>
+                                <div class="btn-group dropstart">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a></li>
+                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#">Separated link</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link">Previous</a>
+                </li>
+                @{
+                    int loopUntil = Model.CurrentPage + 3;
+
+                    for (int i = Model.CurrentPage - 2; i < loopUntil; i++)
+                    {
+                        if (i <= 0 || i > Model.TotalPages)
+                        {
+                            continue;
+                        }
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="All" asp-route-id="@i" class="page-link">@i</a>
+                        </li>
+                    }
                 }
-            </tbody>
-        </table>
+                <li class="page-item">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 
@@ -170,4 +168,4 @@
             });
         });
     </script>
-}
+    }

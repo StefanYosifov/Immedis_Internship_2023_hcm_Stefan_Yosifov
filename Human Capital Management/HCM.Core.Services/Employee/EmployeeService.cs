@@ -4,7 +4,6 @@
     using AutoMapper.QueryableExtensions;
     using BCrypt.Net;
     using Common.Constants;
-    using Common.Helper;
     using Common.Manager;
     using Countries;
     using Data;
@@ -19,6 +18,8 @@
     using Models.ViewModels.Genders;
     using Models.ViewModels.Roles;
     using System.Text;
+
+    using Common.Helpers;
 
     public class EmployeeService : IEmployeeService
     {
