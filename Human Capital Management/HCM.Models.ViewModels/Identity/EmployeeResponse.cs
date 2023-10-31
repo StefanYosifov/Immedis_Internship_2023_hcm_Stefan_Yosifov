@@ -6,7 +6,7 @@
     {
         public EmployeeResponse()
         {
-            Roles = new HashSet<string>();
+            Roles = new List<string>();
         }
         public string Id { get; set; }
 

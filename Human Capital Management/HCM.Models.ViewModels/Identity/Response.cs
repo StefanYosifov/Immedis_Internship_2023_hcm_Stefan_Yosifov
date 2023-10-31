@@ -1,5 +1,6 @@
 ﻿namespace HCM.Models.ViewModels.Identity
 {
+    using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
 
     using Data.Models;
