@@ -2,11 +2,11 @@
 
 namespace HCM.Data
 {
-    using System.Security.Claims;
-
-    using HCM.Data.History_and_Audit;
+    using History_and_Audit;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Models;
-
+    using System.Security.Claims;
+    using System.Text;
     using Task = Models.Task;
 
     public partial class ApplicationDbContext : DbContext
@@ -445,23 +445,56 @@ namespace HCM.Data
             var userName = ClaimTypes.Name;
 
 
-            foreach (var item in ChangeTracker
-                         .Entries().Where(e => e.Entity is IEntity))
+            var modifiedEntities = ChangeTracker
+                .Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted)
+                .ToArray();
+
+
+            foreach (var modifiedEntity in modifiedEntities)
             {
-                if (item.Entity is IEntity entity)
+                var auditLog = new AuditLog
                 {
-                    if (item.State == EntityState.Added)
+                    EntityName = modifiedEntity.Entity.GetType().Name,
+                    Action = modifiedEntity.State.ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    Changes = GetChanges(modifiedEntity)
+                };
+
+                var id = modifiedEntity.OriginalValues.Properties[0];
+
+
+                this.AuditLogs.Add(auditLog);
+
+                if (modifiedEntity.Entity is IEntity entity)
+                {
+                    if (modifiedEntity.State == EntityState.Added)
                     {
                         entity.CreatedOn = currentTime;
                         entity.CreatedBy = userName;
                     }
-                    else if (item.State == EntityState.Modified)
+                    else if (modifiedEntity.State == EntityState.Modified)
                     {
                         entity.ModifiedOn = currentTime;
                         entity.ModifiedBy = userName!;
                     }
                 }
             }
+        }
+
+        private static string GetChanges(EntityEntry entity)
+        {
+            var changes = new StringBuilder();
+            foreach (var property in entity.OriginalValues.Properties)
+            {
+                var originalValue = entity.OriginalValues[property] ?? null;
+                var currentValue = entity.CurrentValues[property] ?? "null";
+                if (!Equals(originalValue, currentValue))
+                {
+                    changes.AppendLine($"{property.Name}: From '{originalValue}' to '{currentValue}'");
+                }
+            }
+            return changes.ToString();
         }
     }
 }
