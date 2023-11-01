@@ -4,6 +4,8 @@
 
     using global::AutoMapper;
 
+    using Helpers;
+
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
@@ -76,6 +78,13 @@
                 .ForMember(dest => dest.EmployeesWithPositionCount, opt => opt.MapFrom(src =>
                     src.Employees.Count(e => e.DepartmentId == src.DepartmentId && e.PositionId == src.Id)
                 ));
+
+            CreateMap<Employee, EmployeeSearchModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.AccountCreatedOn, opt => opt.MapFrom(src => src.CreatedOn))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateCalculator.CalculateAge(src.BirthDate)));
 
         }
     }

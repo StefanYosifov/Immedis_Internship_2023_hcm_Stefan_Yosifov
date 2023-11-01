@@ -97,8 +97,7 @@
     <script>
         let selectedDepartmentId = 1;
         let selectedPositionId = 1;
-        let token = "Bearer " + localStorage.getItem("Authorization")
-        console.log('asd');
+        let token = localStorage.getItem("Authorization")
 
         $(document).ready(function () {
             $(".departments").on('click', function () {

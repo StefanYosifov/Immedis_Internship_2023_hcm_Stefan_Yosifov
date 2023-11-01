@@ -82,13 +82,13 @@
         }
 
 
-        [HttpPost("api/positions/add")]
+        [HttpPost("positions/add")]
         public async Task<IActionResult> AddPositionToDepartment(DepartmentAddPosition model)
         {
             try
             {
                 var result = await service.AddPositionToDepartmentById(model);
-                return Created("asd",result);
+                return Created("asd", result);
             }
             catch (Exception e)
             {
@@ -98,13 +98,27 @@
         }
 
 
-        [HttpDelete("api/positions/remove")]
+        [HttpDelete("positions/remove")]
         public async Task<IActionResult> RemovePositionFromDepartment(DepartmentRemovePosition model)
         {
             try
             {
-                var result=await service.RemovePositionFromDepartmentById(model);
+                var result = await service.RemovePositionFromDepartmentById(model);
                 return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("employee/add")]
+        public async Task<IActionResult> AddEmployeeToDepartment(DepartmentAddEmployee model)
+        {
+            try
+            {
+                var result = await service.AddEmployeeToDepartmentById(model);
+                return Created("",result);
             }
             catch (Exception e)
             {

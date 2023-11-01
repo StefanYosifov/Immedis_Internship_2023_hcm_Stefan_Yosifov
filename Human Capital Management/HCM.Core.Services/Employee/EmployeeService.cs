@@ -4,6 +4,7 @@
     using AutoMapper.QueryableExtensions;
     using BCrypt.Net;
     using Common.Constants;
+    using Common.Helpers;
     using Common.Manager;
     using Countries;
     using Data;
@@ -19,7 +20,7 @@
     using Models.ViewModels.Roles;
     using System.Text;
 
-    using Common.Helpers;
+    using Common.Exceptions_Messages.Employees;
 
     public class EmployeeService : IEmployeeService
     {
@@ -170,7 +171,7 @@
             await context.Employees.AddRangeAsync(employees);
             await context.SaveChangesAsync();
 
-            return "Success";
+            return EmployeeMessages.Success.EmployeeCreated;
         }
 
         public async Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId)
@@ -181,7 +182,7 @@
 
             if (employeeId != currentUserId && employeeManager.IsInRole(RolesEnum.HR) == false)
             {
-                throw new ArgumentException("Invalid user");
+                throw new EmployeeServiceExceptions(EmployeeMessages.NoAccess);
             }
 
             var findEmployee = await context.Employees.FindAsync(employeeId);
@@ -209,12 +210,36 @@
 
             if (findEmployee == null)
             {
-                throw new InvalidOperationException("An error occured, couldn't find Employee");
+                throw new EmployeeServiceExceptions(EmployeeMessages.NotFound);
             }
 
             context.Entry(findEmployee).CurrentValues.SetValues(model);
             await context.SaveChangesAsync();
-            return "Successfully edited the employee";
+            return EmployeeMessages.Success.EmployeeEdited;
+        }
+
+        public async Task<ICollection<EmployeeSearchModel>> GetEmployeesWithNoDepartmentByName(string? name)
+        {
+            var employees = context.Employees
+                .Where(d => d.DepartmentId == null)
+                .ProjectTo<EmployeeSearchModel>(mapper.ConfigurationProvider)
+                .AsQueryable();
+
+            if (employees.Count() == 0)
+            {
+                throw new EmployeeServiceExceptions(EmployeeMessages.NoEmployeesWithSuchName);
+            }
+
+            if (name != null && name != "undefined")
+            {
+                employees = employees
+                    .Where(e => e.FirstName.Contains(name) || e.LastName.Contains(name));
+            }
+
+            return await employees
+                .Take(5)
+                .ToArrayAsync();
+
         }
 
         private string GenerateRandomPassword(int length, Random random)

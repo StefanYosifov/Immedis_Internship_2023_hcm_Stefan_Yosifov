@@ -1,4 +1,0 @@
-﻿namespace HCM.Common.Manager
-{
-   
-}

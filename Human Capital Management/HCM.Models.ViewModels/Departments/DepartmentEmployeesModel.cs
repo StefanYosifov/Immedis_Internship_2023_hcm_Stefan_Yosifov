@@ -4,13 +4,13 @@
     {
 
 
-        public string EmployeeId { get; set; } = null!;
+        public string? EmployeeId { get; set; } = null!;
 
         public string? EmployeeFirstname { get; set; }
 
-        public string EmployeeLastname { get; set; } = null!;
+        public string? EmployeeLastname { get; set; } = null!;
 
-        public string EmployeeFullName => $"{EmployeeFirstname} {EmployeeLastname}";
+        public string? EmployeeFullName => $"{EmployeeFirstname} {EmployeeLastname}";
 
         public int EmployeeAge { get; set; }
 

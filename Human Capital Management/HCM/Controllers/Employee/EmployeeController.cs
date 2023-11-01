@@ -16,7 +16,7 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> All(int id, [FromQuery] EmployeeQueryTableFilters query)
         {
-            var request = new RestRequest($"/employees/{id}");
+            var request = new RestRequest($"/api/employees/{id}");
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authentication", $"Bearer {Request.Headers["Authentication"]}");
@@ -50,7 +50,7 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> Options()
         {
-            var request = new RestRequest($"/employees/options");
+            var request = new RestRequest($"/api/employees/options");
             request.AddHeader("Accept", "application/json");
 
             var response = await client.ExecuteAsync<EmployeeTableFilterOptions>(request);
@@ -67,7 +67,7 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var request = new RestRequest("/employees/getCreate");
+            var request = new RestRequest("/api/employees/getCreate");
             request.AddHeader("Accept", "application/json");
 
             var response = await client.ExecuteGetAsync<EmployeeCreateRequestModel>(request);
@@ -84,7 +84,7 @@ namespace HCM.Controllers.Employee
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeCreateResponseModel requestModel)
         {
-            var request = new RestRequest("/employees/postCreate", Method.Post);
+            var request = new RestRequest("/api/employees/postCreate", Method.Post);
             request.AddHeader("Accept", "application/json");
             request.AddBody(requestModel);
 
@@ -98,7 +98,7 @@ namespace HCM.Controllers.Employee
             return RedirectToAction("Create", "Employee");
         }
 
-        [HttpPost("MVC/employees/postCreate")]
+        [HttpPost("employees/postCreate")]
         public async Task<IActionResult> CreateEmployeeFromFile(IFormFile file)
         {
             var getFileExtension = Path.GetExtension(file.FileName);
@@ -115,7 +115,7 @@ namespace HCM.Controllers.Employee
                 return BadRequest("Empty file");
             }
 
-            var request = new RestRequestBuilder("/employees/postCreateFile",
+            var request = new RestRequestBuilder("/api/employees/postCreateFile",
                     HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Post)
                 .AddAuthentication()
@@ -136,7 +136,7 @@ namespace HCM.Controllers.Employee
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             
-            var request = new RestRequestBuilder($"/employees/edit/{id}",
+            var request = new RestRequestBuilder($"/api/employees/edit/{id}",
                     HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
                 .AddAuthentication()
@@ -153,7 +153,7 @@ namespace HCM.Controllers.Employee
         }
 
 
-        [HttpPut("MVC/employees/edit/{employeeId}")]
+        [HttpPut("employees/edit/{employeeId}")]
         public async Task<IActionResult> Edit(string employeeId, EmployeeSendEditModel model)
         {
             var request = new RestRequestBuilder($"/employees/edit/{employeeId}",
@@ -171,6 +171,29 @@ namespace HCM.Controllers.Employee
 
             return BadRequest();
 
+        }
+
+        [HttpGet("employees/search")]
+        public async Task<IActionResult> GetEmployeesWithNoDepartmentsByName(string? name)
+        {
+            if (name == null)
+            {
+                name = "undefined";
+            }
+
+            var request = new RestRequestBuilder($"/api/employees/search/name/{name}", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            var response=await client.ExecuteGetAsync<ICollection<EmployeeSearchModel>>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return NotFound();
         }
     }
 }

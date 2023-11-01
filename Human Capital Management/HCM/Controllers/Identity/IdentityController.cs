@@ -1,5 +1,6 @@
 ﻿namespace HCM.Controllers.Identity
 {
+    using Common.Requests;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,6 @@
     using Models.ViewModels.Identity;
     using RestSharp;
     using System.Security.Claims;
-
     using Task = System.Threading.Tasks.Task;
 
     [AllowAnonymous]
@@ -32,7 +32,7 @@
                 return View(model);
             }
 
-            var request = new RestRequest("authorize/SignIn", Method.Post);
+            var request = new RestRequest("/api/authorize/SignIn", Method.Post);
             request.AddHeader("Accept", "application/json");
             request.AddJsonBody(model);
 
@@ -57,6 +57,29 @@
         }
 
 
+        [HttpPut("/identity/ChangePass")]
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
+        {
+            var claims = HttpContext.User;
+            var claim=User.Claims.FirstOrDefault(c=>c.Type=="Authorization")?.Value;
+            
+
+            var request = new RestRequestBuilder("/api/authorize/ChangePass",
+                    GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
 
         private async Task AuthenticateUserAndSetupClaims(string token, EmployeeResponse user)
         {
@@ -68,6 +91,7 @@
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name,user.Username),
                 new(ClaimTypes.Authentication,token),
+                new(ClaimTypes.Hash,token)
             };
 
             foreach (var userRole in user.Roles)

@@ -16,8 +16,9 @@
 
         protected string GetAuthenticationClaim()
         {
-            return HttpContext.User.FindFirstValue(ClaimTypes.Authentication);
+            return HttpContext.User.FindFirstValue(ClaimTypes.Authentication) == null
+                ? HttpContext.Request.Headers["Authorization"]
+                : HttpContext.User.FindFirstValue(ClaimTypes.Authentication);
         }
     }
-
 }

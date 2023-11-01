@@ -24,5 +24,7 @@
         Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId);
 
         Task<string> EditEmployee(string employeeId,EmployeeSendEditModel model);
+
+        Task<ICollection<EmployeeSearchModel>> GetEmployeesWithNoDepartmentByName(string? name);
     }
 }

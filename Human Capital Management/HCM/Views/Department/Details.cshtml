@@ -6,7 +6,6 @@
 
 <div class="container">
     <h1>Department Details</h1>
-
     <div class="row">
         <div class="card">
             <div class="card-header d-flex align-items-center border-bottom">
@@ -41,16 +40,16 @@
                     <div class="modal-content">
                         <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
                             <div class="tabs" id="tab01">
-                                <h6 class="text-muted">My Apps</h6>
+                                <h6 class="text-muted">Positions</h6>
                             </div>
                             <div class="tabs active" id="tab02">
                                 <h6 class="font-weight-bold">Knowledge Center</h6>
                             </div>
                             <div class="tabs" id="tab03">
-                                <h6 class="text-muted">Communities</h6>
+                                <h6 class="text-muted">Add Employees</h6>
                             </div>
                             <div class="tabs" id="tab04">
-                                <h6 class="text-muted">Education</h6>
+                                <h6 class="text-muted">Edit</h6>
                             </div>
                         </div>
                         <div class="line"></div>
@@ -119,11 +118,21 @@
                                 </div>
                             </fieldset>
                             <fieldset id="tab031">
-                                <div class="bg-light">
+                                <div class="bg-light align-content-center">
                                     <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
                                     <form>
-                                        <div class="form-group pb-5 px-3 row justify-content-center">
-                                            <button type="button" class="btn btn-primary">New Community +</button>
+                                        <div class="custom-select">
+                                            <input type="text" id="custom-select-input" placeholder="Select an option">
+                                            <ul class="custom-select-options">
+                                            </ul>
+                                        </div>
+                                        <div class="card shadow mb-4 mt-5">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName"></h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p id="employeeDetails"></p>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -215,6 +224,8 @@
                 <th>Gender</th>
                 <th>Position</th>
                 <th>Seniority</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -227,6 +238,10 @@
                     <td>@employee.EmployeeGender</td>
                     <td>@employee.EmployeePosition</td>
                     <td>@employee.EmployeeSeniority</td>
+                    <td><button class="edit-button">Edit</button></td>
+                    <td>
+                        <button class="delete-button" data-id="@employee.EmployeeId">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -242,6 +257,60 @@
         background-color: #D1C4E9;
         background-repeat: no-repeat;
     }
+
+
+    .custom-select {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #custom-select-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .custom-select-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        display: none;
+        border: 1px solid #ccc;
+        border-top: none;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: #fff;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+        .custom-select-options li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+        }
+
+            .custom-select-options li:hover {
+                background-color: #f0f0f0;
+            }
+
+
+    .card-body p {
+        margin: 0;
+        padding: 5px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+        .card-body p strong {
+            font-weight: bold;
+            margin-right: 10px;
+        }
 
     fieldset {
         display: none;
@@ -320,7 +389,6 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-
 @section Scripts
     {
 
@@ -329,7 +397,168 @@
         const url = "https://localhost:7153/departments";
         var currentUrl = window.location.pathname;
         var departmentId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
-        const token = `Bearer ${localStorage.getItem("Authorization")}`;
+        const token = "Bearer " + localStorage.getItem("Authorization");
+
+
+        function addOption(data) {
+            let $customSelectList = $(".custom-select-options");
+            let $li = $("<li>");
+            var $card = $(".card-select");
+            $li.attr("data-value", data.id);
+            $li.text(data.fullName);
+
+            $li.on("click", function () {
+                let selectedValue = $(this).data("value");
+                let selectedText = $(this).text();
+                $("#custom-select-input").val(selectedText);
+
+                // Append the details to the card without removing existing content
+                $("#employeeFullName").text(data.fullName);
+                $("#employeeDetails").html(
+                    "<p><strong>ID:</strong> " + data.id + "</p>" +
+                    "<p><strong>Name:</strong> " + data.fullName + "</p>" +
+                    "<p><strong>Age:</strong> " + data.age + "</p>" +
+                    "<p><strong>Account Created On:</strong> " + data.accountCreatedOn + "</p>" +
+                    "<button id='addDepartment"+ "value='"+data.id+">Add to department</button>"
+                );
+
+                // Remove existing classes and add new ones
+                $card.removeClass("old-class").addClass("new-class");
+            });
+
+            $customSelectList.append($li);
+        }
+
+        function AddToDepartment(){
+            $("#addDepartment").click(function(e){
+                e.preventDefault();
+
+                .$ajax({
+                    url:"",
+                    type:"post",
+                    headers:{"Authorization":token},
+                    contentType: 'application/json',
+                    success:function(data){
+
+                    }
+                })
+            })
+        }
+
+        function SearchUsername(searchName) {
+            var $customSelectList = $(".custom-select-options");
+            $customSelectList.empty(); // Clear existing options
+
+            $.ajax({
+                url: "https://localhost:7153/employees/search?name=" + searchName,
+                type: "GET",
+                headers: { "Authorization": token },
+                contentType: 'application/json',
+                success: function (data) {
+                    for (let i = 0; i < data.length; i++) {
+                        addOption(data[i]);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Toastify({
+                        text: error,
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        stopOnFocus: true,
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                    }).showToast();
+                }
+            });
+        }
+
+        function AsyncSearch() {
+            var typingTimer;
+            var doneTypingInterval = 3000;
+            var $input = $('#custom-select-input');
+
+            $input.on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(doneTyping, doneTypingInterval);
+            });
+
+            $input.on('keydown', function () {
+                clearTimeout(typingTimer);
+            });
+
+            function doneTyping() {
+                SearchUsername($input.val()); // Use .val() to get the input value
+            }
+        }
+
+        function ChangeEdit() {
+            $(".edit-button").click(function () {
+                let row = $(this).closest("tr");
+                let positionCell = row.find("td:eq(4)");
+                let seniorityCell = row.find("td:eq(5)");
+
+
+                if ($(this).text() === "Edit") {
+                    $(this).text("Save");
+
+                    let currentPosition = positionCell.text();
+                    let currentSeniority = seniorityCell.text();
+
+                    let availablePositions = @Html.Raw(Json.Serialize(Model.AvailablePositionsCollection));
+
+                    var positionDropdown = '<select>';
+                    for (let i = 0; i < availablePositions.length; i++) {
+                        let option = '<option value="' + availablePositions[i].id + '">' + availablePositions[i].name + '</option>';
+                        if (availablePositions[i].name === currentPosition) {
+                            option = option.replace('value="', 'value="' + currentPosition + '" selected="selected"');
+                        }
+                        positionDropdown += option;
+                    }
+                    positionDropdown += '</select>';
+
+                    positionCell.html(positionDropdown);
+
+                    var seniorityDropdown = '<select>';
+                    seniorityDropdown += '</select>';
+
+                    seniorityCell.html(seniorityDropdown);
+
+                    positionCell.find('select').change(function () {
+                        var selectedValue = $(this).val();
+                        console.log("trigger");
+
+                        $.ajax({
+                            url: 'https://localhost:7153/departments/seniorities/' + selectedValue,
+                            type: "GET",
+                            headers: { "Authorization": token },
+                            contentType: 'application/json',
+                            success: function (data) {
+                                console.log(data);
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                // Handle errors here
+                            }
+                        });
+                    });
+
+
+                } else if ($(this).text() === "Save") {
+                    $(this).text("Edit");
+
+                    let selectedPositionId = positionCell.find("select").val();
+                    let selectedPositionName = positionCell.find("select option:selected").text();
+                    let selectedSeniority = seniorityCell.find("select").val();
+
+                    positionCell.text(selectedPositionName);
+                    seniorityCell.text(selectedSeniority);
+                }
+            });
+
+        }
 
         function ChangeTabs() {
             $(".tabs").click(function () {
@@ -368,12 +597,6 @@
                 var currData = $(this).data();
                 var positionId = $(this).data("position-id");
 
-                console.log(currData);
-                console.log(currData);
-                console.log(currData);
-                console.log(currData);
-
-
                 $.ajax({
                     url: url + "/positions/add",
                     type: 'post',
@@ -396,7 +619,6 @@
                         console.log(data);
                     },
                     error: function (error) {
-                        // Handle the error here
                         console.error(error);
                     }
                 });
@@ -437,10 +659,38 @@
             });
         }
 
+        function SelectChangeValues() {
+            $("#custom-select-input").on("focus", function () {
+                $(".custom-select-options").show();
+            });
+
+            $("#custom-select-input").on("input", function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $(".custom-select-options li").each(function () {
+                    if ($(this).text().toLowerCase().indexOf(searchTerm) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            $(".custom-select-options li").on("click", function () {
+                var selectedValue = $(this).data("value");
+                var selectedText = $(this).text();
+                $("#custom-select-input").val(selectedText);
+                $(".custom-select-options").hide();
+            });
+        }
+
         $(document).ready(function () {
+            AsyncSearch();
+            SearchUsername();
+            SelectChangeValues();
             ChangeTabs();
             AddToDepartmentPositions();
             RemovePositionFromDepartment();
+            ChangeEdit();
         });
     </script>
 

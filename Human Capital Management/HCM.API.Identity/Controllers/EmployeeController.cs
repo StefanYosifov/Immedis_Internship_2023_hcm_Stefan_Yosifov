@@ -12,7 +12,7 @@
 
     using Microsoft.AspNetCore.Mvc;
 
-    [Route("/employees")]
+    [Route("api/employees")]
     public class EmployeeController : ApiController
     {
         private readonly IEmployeeService service;
@@ -137,6 +137,20 @@
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> GetEmployeeWithNoDepartmentByName(string? name)
+        {
+            try
+            {
+                var result = await service.GetEmployeesWithNoDepartmentByName(name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return NotFound();
             }
         }
         

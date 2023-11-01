@@ -123,7 +123,10 @@
                 averageSalary += salary.SalaryAmount;
             }
 
-            averageSalary /= employeesInDepartment.Count;
+            if (employeesInDepartment.Count > 0)
+            {
+                averageSalary /= employeesInDepartment.Count;
+            }
 
             var datTimeToday = DateTime.UtcNow;
 
@@ -133,9 +136,9 @@
                 EmployeeAge = DateCalculator.CalculateAge(ed.BirthDate),
                 EmployeeFirstname = ed.FirstName,
                 EmployeeLastname = ed.LastName,
-                EmployeeGender = ed.Gender.Name,
-                EmployeePosition = ed.Position.Name,
-                EmployeeSeniority = ed.Seniority.Name,
+                EmployeeGender = ed.Gender?.Name,
+                EmployeePosition = ed.Position?.Name,
+                EmployeeSeniority = ed.Seniority?.Name,
                 EmployeeNationalityISO = ed.Nationality?.Iso
             }).ToArray();
 
@@ -157,8 +160,8 @@
         public async Task<ICollection<DepartmentGetPositionsModel>> GetPositionsInTheDepartmentById(int id)
         {
             return await context.Positions
-                .Include(p=>p.Employees)
-                .Include(p=>p.Department)
+                .Include(p => p.Employees)
+                .Include(p => p.Department)
                 .Where(p => p.DepartmentId == id)
                 .ProjectTo<DepartmentGetPositionsModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
@@ -199,7 +202,7 @@
             department.Positions.Add(getPosition);
             await context.SaveChangesAsync();
 
-            
+
 
             return "Success";
         }
@@ -207,9 +210,9 @@
         public async Task<string> RemovePositionFromDepartmentById(DepartmentRemovePosition model)
         {
             var department = await context.Departments
-                .Include(d=>d.Employees)
-                .Include(d=>d.Positions)
-                .FirstOrDefaultAsync(d=>d.Id==model.DepartmentId);
+                .Include(d => d.Employees)
+                .Include(d => d.Positions)
+                .FirstOrDefaultAsync(d => d.Id == model.DepartmentId);
 
             if (department == null)
             {
@@ -247,6 +250,34 @@
             await context.SaveChangesAsync();
 
             return "Success";
+        }
+
+        public async Task<string> AddEmployeeToDepartmentById(DepartmentAddEmployee model)
+        {
+            var findEmployee = await context.Employees.FindAsync(model.EmployeeId);
+
+            if (findEmployee == null)
+            {
+                throw new InvalidOperationException("Invalid Employee");
+            }
+
+            if (findEmployee.DepartmentId != null)
+            {
+                throw new InvalidOleVariantTypeException("Employee must not be in Department");
+            }
+
+            var doesDepartmentExist = await context.Departments
+                .AnyAsync(d => d.Id == model.DepartmentId);
+
+            if (doesDepartmentExist == false)
+            {
+                throw new InvalidOperationException("Department does not exist");
+            }
+
+            findEmployee.DepartmentId = model.DepartmentId;
+            await context.SaveChangesAsync();
+
+            return "You have successfully added the employee to the department";
         }
 
         private async Task<ICollection<Employee>> GetEmployeesInCurrentDepartment(int id)

@@ -25,7 +25,7 @@
 
         public int AverageSalary { get; set; }
 
-        public ICollection<DepartmentEmployeesModel> DepartmentEmployees { get; set; }
+        public ICollection<DepartmentEmployeesModel?>? DepartmentEmployees { get; set; }
 
         public ICollection<DepartmentGetPositionsModel> PositionsInDepartment { get; set; }
 

@@ -66,8 +66,26 @@
             return GetResponse(token, findEmployee);
         }
 
+        public async Task<string> ChangePassword(ChangePasswordModel model)
+        {
+            var employee = await employeeManager.GetEmployee();
 
 
+            var verifyOldPassword = BCrypt.Net.BCrypt.Verify(model.OldPassword, employee!.PasswordHash);
+
+            if (verifyOldPassword == false)
+            {
+                throw new InvalidOperationException("Old password is incorrect");
+            }
+
+            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+
+
+            employee.PasswordHash = newPasswordHash;
+            await context.SaveChangesAsync();
+
+            return "You have successfully change your password";
+        }
 
         private Response GetResponse(JwtSecurityToken token, Employee user)
         {
@@ -92,6 +110,7 @@
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
+            
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken(

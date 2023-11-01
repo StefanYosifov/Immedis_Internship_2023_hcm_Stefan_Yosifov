@@ -1,7 +1,5 @@
 ﻿namespace HCM.Controllers.Department
 {
-    using System.Security.Claims;
-
     using Common.Requests;
 
     using Microsoft.AspNetCore.Mvc;
@@ -27,7 +25,7 @@
         public async Task<IActionResult> GetPositionsByDepartmentId([FromRoute] int departmentId)
         {
             var request = new RestRequestBuilder($"/api/departments/positions/{departmentId}",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -46,7 +44,7 @@
         public async Task<IActionResult> GetSenioritiesByPositionId(int positionId)
         {
             var request = new RestRequestBuilder($"/api/departments/seniorities/{positionId}",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -65,7 +63,8 @@
         [HttpGet("all/main")]
         public async Task<IActionResult> GetAllDepartments([FromRoute] DepartmentSendQueryFilters query)
         {
-            var request = new RestRequestBuilder("/api/departments/all/main", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+            var request = new RestRequestBuilder("/api/departments/all/main", 
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddParameter(query.Search, query.CountryId.ToString(), query.Sort.ToString())
                 .AddAuthentication()
@@ -84,7 +83,8 @@
         [HttpGet("options")]
         public async Task<IActionResult> GetDepartmentsFilterOptions()
         {
-            var request = new RestRequestBuilder("/api/departments/options", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+            var request = new RestRequestBuilder("/api/departments/options", 
+                   GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -102,7 +102,7 @@
         [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var request = new RestRequestBuilder($"/api/departments/details/{id}", HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+            var request = new RestRequestBuilder($"/api/departments/details/{id}", GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -122,7 +122,7 @@
         public async Task<IActionResult> AddPositionToDepartment([FromBody] DepartmentAddPosition model)
         {
             var request = new RestRequestBuilder("/api/departments/positions/add",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Post)
                 .AddBody(model)
                 .AddAuthentication()
@@ -142,7 +142,7 @@
         public async Task<IActionResult> RemovePositionFromDepartment([FromBody] DepartmentRemovePosition model)
         {
             var request = new RestRequestBuilder("/api/departments/positions/remove",
-                HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                GetAuthenticationClaim())
                 .SetMethod(Method.Delete)
                 .AddBody(model)
                 .AddAuthentication()

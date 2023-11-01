@@ -1,7 +1,6 @@
 ﻿namespace HCM.Common.Requests
 {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Features;
 
     using RestSharp;
 
@@ -48,7 +47,14 @@
 
         public RestRequestBuilder AddAuthentication()
         {
-            request.AddHeader("Authorization", $"Bearer {jwtToken}");
+            if (jwtToken.StartsWith("Bearer"))
+            {
+                request.AddHeader("Authorization", jwtToken);
+            }
+            else
+            {
+                request.AddHeader("Authorization", $"Bearer {jwtToken}");
+            }
             return this;
         }
 
@@ -62,7 +68,7 @@
         public RestRequestBuilder AddFile(IFormFile file)
         {
             byte[] fileBytes;
-    
+
             using (var memoryStream = new MemoryStream())
             {
                 file.CopyTo(memoryStream);
@@ -70,7 +76,7 @@
             }
 
             this.contentType = file.ContentType;
-            request.AddFile(file.Name, fileBytes, Path.GetFileName(file.Name),contentType);
+            request.AddFile(file.Name, fileBytes, Path.GetFileName(file.Name), contentType);
             return this;
         }
 

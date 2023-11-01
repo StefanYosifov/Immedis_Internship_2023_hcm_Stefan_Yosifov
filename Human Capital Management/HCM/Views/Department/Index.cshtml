@@ -149,7 +149,7 @@
 
                 if (queryParams.length > 0) {
                     const urlWithParams = `${baseUrl}?${queryParams.join("&")}`;
-                    const currentUrl = `https://localhost:7039/departments?${queryParams.join("&")}`;
+                    const currentUrl = `https://localhost:7153/departments?${queryParams.join("&")}`;
                     window.history.pushState({}, '', currentUrl);
                     $.ajax({
                         url: urlWithParams,

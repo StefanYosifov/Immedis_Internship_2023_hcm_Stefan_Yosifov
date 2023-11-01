@@ -282,10 +282,39 @@
                                     <label class="col-lg-3 col-form-label form-control-label"></label>
                                     <div class="col-lg-9">
                                         <input type="reset" class="btn btn-secondary" value="Cancel">
-                                        <input id="btnsubmit" type="button" value="Submit" />
+                                        <input id="btnsubmit" type="button btn-primary" value="Submit" />
                                     </div>
                                 </div>
                             </form>
+                            <hr class="mt-5" />
+                            <div class="d-flex justify-content-center mt-4">
+                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                                    Change password
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-center mt-3">
+                                <div class="collapse collapse-horizontal" id="collapseWidthExample">
+                                    <div class="card card-body" style="width: 300px;">
+                                        <form id="passwordChange">
+                                            <div class="mb-3">
+                                                <label for="oldPassword" class="form-label">Old password</label>
+                                                <input name="oldPassword" type="password" class="form-control" id="oldPassword" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="newPassword" class="form-label">New password</label>
+                                                <input name="newPassword" type="password" class="form-control" id="newPassword" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="confirmNewPassword" class="form-label">Confirm new password</label>
+                                                <input name="confirmNewPassword" type="password" class="form-control" id="confirmNewPassword" />
+                                            </div>
+
+                                            <input id="changePassword" type="button" value="Submit" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -309,10 +338,77 @@
 @section Scripts
     {
     <script type="text/javascript">
+        let token = localStorage.getItem("Authorization")
+
+        function ChangePassword() {
+            $("#changePassword").click(function (e) {
+                e.preventDefault();
+
+                let newPassword = $("#newPassword").val();
+                let confirmNewPassword = $("#confirmNewPassword").val();
+
+                console.log(token);
+                if (newPassword !== confirmNewPassword) {
+                    alert("New password and Confirm new password do not match.");
+                    return;
+                }
+
+                let oldPassword = $("#oldPassword").val();
+
+                var formData = {
+                    oldPassword: oldPassword,
+                    newPassword: newPassword,
+                };
+
+                const url = "https://localhost:7153/identity/ChangePass"
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    headers: { "Authorization": token },
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+
+                        let newPassword = $("#newPassword").val("");
+                        let confirmNewPassword = $("#confirmNewPassword").val("");
+                        let oldPassword = $("#oldPassword").val("");
+                    },
+                    error: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #90b09b, #96c93d)",
+                            },
+                        }).showToast();
+
+                        let newPassword = $("#newPassword").val("");
+                        let confirmNewPassword = $("#confirmNewPassword").val("");
+                        let oldPassword = $("#oldPassword").val("");
+                    }
+                })
+            })
+        }
+
         $(document).ready(function () {
-
-            let token = "Bearer " + localStorage.getItem("Authorization")
-
+            ChangePassword();
             $("#DepartmentId").on("change", function () {
                 $("#PositionId").val('');
                 $("#SeniorityId").val('');
