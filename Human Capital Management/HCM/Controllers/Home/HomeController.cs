@@ -1,10 +1,11 @@
 ﻿namespace HCM.Controllers.Home
 {
-    using Controllers;
-    using Models;
+    using System.Diagnostics;
+
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Diagnostics;
+
+    using Models;
 
     public class HomeController : BaseController
     {
@@ -15,11 +16,7 @@
             {
                 return RedirectToAction("SignIn", "Identity");
             }
-            return View();
-        }
 
-        public IActionResult Privacy()
-        {
             return View();
         }
 

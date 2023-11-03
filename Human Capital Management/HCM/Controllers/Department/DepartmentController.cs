@@ -10,11 +10,9 @@
 
     using RestSharp;
 
-
     [Route("/departments")]
     public class DepartmentController : BaseController
     {
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -63,7 +61,7 @@
         [HttpGet("all/main")]
         public async Task<IActionResult> GetAllDepartments([FromRoute] DepartmentSendQueryFilters query)
         {
-            var request = new RestRequestBuilder("/api/departments/all/main", 
+            var request = new RestRequestBuilder("/api/departments/all/main",
                     GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddParameter(query.Search, query.CountryId.ToString(), query.Sort.ToString())
@@ -83,8 +81,8 @@
         [HttpGet("options")]
         public async Task<IActionResult> GetDepartmentsFilterOptions()
         {
-            var request = new RestRequestBuilder("/api/departments/options", 
-                   GetAuthenticationClaim())
+            var request = new RestRequestBuilder("/api/departments/options",
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -107,7 +105,6 @@
                 .AddAuthentication()
                 .Build();
 
-            
             var response = await client.ExecuteGetAsync<DepartmentDetailsViewModel>(request);
 
             if (response.IsSuccessful)
@@ -142,7 +139,7 @@
         public async Task<IActionResult> RemovePositionFromDepartment([FromBody] DepartmentRemovePosition model)
         {
             var request = new RestRequestBuilder("/api/departments/positions/remove",
-                GetAuthenticationClaim())
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Delete)
                 .AddBody(model)
                 .AddAuthentication()
@@ -158,5 +155,42 @@
             return BadRequest(response.Data);
         }
 
+        [HttpPost("employee/add")]
+        public async Task<IActionResult> AddEmployeeToDepartment([FromBody] DepartmentAddEmployee model)
+        {
+            var request = new RestRequestBuilder("/api/departments/employee/add", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var result = await client.ExecutePostAsync<string>(request);
+
+            if (result.IsSuccessful)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Data);
+        }
+
+        [HttpDelete("employee/remove")]
+        public async Task<IActionResult> RemoveEmployeeFromDepartment([FromBody] DepartmentRemoveEmployee model)
+        {
+            var request = new RestRequestBuilder("/api/departments/employee/remove", GetAuthenticationClaim())
+                .SetMethod(Method.Delete)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return NotFound(response.Data);
+        }
     }
 }

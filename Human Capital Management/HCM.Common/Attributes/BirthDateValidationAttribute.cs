@@ -10,7 +10,7 @@ public class BirthDateValidationAttribute : ValidationAttribute
     {
         if (value is DateTime)
         {
-            DateTime birthdate = Convert.ToDateTime(value);
+            var birthdate = Convert.ToDateTime(value);
 
             var age = DateTime.Today.Year - birthdate.Year;
 
@@ -19,16 +19,16 @@ public class BirthDateValidationAttribute : ValidationAttribute
                 return new ValidationResult($"The employee you are trying to register must be at least " +
                                             $"{ValidationConstants.EmployeeConstants.MinEmployeeAge} years old");
             }
+
             if (age > ValidationConstants.EmployeeConstants.MaxEmployeeAge)
             {
                 return new ValidationResult($"The employee you are trying to register must be below " +
                                             $"{ValidationConstants.EmployeeConstants.MaxEmployeeAge} years old");
             }
-            return ValidationResult.Success!;
 
+            return ValidationResult.Success!;
         }
 
         return new ValidationResult("Date of birth may contain only a valid date.");
-
     }
 }

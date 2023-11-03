@@ -1,15 +1,12 @@
 ﻿namespace HCM.Data.Models
 {
-    using System;
-    using System.Collections.Generic;
-
     using History_and_Audit;
 
-    public partial class Employee : IEntity
+    public class Employee : IEntity
     {
         public Employee()
         {
-            this.Id = new Guid().ToString();
+            Id = new Guid().ToString();
             AuditLogs = new HashSet<AuditLog>();
             Bonuses = new HashSet<Bonuse>();
             Deductions = new HashSet<Deduction>();
@@ -31,10 +28,6 @@
         public int? DepartmentId { get; set; }
         public int? PositionId { get; set; }
         public int? SeniorityId { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public string? CreatedBy { get; set; }
-        public DateTime? ModifiedOn { get; set; }
-        public string? ModifiedBy { get; set; }
 
         public virtual Department? Department { get; set; }
         public virtual Gender? Gender { get; set; }
@@ -49,5 +42,9 @@
         public virtual ICollection<Task> Tasks { get; set; }
 
         public virtual ICollection<EmployeeRoles> EmployeeRoles { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public string? ModifiedBy { get; set; }
     }
 }

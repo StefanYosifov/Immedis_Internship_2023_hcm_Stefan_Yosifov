@@ -1,5 +1,7 @@
-﻿namespace HCM.API.Controllers
+﻿namespace HCM.API.Controllers.Department
 {
+    using Common.Exceptions_Messages.Departments;
+
     using Core.Services.Department;
 
     using Microsoft.AspNetCore.Authorization;
@@ -33,7 +35,6 @@
             return Ok(positions);
         }
 
-
         [HttpGet("seniorities/{positionId}")]
         public async Task<IActionResult> GetSenioritiesByPositionId(int positionId)
         {
@@ -56,7 +57,6 @@
             {
                 var departments = await service.GetAllDepartments(query);
                 return Ok(departments);
-
             }
             catch (Exception e)
             {
@@ -81,7 +81,6 @@
             }
         }
 
-
         [HttpPost("positions/add")]
         public async Task<IActionResult> AddPositionToDepartment(DepartmentAddPosition model)
         {
@@ -97,7 +96,6 @@
             }
         }
 
-
         [HttpDelete("positions/remove")]
         public async Task<IActionResult> RemovePositionFromDepartment(DepartmentRemovePosition model)
         {
@@ -112,17 +110,35 @@
             }
         }
 
-        [HttpGet("employee/add")]
+        [HttpPost("employee/add")]
         public async Task<IActionResult> AddEmployeeToDepartment(DepartmentAddEmployee model)
         {
             try
             {
                 var result = await service.AddEmployeeToDepartmentById(model);
-                return Created("",result);
+                return Created("", result);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("employee/remove")]
+        public async Task<IActionResult> RemoveEmployeeFromDepartment(DepartmentRemoveEmployee model)
+        {
+            try
+            {
+                var result = await service.RemoveEmployeeFromDepartmentById(model);
+                return Ok(result);
+            }
+            catch (DepartmentServiceExceptions e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Bad request");
             }
         }
     }

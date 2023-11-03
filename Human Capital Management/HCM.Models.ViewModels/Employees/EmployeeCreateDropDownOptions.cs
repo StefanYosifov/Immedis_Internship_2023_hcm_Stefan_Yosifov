@@ -7,6 +7,7 @@
     using Genders;
 
     using Positions;
+
     using Seniorities;
 
     public class EmployeeCreateDropDownOptions
@@ -25,6 +26,5 @@
         public ICollection<PositionViewModel> Positions { get; set; }
 
         public ICollection<SeniorityViewModel> Seniority { get; set; }
-
     }
 }

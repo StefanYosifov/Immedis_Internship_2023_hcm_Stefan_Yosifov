@@ -1,14 +1,11 @@
 ﻿namespace HCM.Core.Services.Employee
 {
-    using Microsoft.AspNetCore.Http;
-
     using Models.ViewModels.Countries;
     using Models.ViewModels.Employees;
     using Models.ViewModels.Genders;
 
     public interface IEmployeeService
     {
-
         Task<EmployeeTableModel> GetEmployeeTable(int id, EmployeeQueryTableFilters query);
 
         Task<ICollection<CountryViewModel>> GetCountries();
@@ -23,8 +20,10 @@
 
         Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId);
 
-        Task<string> EditEmployee(string employeeId,EmployeeSendEditModel model);
+        Task<string> EditEmployee(string employeeId, EmployeeSendEditModel model);
 
         Task<ICollection<EmployeeSearchModel>> GetEmployeesWithNoDepartmentByName(string? name);
+
+        Task<string> EditEmployeePositionAndSeniority(EmployeeEditPositionAndSeniority model);
     }
 }

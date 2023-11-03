@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCM.Common.Manager", "..\HC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCM.Core.Services", "..\HCM.Core.Services\HCM.Core.Services.csproj", "{927D18C0-52BD-4CB6-AB3D-8C0E9F1DBA50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCM.Common.Exceptions&Messages", "..\HCM.Common.Exceptions&Messages\HCM.Common.Exceptions&Messages.csproj", "{D844A0B1-7B37-498A-A642-B272CE697DD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCM.Common.Exceptions&Messages", "..\HCM.Common.Exceptions&Messages\HCM.Common.Exceptions&Messages.csproj", "{D844A0B1-7B37-498A-A642-B272CE697DD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

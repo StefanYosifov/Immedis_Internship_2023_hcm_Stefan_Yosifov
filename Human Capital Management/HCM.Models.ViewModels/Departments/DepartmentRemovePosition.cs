@@ -2,10 +2,8 @@
 {
     public class DepartmentRemovePosition
     {
-
         public int DepartmentId { get; set; }
 
         public int PositionId { get; set; }
-
     }
 }

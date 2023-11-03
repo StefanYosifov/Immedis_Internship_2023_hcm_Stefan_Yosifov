@@ -6,12 +6,12 @@
 
     public class RestRequestBuilder
     {
+        private readonly string? jwtToken;
+        private readonly RestRequest request;
 
         private readonly string resource;
-        private Method method;
         private string contentType;
-        private readonly RestRequest request;
-        private readonly string? jwtToken;
+        private Method method;
 
         public RestRequestBuilder(string resource, string? token)
         {
@@ -35,6 +35,17 @@
             {
                 request.AddParameter(nameof(param), param);
             }
+
+            return this;
+        }
+
+        public RestRequestBuilder AddQuery(params string[] queryParams)
+        {
+            foreach (var param in queryParams)
+            {
+                request.AddQueryParameter(nameof(param), param);
+            }
+
             return this;
         }
 
@@ -55,6 +66,7 @@
             {
                 request.AddHeader("Authorization", $"Bearer {jwtToken}");
             }
+
             return this;
         }
 
@@ -63,7 +75,6 @@
             request.AddBody(body);
             return this;
         }
-
 
         public RestRequestBuilder AddFile(IFormFile file)
         {
@@ -75,7 +86,7 @@
                 fileBytes = memoryStream.ToArray();
             }
 
-            this.contentType = file.ContentType;
+            contentType = file.ContentType;
             request.AddFile(file.Name, fileBytes, Path.GetFileName(file.Name), contentType);
             return this;
         }

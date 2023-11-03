@@ -4,11 +4,8 @@
 
     public class CountryViewModel
     {
-        [Required]
-        public int Id { get; set; }
+        [Required] public int Id { get; set; }
 
-        [Required]
-        public string Name { get; set; } = null!;
-
+        [Required] public string Name { get; set; } = null!;
     }
 }

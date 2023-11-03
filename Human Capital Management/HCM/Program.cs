@@ -1,5 +1,7 @@
 using AutoMapper;
+
 using HCM.Data;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -41,7 +42,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseCors();
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -50,15 +50,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCookiePolicy(new CookiePolicyOptions()
+app.UseCookiePolicy(new CookiePolicyOptions
 {
     HttpOnly = HttpOnlyPolicy.Always,
     MinimumSameSitePolicy = SameSiteMode.None
 });
 
-
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 
 await app.RunAsync();

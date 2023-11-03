@@ -1,9 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System;
-    using System.Collections.Generic;
-
-    public partial class Payroll
+    public class Payroll
     {
         public Payroll()
         {

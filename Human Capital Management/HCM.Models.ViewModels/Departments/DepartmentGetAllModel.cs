@@ -2,7 +2,6 @@
 {
     public class DepartmentGetAllModel
     {
-
         public int DepartmentId { get; set; }
 
         public string DepartmentName { get; set; } = null!;
@@ -14,6 +13,5 @@
         public int DepartmentEmployeeCount { get; set; }
 
         public int? DepartmentTotalEmployeeCapacity { get; set; }
-
     }
 }

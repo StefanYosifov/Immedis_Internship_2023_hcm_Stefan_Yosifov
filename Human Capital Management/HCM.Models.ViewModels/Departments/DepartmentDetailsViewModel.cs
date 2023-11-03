@@ -6,9 +6,9 @@
     {
         public DepartmentDetailsViewModel()
         {
-            this.DepartmentEmployees = new HashSet<DepartmentEmployeesModel>();
-            this.PositionsInDepartment = new HashSet<DepartmentGetPositionsModel>();
-            this.AvailablePositionsCollection = new HashSet<PositionViewModel>();
+            DepartmentEmployees = new HashSet<DepartmentEmployeesModel>();
+            PositionsInDepartment = new HashSet<DepartmentGetPositionsModel>();
+            AvailablePositionsCollection = new HashSet<PositionViewModel>();
         }
 
         public int DepartmentId { get; set; }
@@ -30,8 +30,5 @@
         public ICollection<DepartmentGetPositionsModel> PositionsInDepartment { get; set; }
 
         public ICollection<PositionViewModel> AvailablePositionsCollection { get; set; }
-
-
-
     }
 }

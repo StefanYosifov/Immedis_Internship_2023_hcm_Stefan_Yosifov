@@ -1,6 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    public partial class PositionSeniority
+    public class PositionSeniority
     {
         public int? PositionId { get; set; }
         public int? SeniorityId { get; set; }

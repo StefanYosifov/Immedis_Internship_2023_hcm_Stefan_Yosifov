@@ -1,6 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    public partial class Priority
+    public class Priority
     {
         public Priority()
         {

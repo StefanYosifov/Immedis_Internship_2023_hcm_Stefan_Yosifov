@@ -1,8 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System;
-
-    public partial class AuditLog
+    public class AuditLog
     {
         public long Id { get; set; }
         public string? EmployeeId { get; set; }

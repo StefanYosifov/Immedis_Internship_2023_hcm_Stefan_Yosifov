@@ -9,14 +9,13 @@
 
     using Models.ViewModels.Genders;
 
-    public class GenderService:IGenderService
+    public class GenderService : IGenderService
     {
-
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
 
         public GenderService(
-            ApplicationDbContext context, 
+            ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context;

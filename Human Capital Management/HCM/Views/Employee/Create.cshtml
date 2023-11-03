@@ -29,29 +29,41 @@
     </div>
     <form asp-action="Create" method="post">
         <div class="form-group">
-            <label><b>Email</b></label>
+            <label>
+                <b>Email</b>
+            </label>
             <input name="email" type="email" class="form-control" id="Email" asp-for="Email" required>
         </div>
         <div class="form-group">
-            <label><b>Firstname</b></label>
+            <label>
+                <b>Firstname</b>
+            </label>
             <input name="firstname" type="text" class="form-control" id="FirstName" asp-for="FirstName" required>
         </div>
         <div class="form-group">
-            <label><b>Lastname</b></label>
+            <label>
+                <b>Lastname</b>
+            </label>
             <input name="lastname" type="text" class="form-control" id="LastName" asp-for="LastName" required>
         </div>
         <div class="form-group">
-            <label><b>Birth Date</b></label>
+            <label>
+                <b>Birth Date</b>
+            </label>
             <input name="birthDate" type="date" class="form-control" id="BirthDate" value="@DateTime.Today.AddYears(-20).ToString("yyyy-MM-dd")"
                    min="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MaxEmployeeAge).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MinEmployeeAge).ToString("yyyy-MM-dd")" asp-for="BirthDate">
 
         </div>
         <div class="form-group">
-            <label><b>Phone number</b></label>
+            <label>
+                <b>Phone number</b>
+            </label>
             <input type="tel" class="form-control" id="PhoneNumber" asp-for="PhoneNumber" required>
         </div>
         <div class="form-group">
-            <label><b>Nationality</b></label>
+            <label>
+                <b>Nationality</b>
+            </label>
             <select name="NationalityId" class="form-control" id="Options.Countries" asp-for="Options.Countries">
                 @foreach (var country in Model.Options.Countries)
                 {
@@ -60,7 +72,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label><b>Gender</b></label>
+            <label>
+                <b>Gender</b>
+            </label>
             <select name="GenderId" class="form-control" id="Options.Genders" asp-for="Options.Genders">
                 @foreach (var gender in Model.Options.Genders)
                 {
@@ -69,7 +83,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label><b>Department</b></label>
+            <label>
+                <b>Department</b>
+            </label>
             <select name="DepartmentId" class="form-control departments" id="Options.Departments" asp-for="Options.Departments">
                 @foreach (var department in Model.Options.Departments)
                 {
@@ -93,11 +109,11 @@
 
 
 @section Scripts
-    {
+{
     <script>
         let selectedDepartmentId = 1;
         let selectedPositionId = 1;
-        let token = localStorage.getItem("Authorization")
+        let token = "Bearer " + localStorage.getItem("Authorization")
 
         $(document).ready(function () {
             $(".departments").on('click', function () {
@@ -105,6 +121,7 @@
                 $.ajax({
                     type: "GET",
                     url: "https://localhost:7153/departments/positions/" + selectedDepartmentId,
+                    headers: { "Authorization": token },
                     data: {},
                     success: function (data) {
                         let arguments = "";
@@ -121,6 +138,7 @@
                 $.ajax({
                     type: "GET",
                     url: "https://localhost:7153/departments/seniorities/" + selectedPositionId,
+                    headers: { "Authorization": token },
                     data: {},
                     success: function (data) {
                         console.log(data.Countries);
@@ -145,7 +163,7 @@
                     formData.append("file", file);
 
                     $.ajax({
-                        url: "https://localhost:7153/MVC/employees/postCreate",
+                        url: "https://localhost:7153/employees/postCreate",
                         type: "POST",
                         data: formData,
                         processData: false, 

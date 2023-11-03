@@ -6,6 +6,7 @@
     {
         private readonly RestClient client;
         private readonly RestRequest request;
+
         public RestPostRequest(string baseUrl, RestClient client, string token)
         {
             this.client = client;
@@ -14,6 +15,7 @@
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authentication", $"Bearer {token}");
         }
+
         public async Task<RestResponse<TResponse>> SendRequest<TResponse>(string resource, params string[] queryParams)
         {
             if (queryParams.Length > 0)
@@ -26,6 +28,5 @@
 
             return await client.ExecutePostAsync<TResponse>(request);
         }
-
     }
 }

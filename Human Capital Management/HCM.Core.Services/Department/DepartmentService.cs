@@ -1,23 +1,31 @@
 ﻿namespace HCM.Core.Services.Department
 {
+    using System.Runtime.InteropServices;
+
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
+
+    using Common.Exceptions_Messages.Departments;
+    using Common.Exceptions_Messages.Employees;
     using Common.Helpers;
+
     using Countries;
+
     using Data;
     using Data.Models;
+
     using Microsoft.EntityFrameworkCore;
+
     using Models.ViewModels.Departments;
     using Models.ViewModels.Departments.Enums;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
-    using System.Runtime.InteropServices;
 
     public class DepartmentService : IDepartmentService
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
         private readonly ICountryService countryService;
+        private readonly IMapper mapper;
 
         public DepartmentService(
             ApplicationDbContext context,
@@ -35,6 +43,7 @@
                 .ProjectTo<DepartmentViewModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
         }
+
         public async Task<ICollection<PositionViewModel>> GetPositionsByDepartmentId(int id)
         {
             return await context.Positions
@@ -47,14 +56,13 @@
         {
             return await context.PositionSeniorities
                 .Where(s => s.PositionId == id)
-                .Select(s => new SeniorityViewModel()
+                .Select(s => new SeniorityViewModel
                 {
                     Id = s.SeniorityId,
                     Name = s.Seniority!.Name
                 })
                 .ToArrayAsync();
         }
-
 
         public async Task<ICollection<DepartmentGetAllModel>> GetAllDepartments(DepartmentSendQueryFilters query)
         {
@@ -73,17 +81,20 @@
                 departments = departments.Where(d => d.CountryId == query.CountryId);
             }
 
-
             departments = query.Sort switch
             {
-                DepartmentSortSearch.AvailablePositionsAccending => departments.OrderBy(d => d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
-                DepartmentSortSearch.AvailablePositionsDecending => departments.OrderByDescending(d => d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
+                DepartmentSortSearch.AvailablePositionsAccending => departments.OrderBy(d =>
+                    d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
+                DepartmentSortSearch.AvailablePositionsDecending => departments.OrderByDescending(d =>
+                    d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
                 DepartmentSortSearch.CountryAccending => departments.OrderBy(d => d.Country.Name),
                 DepartmentSortSearch.CountryDeccending => departments.OrderByDescending(d => d.Country.Name),
-                DepartmentSortSearch.EmployeeCountAccending => departments.OrderBy(d => d.Employees.Count(e => e.DepartmentId == d.Id)),
-                DepartmentSortSearch.EmployeeCountDeccending => departments.OrderByDescending(d => d.Employees.Count(e => e.DepartmentId == d.Id)),
+                DepartmentSortSearch.EmployeeCountAccending => departments.OrderBy(d =>
+                    d.Employees.Count(e => e.DepartmentId == d.Id)),
+                DepartmentSortSearch.EmployeeCountDeccending => departments.OrderByDescending(d =>
+                    d.Employees.Count(e => e.DepartmentId == d.Id)),
                 DepartmentSortSearch.NameAccending => departments.OrderBy(d => d.Name),
-                DepartmentSortSearch.NameDeccending => departments.OrderByDescending(d => d.Name),
+                DepartmentSortSearch.NameDeccending => departments.OrderByDescending(d => d.Name)
             };
 
             return await departments
@@ -93,9 +104,9 @@
 
         public async Task<DepartmentGetAllQueryFilters> GetAllQueryFilters()
         {
-            return new DepartmentGetAllQueryFilters()
+            return new DepartmentGetAllQueryFilters
             {
-                Sort = (string[])Enum.GetNames(typeof(DepartmentSortSearch)),
+                Sort = Enum.GetNames(typeof(DepartmentSortSearch)),
                 Countries = await countryService.GetCountries()
             };
         }
@@ -120,6 +131,7 @@
                 {
                     continue;
                 }
+
                 averageSalary += salary.SalaryAmount;
             }
 
@@ -130,7 +142,7 @@
 
             var datTimeToday = DateTime.UtcNow;
 
-            var mappedEmployees = employeesInDepartment.Select(ed => new DepartmentEmployeesModel()
+            var mappedEmployees = employeesInDepartment.Select(ed => new DepartmentEmployeesModel
             {
                 EmployeeId = ed.Id,
                 EmployeeAge = DateCalculator.CalculateAge(ed.BirthDate),
@@ -142,7 +154,7 @@
                 EmployeeNationalityISO = ed.Nationality?.Iso
             }).ToArray();
 
-            return new DepartmentDetailsViewModel()
+            return new DepartmentDetailsViewModel
             {
                 DepartmentId = id,
                 DepartmentName = getDepartment.Name,
@@ -184,7 +196,6 @@
                 throw new InvalidOperationException("Invalid department");
             }
 
-
             var getPosition = await context.Positions.FindAsync(model.PositionId);
 
             if (getPosition == null)
@@ -201,8 +212,6 @@
 
             department.Positions.Add(getPosition);
             await context.SaveChangesAsync();
-
-
 
             return "Success";
         }
@@ -236,7 +245,6 @@
 
             department.Positions.Remove(findPositionInDepartment);
             await context.SaveChangesAsync();
-
 
             foreach (var employee in department.Employees)
             {
@@ -278,6 +286,45 @@
             await context.SaveChangesAsync();
 
             return "You have successfully added the employee to the department";
+        }
+
+        public async Task<string> RemoveEmployeeFromDepartmentById(DepartmentRemoveEmployee model)
+        {
+            var findEmployee = await context.Employees.FindAsync(model.EmployeeId);
+
+            if (findEmployee == null)
+            {
+                throw new DepartmentServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            var findDepartment = await context.Departments.FindAsync(model.DepartmentId);
+
+            if (findDepartment == null)
+            {
+                throw new DepartmentServiceExceptions(DepartmentMessages.Department.NotFound);
+            }
+
+            var doesEmployeeExistInDepartment = await context.Departments
+                .Include(d => d.Employees)
+                .Select(d => new
+                {
+                    d.Employees,
+                    d.Id
+                })
+                .AnyAsync(d => d.Employees
+                    .Any(e => e.Id == model.EmployeeId && e.DepartmentId == model.DepartmentId));
+
+            if (doesEmployeeExistInDepartment == false)
+            {
+                throw new DepartmentServiceExceptions(DepartmentMessages.Department.EmployeeNotFound);
+            }
+
+            findEmployee.DepartmentId = null;
+            findEmployee.PositionId = null;
+            findEmployee.SeniorityId = null;
+
+            await context.SaveChangesAsync();
+            return DepartmentMessages.Success.SuccessfullyRemovedEmployeeFromDepartment;
         }
 
         private async Task<ICollection<Employee>> GetEmployeesInCurrentDepartment(int id)

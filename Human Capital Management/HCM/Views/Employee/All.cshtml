@@ -1,6 +1,4 @@
-﻿@using HCM.Models.ViewModels.Employees
-@model HCM.Models.ViewModels.Employees.EmployeeTableModel
-
+﻿@model HCM.Models.ViewModels.Employees.EmployeeTableModel
 
 
 <div class="container-fluid m-5">
@@ -8,27 +6,37 @@
     <form id="myForm" class="flex" method="get" asp-controller="Employee" asp-action="All" asp-route-id="@Model.CurrentPage">
         <div class="row">
             <div class="col-md-2">
-                <label><b>Search username</b></label>
-                <input name="SearchEmployeeName" class="form-control bg-light border-0 small" />
+                <label>
+                    <b>Search username</b>
+                </label>
+                <input name="SearchEmployeeName" class="form-control bg-light border-0 small"/>
             </div>
 
             <div class="col-md-2">
-                <label for="genders"><b>Genders</b></label>
+                <label for="genders">
+                    <b>Genders</b>
+                </label>
                 <select class="form-control" id="genders" name="genderId"></select>
             </div>
 
             <div class="col-md-2">
-                <label for="departments"><b>Departments</b></label>
+                <label for="departments">
+                    <b>Departments</b>
+                </label>
                 <select class="form-control" id="departments" name="departmentId"></select>
             </div>
 
             <div class="col-md-2">
-                <label for="countries"><b>Country</b></label>
+                <label for="countries">
+                    <b>Country</b>
+                </label>
                 <select class="form-control" id="countries" name="nationalityId"></select>
             </div>
 
             <div class="col-md-2">
-                <label for="sort"><b>Sort by</b></label>
+                <label for="sort">
+                    <b>Sort by</b>
+                </label>
                 <select class="form-control" id="sort" name="Sort"></select>
             </div>
 
@@ -74,11 +82,21 @@
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="#">Separated link</a></li>
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Separated link</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -94,9 +112,9 @@
                     <a class="page-link">Previous</a>
                 </li>
                 @{
-                    int loopUntil = Model.CurrentPage + 3;
+                    var loopUntil = Model.CurrentPage + 3;
 
-                    for (int i = Model.CurrentPage - 2; i < loopUntil; i++)
+                    for (var i = Model.CurrentPage - 2; i < loopUntil; i++)
                     {
                         if (i <= 0 || i > Model.TotalPages)
                         {
@@ -117,19 +135,17 @@
 
 </div>
 
+
 @section Scripts
-    {
+{
     <script>
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "@Url.Action("Options","Employee")",
+                url: "@Url.Action("Options", "Employee")",
                 data: "{}",
                 success: function (data) {
-
                     console.log(data);
-
-
                     var sDepartments = '<option value="-1">Please Select a Department</option>';
                     var departments = data.departments;
                     for (var i = 0; i < departments.length; i++) {
@@ -168,4 +184,4 @@
             });
         });
     </script>
-    }
+}

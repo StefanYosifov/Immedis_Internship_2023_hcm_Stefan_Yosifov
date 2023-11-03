@@ -1,4 +1,4 @@
-﻿namespace HCM.API.Controllers
+﻿namespace HCM.API.Controllers.Country
 {
     using Core.Services.Countries;
 
@@ -13,7 +13,6 @@
         {
             this.service = service;
         }
-
 
         [HttpGet("all")]
         public async Task<IActionResult> GetCountries()

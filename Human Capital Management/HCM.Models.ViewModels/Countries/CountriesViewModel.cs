@@ -13,7 +13,6 @@
             Departments = new HashSet<DepartmentViewModel>();
         }
 
-
         public ICollection<GenderViewModel> Genders { get; set; }
 
         public ICollection<CountryViewModel> Countries { get; set; }

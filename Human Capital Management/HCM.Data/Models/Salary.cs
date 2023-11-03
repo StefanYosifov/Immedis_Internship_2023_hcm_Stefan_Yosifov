@@ -1,8 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System;
-
-    public partial class Salary
+    public class Salary
     {
         public string EmployeeId { get; set; } = null!;
         public decimal? SalaryAmount { get; set; }

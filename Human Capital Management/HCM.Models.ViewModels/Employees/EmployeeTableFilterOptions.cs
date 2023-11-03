@@ -17,12 +17,10 @@
 
         public ICollection<DepartmentViewModel> Departments { get; set; }
 
-
         public ICollection<GenderViewModel> Genders { get; set; }
 
         public ICollection<CountryViewModel> Counties { get; set; }
 
         public string[] Sort { get; set; }
-
     }
 }

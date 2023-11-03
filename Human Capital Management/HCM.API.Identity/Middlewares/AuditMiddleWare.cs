@@ -1,12 +1,10 @@
 ﻿namespace HCM.API.Middlewares
 {
-    using System.Security.Claims;
-
-    using Common.Manager;
-    using Data.Models;
-    using HCM.Data;
-    using Microsoft.AspNetCore.Http;
     using System.Text;
+
+    using Data;
+    using Data.Models;
+
     using Task = System.Threading.Tasks.Task;
 
     public class AuditMiddleWare
@@ -22,7 +20,6 @@
 
         public async Task Invoke(HttpContext context, ApplicationDbContext dbContext)
         {
-
             var request = context.Request;
 
             if (request.Path.ToString().Contains("/api"))
@@ -31,7 +28,7 @@
 
                 var controllerName = ControllerValue!.ToString() ?? string.Empty;
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 
                 if (request.Method == "GET")
                 {
@@ -54,19 +51,17 @@
                         break;
                 }
 
-                var auditLog = new AuditLog()
+                var auditLog = new AuditLog
                 {
-                    
                     EntityName = controllerName,
                     Action = request.Method,
                     Timestamp = DateTime.UtcNow,
-                    Changes = sb.ToString(),
+                    Changes = sb.ToString()
                 };
 
                 dbContext.AuditLogs.Add(auditLog);
                 await dbContext.SaveChangesAsync();
             }
-
         }
     }
 }

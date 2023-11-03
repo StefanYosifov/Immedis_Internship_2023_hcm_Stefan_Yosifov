@@ -2,7 +2,6 @@
 {
     public class EmployeeSearchModel
     {
-
         public string Id { get; set; } = null!;
 
         public string FirstName { get; set; } = null!;
@@ -14,6 +13,5 @@
         public int Age { get; set; }
 
         public DateTime AccountCreatedOn { get; set; }
-
     }
 }

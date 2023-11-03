@@ -1,11 +1,11 @@
 ﻿namespace HCM.Common;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 public static class BuilderCustomExtensionMethods
@@ -13,7 +13,6 @@ public static class BuilderCustomExtensionMethods
     public static void RegisterApplicationServices(this IServiceCollection serviceCollection, Type serviceInterface)
     {
         var assembly = Assembly.GetAssembly(serviceInterface);
-
 
         var serviceClassType = assembly
             .GetTypes()
@@ -27,8 +26,6 @@ public static class BuilderCustomExtensionMethods
             serviceCollection.AddScoped(interfaceType, implementationType);
         }
     }
-
-
 
     public static IServiceCollection RegisterJwtAuthentication(this IServiceCollection serviceCollection,
         IConfiguration configuration)
@@ -59,5 +56,4 @@ public static class BuilderCustomExtensionMethods
 
         return serviceCollection;
     }
-
 }

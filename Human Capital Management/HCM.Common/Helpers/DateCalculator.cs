@@ -2,11 +2,9 @@
 {
     public static class DateCalculator
     {
-
         public static int CalculateAge(DateTime? date)
         {
             return (int)((DateTime.Now - date).Value.Days / 365.242199);
         }
-
     }
 }

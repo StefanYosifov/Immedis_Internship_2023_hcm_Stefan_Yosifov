@@ -17,7 +17,6 @@
             Senioritys = new HashSet<SeniorityViewModel>();
         }
 
-
         public string Firstname { get; set; }
 
         public string Lastname { get; set; }
@@ -45,6 +44,5 @@
         public int SeniorityId { get; set; }
 
         public ICollection<SeniorityViewModel> Senioritys { get; set; }
-
     }
 }

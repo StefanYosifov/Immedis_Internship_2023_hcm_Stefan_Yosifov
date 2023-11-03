@@ -6,7 +6,6 @@
 
     public interface IEmployeeManager
     {
-
         public Task<Employee?> GetEmployee();
 
         public Task<Employee?> FindEmployeeByEmail(string email);

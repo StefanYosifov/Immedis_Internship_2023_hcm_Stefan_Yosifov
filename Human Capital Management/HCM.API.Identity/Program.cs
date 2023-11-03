@@ -7,21 +7,18 @@ using HCM.Core.Services.Employee;
 using HCM.Core.Services.Gender;
 using HCM.Core.Services.Identity;
 using HCM.Data;
+
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IGenderService, GenderService>();
-builder.Services.AddScoped<ICountryService, CountryService>();
+
+builder.Services.RegisterApplicationServices(typeof(IdentityService));
 builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -41,17 +38,15 @@ builder.Services.AddCors(options =>
 builder.Services.Configure<FormOptions>(opt =>
 {
     opt.ValueCountLimit = int.MaxValue;
-    opt.ValueLengthLimit = 1024 * 1024 * 100;
+    opt.ValueLengthLimit = 104_857_600;
 });
 
 builder.Services.RegisterJwtAuthentication(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -61,10 +56,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 //app.UseMiddleware<AuditMiddleWare>();
 

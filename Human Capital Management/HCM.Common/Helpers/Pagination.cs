@@ -1,7 +1,5 @@
 ﻿namespace HCM.Common.Helpers;
 
-using System.Linq;
-
 using Microsoft.EntityFrameworkCore;
 
 public class Pagination<T> : List<T>

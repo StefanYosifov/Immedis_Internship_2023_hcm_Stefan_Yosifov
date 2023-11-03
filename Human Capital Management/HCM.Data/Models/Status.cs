@@ -1,8 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System.Collections.Generic;
-
-    public partial class Status
+    public class Status
     {
         public Status()
         {

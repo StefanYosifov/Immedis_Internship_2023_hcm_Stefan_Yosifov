@@ -1,0 +1,294 @@
+﻿@{
+    ViewBag.Title = "title";
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+
+
+<div class="row d-flex justify-content-center mt-100">
+    <div class="card mx-5">
+        <div class="card-header">
+            <h5>Select Options</h5>
+            <div class="row">
+                <form id="filterForm">
+                    <div class="row">
+                        <div class="col">
+                            <label>Look up user:</label>
+                            <input class="input" name="Search" placeholder="Search..." type="search">
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="departmentDropDown">Department:</label>
+                                <select name="DepartmentId" class="form-control" id="departmentDropDown"></select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="positionDropDown">Position:</label>
+                                <select name="PositionId" class="form-control" id="positionDropDown"></select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="seniorityDropDown">Seniority:</label>
+                                <select name="SeniorityId" class="form-control" id="seniorityDropDown"></select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="sortDropDown">Sort:</label>
+                                <select name="Sort" class="form-control" id="sortDropDown"></select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button id="search" class="btn btn-outline-dark">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table">
+        </table>
+    </div>
+</div>
+
+<h1>Beautiful Table with Pagination</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+</table>
+
+<ul class="pagination">
+    <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Previous</a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+    </li>
+</ul>
+
+
+
+@if (false)
+{
+    <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+}
+
+
+<style>
+    #departmentDropDown {
+        color: #4e73df;
+    }
+
+    .input {
+        max-width: 190px;
+        background-color: #f5f5f5;
+        color: #4e73df;
+        padding: .15rem .5rem;
+        min-height: 40px;
+        border-radius: 4px;
+        outline: 1px solid #4e73df;
+        border: 0.5px solid #4e73df;
+        line-height: 1.15;
+        box-shadow: 0px 10px 20px -18px;
+    }
+
+    input:focus {
+        border-bottom: 2px solid #4e73df;
+        border-radius: 4px 4px 2px 2px;
+    }
+
+    input:hover {
+        outline: 1px solid lightgrey;
+    }
+
+</style>
+
+@section Scripts
+    {
+
+    <script type="text/javascript">
+
+        const baseUrl = "https://localhost:7153/payments";
+        const mvcUrl = "https://localhost:7039/Payment/Salary";
+        const token = "Bearer " + localStorage.getItem("Authorization");
+        let page = 1;
+        var currentUrl = window.location.pathname;
+
+        function GetDropDown() {
+            $.ajax({
+                url: baseUrl + "/salary/options",
+                type: "GET",
+                contentType: 'application/json',
+                headers: { "Authorization": token },
+                success: function (data) {
+                    let options = "";
+                    console.log(data);
+                    for (let i = 0; i < data.departments.length; i++) {
+                        options += '<option value="' + data.departments[i].departmentId + '">' + data.departments[i].name + '</option>';
+                    }
+                    $("#departmentDropDown").html(options);
+
+                    options = "";
+                    for (let i = 0; i < data.sort.length; i++) {
+                        let splitWord = data.sort[i].replace(/([a-z])([A-Z])/g, '$1 $2');
+                        options += '<option value="' + i + '">' + splitWord + '</option>';
+                    }
+                    $("#sortDropDown").html(options);
+                }
+            });
+        }
+        function FillPositionDropDown() {
+            $("#departmentDropDown").on("change", function (e) {
+                e.preventDefault();
+                $('#seniorityDropDown').empty();
+                selectedDepartmentId = $('#departmentDropDown').find(":selected").val();
+                $.ajax({
+                    type: "GET",
+                    url: "https://localhost:7153/departments/positions/" + selectedDepartmentId,
+                    headers: { "Authorization": token },
+                    data: {},
+                    success: function (data) {
+                        console.log(data);
+                        let arguments = "";
+                        for (let i = 0; i < data.length; i++) {
+                            arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                        $("#positionDropDown").html(arguments);
+                    },
+                });
+            })
+        }
+        function FillSeniorityDropDown() {
+            $("#positionDropDown").on('change', function () {
+                selectedPositionId = $('#positionDropDown').find(":selected").val();
+                console.log(selectedPositionId);
+                $.ajax({
+                    type: "GET",
+                    url: "https://localhost:7153/departments/seniorities/" + selectedPositionId,
+                    headers: { "Authorization": token },
+                    data: {},
+                    success: function (data) {
+                        console.log(data);
+                        console.log(data.Countries);
+                        let arguments = "";
+                        for (let i = 0; i < data.length; i++) {
+                            console.log(data[i].name);
+                            arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                        $("#seniorityDropDown").html(arguments);
+                    },
+                });
+            });
+        }
+        function fetchData(page, query) {
+            console.log(query);
+            $.ajax({
+                url: baseUrl + "/salary/all/" + page +"?"+ query,
+                method: 'GET',
+                headers: { "Authorization": token },
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                    populateTable(response.employees);
+                    PopulatePagination(response.pageNumber + 1, response.totalPages);
+                },
+                error: function () {
+                    console.log('Error fetching data');
+                }
+            });
+        }
+        function Search() {
+            $("#search").on("click", function (e) {
+                e.preventDefault();
+                let searchValue = $("input[name='Search']").val();
+                let selectedDepartment = $("#departmentDropDown option:selected").attr("value");
+                let selectedPosition = $("#positionDropDown option:selected").attr("value");
+                let selectedSeniority = $("#seniorityDropDown option:selected").attr("value");
+                let selectedSort = $("#sortDropDown").val();
+                var page = 1;
+
+                var queryString = `Search=${searchValue}&departmentId=${selectedDepartment}&positionId=${selectedPosition}&seniorityId=${selectedSeniority}&sort=${selectedSort}`;
+
+
+                var stateObj = { query: queryString };
+                window.history.pushState(stateObj, "Search Results", "?" + queryString);
+                fetchData(page, queryString);
+            })
+        }
+        function populateTable(data) {
+            $('#table-body').empty();
+            data.forEach(item => {
+                console.log(item);
+                $('#table-body').append(`<tr><td>${item.employeeId}</td><td>${item.employeeFullname}</td><td>${item.departmentName}</td></tr>`);
+            });
+        }
+        function PopulatePagination(currentPage, totalPages) {
+            var paginationElement = $('.pagination');
+            paginationElement.empty();
+
+            // Add "Previous" button
+            if (currentPage > 1) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>`);
+            }
+
+            // Add page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationElement.append(`<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                } else {
+                    paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                }
+            }
+
+            // Add "Next" button
+            if (currentPage < totalPages) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">Next</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
+            }
+
+            // Add click event handler for page links
+            paginationElement.find('a.page-link').click(function (e) {
+                e.preventDefault();
+                var clickedPage = $(this).data('page');
+                fetchData(clickedPage, queryString);
+            });
+        }
+
+        $(document).ready(function () {
+            GetDropDown();
+            FillPositionDropDown();
+            FillSeniorityDropDown();
+            Search();
+
+            fetchData(1);
+
+            $('#pagination a.page-link').click(function (e) {
+                e.preventDefault();
+                if (!$(this).parent().hasClass('disabled')) {
+                    const page = parseInt($(this).text());
+                    fetchData(page);
+                }
+            });
+
+        });
+
+    </script>
+
+    }

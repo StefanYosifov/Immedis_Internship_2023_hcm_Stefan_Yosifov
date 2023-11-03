@@ -2,7 +2,6 @@
 {
     public class ValidationConstants
     {
-
         public static class EmployeeConstants
         {
             public const int MinEmployeeAge = 16;
@@ -13,13 +12,11 @@
 
             public const int LastNameMinLength = 2;
             public const int LastNameMaxLength = 30;
-
         }
 
         public static class PaginationConstants
         {
             public const int ItemsPerPage = 12;
         }
-
     }
 }

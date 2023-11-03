@@ -2,8 +2,6 @@
 {
     public class DepartmentEmployeesModel
     {
-
-
         public string? EmployeeId { get; set; } = null!;
 
         public string? EmployeeFirstname { get; set; }

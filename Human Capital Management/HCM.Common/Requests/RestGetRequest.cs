@@ -2,20 +2,21 @@
 {
     using RestSharp;
 
-    public class RestGetRequest 
+    public class RestGetRequest
     {
-
         private readonly RestClient client;
         private readonly RestRequest request;
+
         public RestGetRequest(string baseUrl, RestClient client)
         {
             this.client = client;
             request = new RestRequest(baseUrl);
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authentication", $"Bearer");
+            request.AddHeader("Authentication", "Bearer");
         }
-        public async Task<RestResponse<TResponse>> SendRequest<TResponse>( params string[] queryParams)
+
+        public async Task<RestResponse<TResponse>> SendRequest<TResponse>(params string[] queryParams)
         {
             if (queryParams.Length > 0)
             {
@@ -24,6 +25,7 @@
                     request.AddQueryParameter(nameof(param), param);
                 }
             }
+
             return await client.ExecuteGetAsync<TResponse>(request);
         }
     }

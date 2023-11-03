@@ -1,16 +1,27 @@
 ﻿namespace HCM.Core.Services.Employee
 {
+    using System.Text;
+
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
+
     using BCrypt.Net;
+
     using Common.Constants;
+    using Common.Exceptions_Messages.Departments;
+    using Common.Exceptions_Messages.Employees;
     using Common.Helpers;
     using Common.Manager;
+
     using Countries;
+
     using Data;
     using Data.Models;
+
     using Department;
+
     using Microsoft.EntityFrameworkCore;
+
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
@@ -18,9 +29,6 @@
     using Models.ViewModels.Files;
     using Models.ViewModels.Genders;
     using Models.ViewModels.Roles;
-    using System.Text;
-
-    using Common.Exceptions_Messages.Employees;
 
     public class EmployeeService : IEmployeeService
     {
@@ -239,7 +247,36 @@
             return await employees
                 .Take(5)
                 .ToArrayAsync();
+        }
 
+        public async Task<string> EditEmployeePositionAndSeniority(EmployeeEditPositionAndSeniority model)
+        {
+            var doesPositionExist = await context.Positions
+                .AnyAsync(p => p.Id == model.PositionId);
+
+            if (doesPositionExist == false)
+            {
+                throw new EmployeeServiceExceptions(DepartmentMessages.Position.NotFound);
+            }
+
+            var doesSeniorityExist = await context.PositionSeniorities
+                .AnyAsync(ps => ps.PositionId == model.PositionId && ps.SeniorityId == model.SeniorityId);
+
+            if (doesSeniorityExist == false)
+            {
+                throw new EmployeeServiceExceptions(DepartmentMessages.Seniority.NotFound);
+            }
+
+            var employee = await context.Employees.FindAsync(model.EmployeeId);
+
+            if (employee == null)
+            {
+                throw new EmployeeServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            employee.PositionId = model.PositionId;
+            employee.SeniorityId = model.SeniorityId;
+            return EmployeeMessages.Success.EmployeePositionSeniorityEdited;
         }
 
         private string GenerateRandomPassword(int length, Random random)

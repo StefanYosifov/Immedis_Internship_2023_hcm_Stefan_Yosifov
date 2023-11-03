@@ -1,21 +1,27 @@
 ﻿namespace HCM.Core.Services.Identity
 {
-    using Common.Constants;
-    using Common.Manager;
-    using Data.Models;
-    using HCM.Models.ViewModels.Identity;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.IdentityModel.Tokens;
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
     using System.Text;
-    using ApplicationDbContext = Data.ApplicationDbContext;
+
+    using BCrypt.Net;
+
+    using Common.Constants;
+    using Common.Manager;
+
+    using Data;
+    using Data.Models;
+
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
+
+    using Models.ViewModels.Identity;
 
     public class IdentityService : IIdentityService
     {
+        private readonly IConfiguration configuration;
         private readonly ApplicationDbContext context;
         private readonly IEmployeeManager employeeManager;
-        private readonly IConfiguration configuration;
 
         public IdentityService(
             ApplicationDbContext context,
@@ -29,7 +35,6 @@
 
         public async Task<Response> SignIn(LoginViewModel model)
         {
-
             var findEmployee = await employeeManager
                 .FindEmployeeByUsernameOrPassword(model.LoginParameter);
 
@@ -38,7 +43,7 @@
                 return null;
             }
 
-            var verifyPasswordMatch = BCrypt.Net.BCrypt
+            var verifyPasswordMatch = BCrypt
                 .Verify(model.Password, findEmployee.PasswordHash);
 
             if (verifyPasswordMatch == false)
@@ -50,7 +55,7 @@
             {
                 new(ClaimTypes.Name, findEmployee.Username),
                 new(ClaimTypes.NameIdentifier, findEmployee.Id),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var employeeRoles = findEmployee.EmployeeRoles
@@ -70,16 +75,14 @@
         {
             var employee = await employeeManager.GetEmployee();
 
-
-            var verifyOldPassword = BCrypt.Net.BCrypt.Verify(model.OldPassword, employee!.PasswordHash);
+            var verifyOldPassword = BCrypt.Verify(model.OldPassword, employee!.PasswordHash);
 
             if (verifyOldPassword == false)
             {
                 throw new InvalidOperationException("Old password is incorrect");
             }
 
-            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-
+            var newPasswordHash = BCrypt.HashPassword(model.NewPassword);
 
             employee.PasswordHash = newPasswordHash;
             await context.SaveChangesAsync();
@@ -92,11 +95,11 @@
             var response = new Response
             {
                 JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                Employee = new EmployeeResponse()
+                Employee = new EmployeeResponse
                 {
                     Username = user.Username,
                     Email = user.Email,
-                    Id = user.Id,
+                    Id = user.Id
                 }
             };
 
@@ -110,7 +113,6 @@
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
-            
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken(

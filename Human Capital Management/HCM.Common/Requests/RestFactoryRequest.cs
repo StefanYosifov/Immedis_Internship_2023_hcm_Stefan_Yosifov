@@ -4,14 +4,13 @@
 
     public class RestFactoryRequest
     {
-        private readonly string url;
         private readonly RestClient restClient;
+        private readonly string url;
 
         public RestFactoryRequest(string url, RestClient restClient)
         {
             this.url = url;
             this.restClient = restClient;
-
         }
 
         public TRequest CreateRequest<TRequest>() where TRequest : IRestRequest
@@ -32,11 +31,8 @@
             //{
             //    return new DeleteRequest(_baseUrl) as TRequest;
             //}
-            else
-            {
-                throw new NotSupportedException("Unsupported request type");
-            }
-        }
 
+            throw new NotSupportedException("Unsupported request type");
+        }
     }
 }

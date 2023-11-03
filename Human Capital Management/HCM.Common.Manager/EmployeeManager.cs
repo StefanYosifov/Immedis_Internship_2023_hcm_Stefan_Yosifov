@@ -1,18 +1,20 @@
 ﻿namespace HCM.Common.Manager
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.EntityFrameworkCore;
-    using Models.ViewModels.Roles;
     using System.Security.Claims;
 
     using Data;
     using Data.Models;
 
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
+
+    using Models.ViewModels.Roles;
+
     public class EmployeeManager : IEmployeeManager
     {
+        private readonly ApplicationDbContext context;
 
         private readonly ClaimsPrincipal user;
-        private readonly ApplicationDbContext context;
 
         public EmployeeManager(IHttpContextAccessor httpContext,
             ApplicationDbContext context)
@@ -21,25 +23,25 @@
             this.context = context;
         }
 
-
         public async Task<Employee> GetEmployee()
         {
-            string employeeId = GetUserId();
+            var employeeId = GetUserId();
             return (await context.Employees.FindAsync(employeeId))!;
         }
 
         public async Task<Employee?> FindEmployeeByEmail(string email)
         {
-            return (await context.Employees
+            return await context.Employees
                 .Include(e => e.EmployeeRoles)
-                .FirstOrDefaultAsync(e => e.Email == email));
+                .FirstOrDefaultAsync(e => e.Email == email);
         }
 
         public async Task<Employee?> FindEmployeeByUsername(string username)
         {
-            return (await context.Employees
+            return await context.Employees
                 .Include(e => e.EmployeeRoles)
-                .FirstOrDefaultAsync(e => string.Equals(e.Username, username, StringComparison.InvariantCultureIgnoreCase)));
+                .FirstOrDefaultAsync(e =>
+                    string.Equals(e.Username, username, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public async Task<Employee?> FindEmployeeByUsernameOrPassword(string data)
@@ -48,7 +50,7 @@
                 .Include(e => e.EmployeeRoles)
                 .ThenInclude(er => er.Role)
                 .FirstOrDefaultAsync(e =>
-                e.Email == data || e.Username == data);
+                    e.Email == data || e.Username == data);
         }
 
         public string GetUserId()
@@ -71,5 +73,4 @@
             return user.IsInRole(role.ToString());
         }
     }
-
 }

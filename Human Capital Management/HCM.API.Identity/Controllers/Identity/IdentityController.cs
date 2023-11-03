@@ -1,10 +1,11 @@
-﻿namespace HCM.API.Controllers
+﻿namespace HCM.API.Controllers.Identity
 {
     using Core.Services.Identity;
-    using Models.ViewModels.Identity;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+
+    using Models.ViewModels.Identity;
 
     [AllowAnonymous]
     [Route("/api/authorize")]
@@ -22,18 +23,16 @@
         {
             var result = await service.SignIn(model);
 
-
             if (!result.isValid)
             {
                 return BadRequest();
             }
 
             return Ok(result);
-
         }
 
         [HttpPut("ChangePass")]
-        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             try
             {

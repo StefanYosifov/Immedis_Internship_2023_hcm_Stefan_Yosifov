@@ -1,24 +1,23 @@
-﻿namespace HCM.API.Controllers
+﻿namespace HCM.API.Controllers.Employee
 {
-    using System;
-
     using Core.Services.Countries;
     using Core.Services.Department;
     using Core.Services.Employee;
     using Core.Services.Gender;
 
-    using Models.ViewModels.Employees;
-    using HCM.Models.ViewModels.Employees.Enum;
-
     using Microsoft.AspNetCore.Mvc;
+
+    using Models.ViewModels.Employees;
+    using Models.ViewModels.Employees.Enum;
 
     [Route("api/employees")]
     public class EmployeeController : ApiController
     {
-        private readonly IEmployeeService service;
+        private readonly ICountryService countryService;
         private readonly IDepartmentService departmentService;
         private readonly IGenderService genderService;
-        private readonly ICountryService countryService;
+        private readonly IEmployeeService service;
+
         public EmployeeController(
             IEmployeeService service,
             IDepartmentService departmentService,
@@ -39,7 +38,6 @@
             return Ok(employees);
         }
 
-
         [HttpGet("countries")]
         public async Task<IActionResult> GetCountries()
         {
@@ -57,12 +55,12 @@
         [HttpGet("options")]
         public async Task<IActionResult> GetTableOptions()
         {
-            var options = new EmployeeTableFilterOptions()
+            var options = new EmployeeTableFilterOptions
             {
                 Genders = await genderService.GetGenders(),
                 Counties = await countryService.GetCountries(),
                 Departments = await departmentService.GetDepartments(),
-                Sort = (string[])Enum.GetNames(typeof(EmployeeTableSortEnum))
+                Sort = Enum.GetNames(typeof(EmployeeTableSortEnum))
             };
 
             return Ok(options);
@@ -71,13 +69,13 @@
         [HttpGet("getCreate")]
         public async Task<IActionResult> GetEmployeeCreationOptions()
         {
-            var employeeCreationModel = new EmployeeCreateRequestModel()
+            var employeeCreationModel = new EmployeeCreateRequestModel
             {
-                Options = new EmployeeCreateDropDownOptions()
+                Options = new EmployeeCreateDropDownOptions
                 {
                     Departments = await departmentService.GetDepartments(),
                     Countries = await countryService.GetCountries(),
-                    Genders = await genderService.GetGenders(),
+                    Genders = await genderService.GetGenders()
                 }
             };
 
@@ -153,6 +151,19 @@
                 return NotFound();
             }
         }
-        
+
+        [HttpPut("edit/position/seniority")]
+        public async Task<IActionResult> EditEmployeesPositionAndSeniority(EmployeeEditPositionAndSeniority model)
+        {
+            try
+            {
+                var result = await service.EditEmployeePositionAndSeniority(model);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@
 {
     public static class EmployeeMessages
     {
-
         public const string NoEmployeesWithSuchName = "No employees with such name";
 
         public const string NotFound = "Employee could not be found";
@@ -13,7 +12,9 @@
         {
             public const string EmployeeEdited = "Successfully edited the employee";
             public const string EmployeeCreated = "Successfully created employees";
-        }
 
+            public const string EmployeePositionSeniorityEdited =
+                "Successfully edited employee's Position and Seniority";
+        }
     }
 }

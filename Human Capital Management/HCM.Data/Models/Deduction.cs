@@ -1,6 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    public partial class Deduction
+    public class Deduction
     {
         public long Id { get; set; }
         public decimal? Amount { get; set; }

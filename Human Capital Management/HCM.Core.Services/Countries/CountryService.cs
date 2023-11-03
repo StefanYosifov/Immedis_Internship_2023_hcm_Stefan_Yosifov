@@ -15,7 +15,7 @@
         private readonly IMapper mapper;
 
         public CountryService(
-            ApplicationDbContext context, 
+            ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context;

@@ -15,14 +15,11 @@
 
     public class MappingProfile : Profile
     {
-
         public MappingProfile()
         {
             CreateMap<Department, DepartmentViewModel>()
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
-
-
 
             CreateMap<Position, PositionViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -44,7 +41,7 @@
                 .ForMember(dest => dest.EmployeeUserName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeAge,
-                    opt => opt.MapFrom(src => (int)Math.Abs(DateTime.UtcNow.Year - src.BirthDate!.Value.Year)))
+                    opt => opt.MapFrom(src => Math.Abs(DateTime.UtcNow.Year - src.BirthDate!.Value.Year)))
                 .ForMember(dest => dest.EmployeeFirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.EmployeeLastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.EmployeeDepartmentName, opt => opt.MapFrom(src => src.Department!.Name))
@@ -61,16 +58,15 @@
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
                 .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId));
 
-
             CreateMap<Department, DepartmentGetAllModel>()
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.DepartmentCountry, opt => opt.MapFrom(src => src.Country.Name))
                 .ForMember(dest => dest.DepartmentEmployeeCount, opt => opt
                     .MapFrom(src => src.Employees.Count(e => e.DepartmentId == src.Id)))
-                    .ForMember(dest => dest.DepartmentImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-                    .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
-                    .ForMember(dest => dest.DepartmentTotalEmployeeCapacity,
-                        opt => opt.MapFrom(src => src.MaxPeopleCount));
+                .ForMember(dest => dest.DepartmentImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.DepartmentTotalEmployeeCapacity,
+                    opt => opt.MapFrom(src => src.MaxPeopleCount));
 
             CreateMap<Position, DepartmentGetPositionsModel>()
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Id))
@@ -85,7 +81,6 @@
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.AccountCreatedOn, opt => opt.MapFrom(src => src.CreatedOn))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateCalculator.CalculateAge(src.BirthDate)));
-
         }
     }
 }

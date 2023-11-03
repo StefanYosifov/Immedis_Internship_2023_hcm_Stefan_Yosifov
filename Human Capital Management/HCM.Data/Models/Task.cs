@@ -1,8 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System;
-
-    public partial class Task
+    public class Task
     {
         public int Id { get; set; }
         public string? TaskName { get; set; }

@@ -4,15 +4,11 @@
 
     public class RestRequestAPI
     {
+        private RestRequest request;
 
         public RestRequestAPI(string url, Method method)
         {
             request = new RestRequest(url, method);
         }
-
-        private RestRequest request;
-
-        
-
     }
 }

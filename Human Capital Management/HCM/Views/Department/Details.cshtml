@@ -12,7 +12,7 @@
                 <span class="avatar text-bg-primary avatar-lg fs-5">
                     @if (Model.DepartmentName.Length > 3)
                     {
-                        @Model.DepartmentName.Substring(0,3)
+                        @Model.DepartmentName.Substring(0, 3)
                     }
                     else
                     {
@@ -23,13 +23,23 @@
                     <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
                     <span class="text-muted fs-sm">@Model.CountryName</span>
                 </div>
-                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn"><i class="fas fa-ellipsis-v"></i></button>
+                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
             </div>
             <div class="card-body">
-                <h6><small>Id: </small>@Model.DepartmentId</h6>
-                <h6><small>Average salary: </small>@Model.AverageSalary</h6>
-                <h6><small>Employee count: </small>@Model.EmployeesCount</h6>
-                <h6><small>Total positions:</small>@Model.EmployeeCapacity</h6>
+                <h6>
+                    <small>Id : </small>@Model.DepartmentId
+                </h6>
+                <h6>
+                    <small>Average salary : </small>@Model.AverageSalary
+                </h6>
+                <h6>
+                    <small>Employee count : </small>@Model.EmployeesCount
+                </h6>
+                <h6>
+                    <small>Total positions : </small>@Model.EmployeeCapacity
+                </h6>
                 <h6></h6>
             </div>
         </div>
@@ -110,40 +120,26 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="px-3">
-                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-star"></span> Popular Topics</h6>
-                                    <h6 class="text-primary pb-2"><a href="#">Getting started with Blazemeter</a></h6>
-                                    <h6 class="text-primary pb-2"><a href="#">Creating tests</a></h6>
-                                    <h6 class="text-primary pb-4"><a href="#">Running tests</a></h6>
-                                </div>
                             </fieldset>
                             <fieldset id="tab031">
                                 <div class="bg-light align-content-center">
                                     <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
-                                    <form>
-                                        <div class="custom-select">
-                                            <input type="text" id="custom-select-input" placeholder="Select an option">
-                                            <ul class="custom-select-options">
-                                            </ul>
-                                        </div>
-                                        <div class="card shadow mb-4 mt-5">
-                                            <div class="card-header py-3">
-                                                <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName"></h6>
+                                    <div class="d-flex justify-content-center">
+                                        <form id="employeeForm">
+                                            <div class="custom-select">
+                                                <input type="text" id="custom-select-input" placeholder="Select an option">
+                                                <ul class="custom-select-options">
+                                                </ul>
                                             </div>
-                                            <div class="card-body">
-                                                <p id="employeeDetails"></p>
+                                            <div class="card shadow mb-4 mt-5">
+                                                <div class="card-header py-3">
+                                                    <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p id="employeeDetails"></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="px-3">
-                                    <div class="border border-1 box">
-                                        <h5>Community 1</h5>
-                                        <p class="text-muted mb-1">Members : <strong>27</strong></p>
-                                    </div>
-                                    <div class="border border-1 box">
-                                        <h5>Community 2</h5>
-                                        <p class="text-muted mb-1">Members : <strong>16</strong></p>
+                                        </form>
                                     </div>
                                 </div>
                             </fieldset>
@@ -163,7 +159,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group px-3 pb-2">
-                                            <label class="form-control-label"><h6>What are you good at ?</h6></label>
+                                            <label class="form-control-label">
+                                                <h6>What are you good at ?</h6>
+                                            </label>
                                             <div class="custom-control custom-checkbox">
                                                 <input class="custom-control-input" id="option1" type="checkbox" value="">
                                                 <label class="custom-control-label" for="option1">Web Development</label>
@@ -192,10 +190,18 @@
                                 </div>
                                 <div class="px-3">
                                     <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
-                                    <h6 class="text-primary pb-2"><a href="#">Augmented Reality and Virtual Reality</a></h6>
-                                    <h6 class="text-primary pb-2"><a href="#">Angular and React</a></h6>
-                                    <h6 class="text-primary pb-2"><a href="#">Big Data and Hadoop</a></h6>
-                                    <h6 class="text-primary pb-4"><a href="#">Internet of Things (IoT)</a></h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Augmented Reality and Virtual Reality</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Angular and React</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Big Data and Hadoop</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-4">
+                                        <a href="#">Internet of Things (IoT)</a>
+                                    </h6>
                                 </div>
                             </fieldset>
                         </div>
@@ -215,37 +221,44 @@
     </div>
 
     <h2>Department Employees</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Full Name</th>
-                <th>Age</th>
-                <th>Nationality</th>
-                <th>Gender</th>
-                <th>Position</th>
-                <th>Seniority</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var employee in Model.DepartmentEmployees)
-            {
+    <div class="card shadow mb-4 mt-5 me-5">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@employee.EmployeeFullName</td>
-                    <td>@employee.EmployeeAge</td>
-                    <td>@employee.EmployeeNationalityISO</td>
-                    <td>@employee.EmployeeGender</td>
-                    <td>@employee.EmployeePosition</td>
-                    <td>@employee.EmployeeSeniority</td>
-                    <td><button class="edit-button">Edit</button></td>
-                    <td>
-                        <button class="delete-button" data-id="@employee.EmployeeId">Delete</button>
-                    </td>
+                    <th>Full Name</th>
+                    <th>Age</th>
+                    <th>Nationality</th>
+                    <th>Gender</th>
+                    <th>Position</th>
+                    <th>Seniority</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model.DepartmentEmployees)
+                {
+                    <tr>
+                        <td>@employee.EmployeeFullName</td>
+                        <td>@employee.EmployeeAge</td>
+                        <td>@employee.EmployeeNationalityISO</td>
+                        <td>@employee.EmployeeGender</td>
+                        <td>@employee.EmployeePosition</td>
+                        <td>@employee.EmployeeSeniority</td>
+                        <td>
+                            <button class="bg-primary text-white edit-button">Edit</button>
+                        </td>
+                        <td>
+                            <button class="bg-primary text-white delete-button" value="@employee.EmployeeId">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <style>
@@ -399,6 +412,39 @@
         var departmentId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
         const token = "Bearer " + localStorage.getItem("Authorization");
 
+        function KickEmployee() {
+            $(".delete-button").click(function (e) {
+                e.preventDefault();
+
+                let row = $(this).closest("tr");
+                let employeeId = row.find("td:eq(7) button").attr('value');
+
+                $.ajax({
+                    url: "https://localhost:7153/departments/employee/remove",
+                    type: "Delete",
+                    headers: { "Authorization": token },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ departmentId: departmentId, employeeId: employeeId }),
+                    success: function (data) {
+                        console.log(data);
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+                        row.remove();
+                    }
+                })
+
+            })
+        }
 
         function addOption(data) {
             let $customSelectList = $(".custom-select-options");
@@ -412,34 +458,47 @@
                 let selectedText = $(this).text();
                 $("#custom-select-input").val(selectedText);
 
-                // Append the details to the card without removing existing content
                 $("#employeeFullName").text(data.fullName);
                 $("#employeeDetails").html(
                     "<p><strong>ID:</strong> " + data.id + "</p>" +
                     "<p><strong>Name:</strong> " + data.fullName + "</p>" +
                     "<p><strong>Age:</strong> " + data.age + "</p>" +
                     "<p><strong>Account Created On:</strong> " + data.accountCreatedOn + "</p>" +
-                    "<button id='addDepartment"+ "value='"+data.id+">Add to department</button>"
-                );
+                    "<button id='addDepartment' value='" + data.id + "'>Add to department</button>"
 
-                // Remove existing classes and add new ones
-                $card.removeClass("old-class").addClass("new-class");
+                );
             });
 
             $customSelectList.append($li);
         }
 
-        function AddToDepartment(){
-            $("#addDepartment").click(function(e){
+        function AddToDepartment() {
+            $("#employeeForm").submit(function (e) {
                 e.preventDefault();
 
-                .$ajax({
-                    url:"",
-                    type:"post",
-                    headers:{"Authorization":token},
-                    contentType: 'application/json',
-                    success:function(data){
+                let employeeId = $("#addDepartment").val();
+                console.log(employeeId);
+                console.log(departmentId);
 
+                $.ajax({
+                    url: "https://localhost:7153/departments/employee/add",
+                    type: "POST",
+                    headers: { "Authorization": token },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ EmployeeId: employeeId, DepartmentId: departmentId }),
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
                     }
                 })
             })
@@ -447,7 +506,7 @@
 
         function SearchUsername(searchName) {
             var $customSelectList = $(".custom-select-options");
-            $customSelectList.empty(); // Clear existing options
+            $customSelectList.empty();
 
             $.ajax({
                 url: "https://localhost:7153/employees/search?name=" + searchName,
@@ -521,15 +580,10 @@
                     positionDropdown += '</select>';
 
                     positionCell.html(positionDropdown);
-
                     var seniorityDropdown = '<select>';
-                    seniorityDropdown += '</select>';
-
-                    seniorityCell.html(seniorityDropdown);
 
                     positionCell.find('select').change(function () {
                         var selectedValue = $(this).val();
-                        console.log("trigger");
 
                         $.ajax({
                             url: 'https://localhost:7153/departments/seniorities/' + selectedValue,
@@ -537,7 +591,16 @@
                             headers: { "Authorization": token },
                             contentType: 'application/json',
                             success: function (data) {
-                                console.log(data);
+                                var updatedSeniorityDropdown = '<select>';
+                                for (let i = 0; i < data.length; i++) {
+                                    var option = '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                                    if (data[i].name === currentSeniority) {
+                                        option = option.replace('value="', 'value="' + currentSeniority + '" selected="selected"');
+                                    }
+                                    updatedSeniorityDropdown += option;
+                                }
+                                updatedSeniorityDropdown += '</select>';
+                                seniorityCell.html(updatedSeniorityDropdown);
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
                                 // Handle errors here
@@ -545,16 +608,56 @@
                         });
                     });
 
+                    seniorityDropdown += '</select>';
+                    seniorityCell.html(seniorityDropdown);
+
+
 
                 } else if ($(this).text() === "Save") {
                     $(this).text("Edit");
 
                     let selectedPositionId = positionCell.find("select").val();
                     let selectedPositionName = positionCell.find("select option:selected").text();
-                    let selectedSeniority = seniorityCell.find("select").val();
+                    let selectedSeniorityId = seniorityCell.find("select").val();
+                    let selectedSeniorityName = seniorityCell.find("select option:selected").text();
+                    let employeeId = row.find("td:eq(7) button").attr('value');
 
                     positionCell.text(selectedPositionName);
-                    seniorityCell.text(selectedSeniority);
+                    seniorityCell.text(selectedSeniorityName);
+
+                    console.log(selectedPositionId);
+                    console.log(selectedSeniorityId);
+                    console.log(employeeId);
+
+                    var model = {
+                        employeeId: employeeId,
+                        positionId: selectedPositionId,
+                        seniorityId: selectedSeniorityId
+                    }
+
+                    console.log(model);
+
+                    $.ajax({
+                        url: "https://localhost:7153/employees/position/seniority",
+                        type: "PUT",
+                        headers: { "Authorization": token },
+                        contentType: 'application/json',
+                        data: JSON.stringify(model),
+                        success: function (data) {
+                            Toastify({
+                                text: data,
+                                duration: 3000,
+                                newWindow: true,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
+                                stopOnFocus: true,
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                                },
+                            }).showToast();
+                        }
+                    });
                 }
             });
 
@@ -665,7 +768,7 @@
             });
 
             $("#custom-select-input").on("input", function () {
-                var searchTerm = $(this).val().toLowerCase();
+                let searchTerm = $(this).val().toLowerCase();
                 $(".custom-select-options li").each(function () {
                     if ($(this).text().toLowerCase().indexOf(searchTerm) > -1) {
                         $(this).show();
@@ -676,14 +779,16 @@
             });
 
             $(".custom-select-options li").on("click", function () {
-                var selectedValue = $(this).data("value");
-                var selectedText = $(this).text();
+                let selectedValue = $(this).data("value");
+                let selectedText = $(this).text();
                 $("#custom-select-input").val(selectedText);
                 $(".custom-select-options").hide();
             });
         }
 
         $(document).ready(function () {
+            KickEmployee();
+            AddToDepartment();
             AsyncSearch();
             SearchUsername();
             SelectChangeValues();
@@ -694,4 +799,4 @@
         });
     </script>
 
-}
+    }

@@ -1,8 +1,6 @@
 ﻿namespace HCM.Data.Models
 {
-    using System.Collections.Generic;
-
-    public partial class Department
+    public class Department
     {
         public Department()
         {

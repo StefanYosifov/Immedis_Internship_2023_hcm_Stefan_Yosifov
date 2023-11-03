@@ -2,10 +2,8 @@
 {
     public class DepartmentAddEmployee
     {
-
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; } = null!;
 
         public int DepartmentId { get; set; }
-
     }
 }

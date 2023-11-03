@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace HCM.Data
+﻿namespace HCM.Data
 {
-    using History_and_Audit;
-    using Microsoft.EntityFrameworkCore.ChangeTracking;
-    using Models;
     using System.Security.Claims;
     using System.Text;
-    using Task = Models.Task;
+
+    using History_and_Audit;
+
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+    using Models;
 
     public partial class ApplicationDbContext : DbContext
     {
@@ -39,6 +40,13 @@ namespace HCM.Data
         public virtual DbSet<Status> Statuses { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
 
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+        {
+            AuditSave();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -57,7 +65,6 @@ namespace HCM.Data
                     k.EmployeeId
                 });
             });
-
 
             modelBuilder.Entity<AuditLog>(entity =>
             {
@@ -430,13 +437,6 @@ namespace HCM.Data
             OnModelCreatingPartial(modelBuilder);
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default)
-        {
-            AuditSave();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
         private void AuditSave()
@@ -444,12 +444,11 @@ namespace HCM.Data
             var currentTime = DateTime.UtcNow;
             var userName = ClaimTypes.Name;
 
-
             var modifiedEntities = ChangeTracker
                 .Entries()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted)
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted)
                 .ToArray();
-
 
             foreach (var modifiedEntity in modifiedEntities)
             {
@@ -463,8 +462,7 @@ namespace HCM.Data
 
                 var id = modifiedEntity.OriginalValues.Properties[0];
 
-
-                this.AuditLogs.Add(auditLog);
+                AuditLogs.Add(auditLog);
 
                 if (modifiedEntity.Entity is IEntity entity)
                 {
@@ -494,6 +492,7 @@ namespace HCM.Data
                     changes.AppendLine($"{property.Name}: From '{originalValue}' to '{currentValue}'");
                 }
             }
+
             return changes.ToString();
         }
     }

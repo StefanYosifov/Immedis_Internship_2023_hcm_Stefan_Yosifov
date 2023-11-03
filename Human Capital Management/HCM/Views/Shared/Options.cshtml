@@ -1,6 +1,7 @@
-﻿
-<form id="myForm">
-    <label for="d"><b>Departments</b></label>
+﻿<form id="myForm">
+    <label for="d">
+        <b>Departments</b>
+    </label>
     <select class="form-control" id="d" name="d"></select>
 </form>
 
@@ -33,12 +34,12 @@
 </div>
 
 @section Scripts
-    {
+{
     <script>
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "@Url.Action("Options","Employee")",
+                url: "@Url.Action("Options", "Employee")",
                 data: "{}",
                 success: function (data) {
                     var s = '<option value="-1">Please Select a Department</option>';

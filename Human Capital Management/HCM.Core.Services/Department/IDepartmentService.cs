@@ -27,5 +27,7 @@
         Task<string> RemovePositionFromDepartmentById(DepartmentRemovePosition model);
 
         Task<string> AddEmployeeToDepartmentById(DepartmentAddEmployee model);
+
+        Task<string> RemoveEmployeeFromDepartmentById(DepartmentRemoveEmployee model);
     }
 }

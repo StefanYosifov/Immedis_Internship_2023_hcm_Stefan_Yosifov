@@ -1,18 +1,20 @@
 ﻿// ReSharper disable InconsistentNaming
+
 namespace HCM.Controllers.Employee
 {
-    using Common.Requests;
-
-    using Microsoft.AspNetCore.Mvc;
-    using Models.ViewModels.Employees;
-    using RestSharp;
     using System.Security.Claims;
 
     using Common.Helpers;
+    using Common.Requests;
+
+    using Microsoft.AspNetCore.Mvc;
+
+    using Models.ViewModels.Employees;
+
+    using RestSharp;
 
     public class EmployeeController : BaseController
     {
-
         [HttpGet]
         public async Task<IActionResult> All(int id, [FromQuery] EmployeeQueryTableFilters query)
         {
@@ -21,12 +23,12 @@ namespace HCM.Controllers.Employee
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authentication", $"Bearer {Request.Headers["Authentication"]}");
 
-            string? DepartmentId = query.DepartmentId.ToString();
-            string? SearchEmployeeName = query.SearchEmployeeName;
-            string? GenderId = query.GenderId.ToString();
-            string? PositionId = query.PositionId.ToString();
-            string? SeniorityId = query.SeniorityId.ToString();
-            string? Sort = query.Sort.ToString();
+            var DepartmentId = query.DepartmentId.ToString();
+            var SearchEmployeeName = query.SearchEmployeeName;
+            var GenderId = query.GenderId.ToString();
+            var PositionId = query.PositionId.ToString();
+            var SeniorityId = query.SeniorityId.ToString();
+            var Sort = query.Sort.ToString();
 
             request.AddQueryParameter(nameof(SearchEmployeeName), SearchEmployeeName);
             request.AddQueryParameter(nameof(GenderId), GenderId);
@@ -35,8 +37,7 @@ namespace HCM.Controllers.Employee
             request.AddQueryParameter(nameof(SeniorityId), SeniorityId);
             request.AddQueryParameter(nameof(Sort), Sort);
 
-
-            var response = await client.ExecuteAsync<EmployeeTableModel>(request);
+            var response = await client.ExecuteGetAsync<EmployeeTableModel>(request);
 
             if (response.IsSuccessful)
             {
@@ -50,10 +51,12 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> Options()
         {
-            var request = new RestRequest($"/api/employees/options");
-            request.AddHeader("Accept", "application/json");
+            var request = new RestRequestBuilder("/api/employees/options", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
 
-            var response = await client.ExecuteAsync<EmployeeTableFilterOptions>(request);
+            var response = await client.ExecuteGetAsync<EmployeeTableFilterOptions>(request);
 
             if (response.IsSuccessful)
             {
@@ -67,8 +70,10 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var request = new RestRequest("/api/employees/getCreate");
-            request.AddHeader("Accept", "application/json");
+            var request = new RestRequestBuilder("/api/employees/getCreate", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
 
             var response = await client.ExecuteGetAsync<EmployeeCreateRequestModel>(request);
 
@@ -84,13 +89,15 @@ namespace HCM.Controllers.Employee
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeCreateResponseModel requestModel)
         {
-            var request = new RestRequest("/api/employees/postCreate", Method.Post);
-            request.AddHeader("Accept", "application/json");
-            request.AddBody(requestModel);
+            var request = new RestRequestBuilder("/api/employees/postCreate", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(requestModel)
+                .AddAuthentication()
+                .Build();
 
-            var response = await client.ExecuteAsync<bool>(request);
+            var response = await client.ExecutePostAsync<bool>(request);
 
-            if (response.Data == true)
+            if (response.Data)
             {
                 return RedirectToAction("All");
             }
@@ -104,7 +111,7 @@ namespace HCM.Controllers.Employee
             var getFileExtension = Path.GetExtension(file.FileName);
             var convertIntoByteArr = await FileHelper.ReadAsByteArrAsync(file);
 
-            EmployeeFileInternalDTO fileToSend = new EmployeeFileInternalDTO()
+            var fileToSend = new EmployeeFileInternalDTO
             {
                 File = convertIntoByteArr,
                 Extension = getFileExtension
@@ -116,7 +123,7 @@ namespace HCM.Controllers.Employee
             }
 
             var request = new RestRequestBuilder("/api/employees/postCreateFile",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Post)
                 .AddAuthentication()
                 .AddBody(fileToSend)
@@ -126,7 +133,7 @@ namespace HCM.Controllers.Employee
 
             if (response.IsSuccessful)
             {
-                return Created("",response.Content);
+                return Created("", response.Content);
             }
 
             return BadRequest(response.Data);
@@ -135,7 +142,6 @@ namespace HCM.Controllers.Employee
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
-            
             var request = new RestRequestBuilder($"/api/employees/edit/{id}",
                     HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
                 .SetMethod(Method.Get)
@@ -152,12 +158,11 @@ namespace HCM.Controllers.Employee
             return RedirectToAction("All", "Employee");
         }
 
-
         [HttpPut("employees/edit/{employeeId}")]
         public async Task<IActionResult> Edit(string employeeId, EmployeeSendEditModel model)
         {
             var request = new RestRequestBuilder($"/employees/edit/{employeeId}",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Put)
                 .AddAuthentication()
                 .AddBody(model)
@@ -170,7 +175,6 @@ namespace HCM.Controllers.Employee
             }
 
             return BadRequest();
-
         }
 
         [HttpGet("employees/search")]
@@ -186,7 +190,7 @@ namespace HCM.Controllers.Employee
                 .AddAuthentication()
                 .Build();
 
-            var response=await client.ExecuteGetAsync<ICollection<EmployeeSearchModel>>(request);
+            var response = await client.ExecuteGetAsync<ICollection<EmployeeSearchModel>>(request);
 
             if (response.IsSuccessful)
             {
@@ -194,6 +198,24 @@ namespace HCM.Controllers.Employee
             }
 
             return NotFound();
+        }
+
+        [HttpPut("employees/position/seniority")]
+        public async Task<IActionResult> EditEmployeesPositionAndSeniority(EmployeeEditPositionAndSeniority model)
+        {
+            var request = new RestRequestBuilder("/api/employees/edit/positionSeniority", GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddBody(model)
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
         }
     }
 }

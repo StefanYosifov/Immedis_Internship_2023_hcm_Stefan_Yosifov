@@ -1,47 +1,131 @@
 ﻿@model HCM.Models.ViewModels.Identity.LoginViewModel
 
 <div class="container w-50">
-    <div class="m-xxl-5 justify-content-sm-center align-items-center shadow-lg w-75">
-        <div class="row card border p-5 align-items-center ">
-            <h5 class="align-content-center">Login</h5>
-            <form id="loginForm" class="py-2">
-                <div class="">
-                    <label asp-for="LoginParameter" class="form-label">Email or Username:</label>
-                    <div class="row"></div>
-                    <input asp-for="LoginParameter" type="text" id="Username" class="w-100 rounded form-text form-control-lg" />
-                </div>
-                <div class="mt-2">
-                    <label asp-for="Password" class="form-label">Password:</label>
-                    <div class="row"></div>
-                    <input asp-for="Password" type="password" id="Password" class="w-100 rounded form-text form-control-lg" />
-                </div>
-                <div class="mt-4">
-                    <button type="button" id="loginButton" class="w-100 rounded form-control-lg text-light form-text" style="background-color:#ef5b25">Login</button>
-                </div>
-            </form>
-        </div>
+    <div>
+        <form id="loginForm" class="form py-2">
+            <p class="form-title">Sign in to your account</p>
+            <div class="input-container">
+                <input asp-for="LoginParameter" type="text" id="Username" placeholder="Enter email" type="email">
+                <span>
+                    <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+                    </svg>
+                </span>
+            </div>
+            <div class="input-container">
+                <input asp-for="Password" type="password" id="Password" placeholder="Enter password" type="password">
+                <span>
+                    <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+                    </svg>
+                </span>
+            </div>
+            <button id="loginButton" class="submit" type="submit">
+                Sign in
+            </button>
+        </form>
     </div>
+
 </div>
 
+<style>
+    .form {
+        background-color: #f8f9fc;
+        display: block;
+        padding: 1rem;
+        max-width: 350px;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-title {
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+        font-weight: 600;
+        text-align: center;
+        color: #000;
+    }
+
+    .input-container {
+        position: relative;
+    }
+
+        .input-container input, .form button {
+            outline: none;
+            border: 1px solid #f8f9fc;
+            margin: 8px 0;
+        }
+
+        .input-container input {
+            background-color: #fff;
+            padding: 1rem;
+            padding-right: 3rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            width: 300px;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .input-container span {
+            display: grid;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            place-content: center;
+        }
+
+            .input-container span svg {
+                color: #9CA3AF;
+                width: 1rem;
+                height: 1rem;
+            }
+
+    .submit {
+        display: block;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        background-color: #4e73df;
+        color: #f8f9fc;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 500;
+        width: 100%;
+        border-radius: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .signup-link {
+        color: #4e73df;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        text-align: center;
+    }
+
+        .signup-link a {
+            text-decoration: underline;
+        }
+</style>
+
 <script>
-    document.getElementById("loginButton").addEventListener("click", function() {
-        // Get the form data
+    document.getElementById("loginButton").addEventListener("click", function () {
         var formData = {
             LoginParameter: document.getElementById("Username").value,
             Password: document.getElementById("Password").value
         };
 
-        // Send an AJAX post request
         $.ajax({
             type: "POST",
             url: "https://localhost:7039/identity/SignIn",
             data: formData,
             success: function (data) {
-                console.log(data);
-                alert(data);
                 localStorage.setItem('Authorization', data);
-
-                // Include the JWT token in the Authorization header
                 $.ajaxSetup({
                     headers: {
                         'Authorization': 'Bearer ' + data
