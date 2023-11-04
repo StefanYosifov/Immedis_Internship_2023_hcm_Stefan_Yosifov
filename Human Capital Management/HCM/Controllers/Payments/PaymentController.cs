@@ -1,13 +1,12 @@
 ﻿namespace HCM.Controllers.Payments
 {
     using Common.Requests;
-
     using Microsoft.AspNetCore.Mvc;
-
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
-
     using RestSharp;
+    using System.Globalization;
+    using System.Net;
 
     public class PaymentController : BaseController
     {
@@ -125,6 +124,11 @@
         public async Task<IActionResult> GetMonthlySalaryAdditionsByMonth(
             [FromQuery] TableBonusDeductionSearchModel model)
         {
+            if (string.IsNullOrEmpty(model.MonthYearOfSearch))
+            {
+                model.MonthYearOfSearch = DateTime.UtcNow.ToString("dd/mm/yyyy").Replace('.', '-');
+            }
+
             var request = new RestRequestBuilder("/api/payments/monthly/additions", GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddQueryParameter(model)
@@ -132,6 +136,69 @@
                 .Build();
 
             var response = await client.ExecuteGetAsync<MonthlyBonusDeductionTableModel>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpPut("payments/salary/change")]
+        public async Task<IActionResult> ChangeSalary([FromBody] SalaryChangeRequestModel model)
+        {
+            var request = new RestRequestBuilder("/api/payments/salary/change", GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddQueryParameter(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(response.Data);
+            }
+
+            return BadRequest(response.Data);
+
+        }
+
+        [HttpPost("payments/bonus/add")]
+        public async Task<IActionResult> AddBonus([FromBody] BonusAddModel model)
+        {
+            var request = new RestRequestBuilder("/api/payments/bonus/add", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpPost("payments/deduction/add")]
+        public async Task<IActionResult> AddDeduction([FromBody] DeductionAddModel model)
+        {
+            var request = new RestRequestBuilder("/api/payments/deduction/add", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
 
             if (response.IsSuccessful)
             {

@@ -1,5 +1,7 @@
 ﻿namespace HCM.Core.Services.Payments
 {
+    using System.Globalization;
+
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
 
@@ -9,6 +11,7 @@
     using Common.Helpers;
 
     using Data;
+    using Data.Models;
 
     using Details;
 
@@ -195,7 +198,15 @@
         public async Task<MonthlyBonusDeductionTableModel> GetMonthlySalaryAdditionsByMonth(
             TableBonusDeductionSearchModel model)
         {
-            var doesEmployeeExist = await context.Employees.AnyAsync(e => e.Id == model.EmployeeId);
+            var doesEmployeeExist = await DoesEmployeeExist(model.EmployeeId);
+
+            DateTime? date = DateTime.ParseExact(model.MonthYearOfSearch, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+
+            if (date == null)
+            {
+                date = DateTime.UtcNow;
+            }
 
             if (doesEmployeeExist == false)
             {
@@ -204,16 +215,132 @@
 
             return new MonthlyBonusDeductionTableModel
             {
-                Bonuses = await GetBonusesForTheMonth(model),
-                Deductions = await GetDeductionForTheMonth(model)
+                Bonuses = await GetBonusesForTheMonth(model, date),
+                Deductions = await GetDeductionForTheMonth(model, date)
             };
         }
 
-        private async Task<ICollection<MonthlyBonusTableModel>> GetBonusesForTheMonth(
-            TableBonusDeductionSearchModel model)
+        public async Task<string> ChangeEmployeeSalary(SalaryChangeRequestModel model)
         {
+            var doesEmployeeExist = await DoesEmployeeExist(model.EmployeeId);
+
+            if (doesEmployeeExist == false)
+            {
+                throw new PaymentServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            var findSalary = await context.Salaries.FindAsync(model.EmployeeId);
+
+            if (findSalary == null)
+            {
+                var salary = new Salary
+                {
+                    EmployeeId = model.EmployeeId,
+                    EffectiveDate = DateTime.UtcNow,
+                    SalaryAmount = model.SalaryAmount
+                };
+
+                await context.Salaries.AddAsync(salary);
+                await context.SaveChangesAsync();
+                return PaymentMessages.SuccessfullyChangedSalary;
+            }
+
+            context.Entry(findSalary).CurrentValues.SetValues(model);
+            findSalary.EffectiveDate = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+            return PaymentMessages.SuccessfullyChangedSalary;
+        }
+
+        public async Task<string> AddBonus(BonusAddModel model)
+        {
+            var doesEmployeeExist = await DoesEmployeeExist(model.EmployeeId);
+
+            if (doesEmployeeExist == false)
+            {
+                throw new PaymentServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            if (model.Amount < 1)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.BonusOrDeductionCannotBeBelowOne);
+            }
+
+            var doesReasonExists = await context.BonusesReasons
+                .Select(br => br.Id)
+                .AnyAsync(x => x == model.ReasonId);
+
+            if (doesReasonExists == false)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.ReasonNotFound);
+            }
+
+            Bonuse bonus = new Bonuse()
+            {
+                Amount = model.Amount,
+                ReasonId = model.ReasonId,
+                EmployeeId = model.EmployeeId
+            };
+
+            await context.Bonuses.AddAsync(bonus);
+            await context.SaveChangesAsync();
+
+            return PaymentMessages.SuccessfullyAddedBonus;
+        }
+
+        public async Task<string> AddDeduction(DeductionAddModel model)
+        {
+            var doesEmployeeExist = await DoesEmployeeExist(model.EmployeeId);
+
+            if (doesEmployeeExist == false)
+            {
+                throw new PaymentServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            if (model.Amount < 1)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.BonusOrDeductionCannotBeBelowOne);
+            }
+
+            var doesReasonExists = await context.DeductionReasons
+                .Select(br => br.Id)
+                .AnyAsync(x => x == model.ReasonId);
+
+            if (doesReasonExists == false)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.ReasonNotFound);
+            }
+
+            var deduction = new Deduction()
+            {
+                EmployeeId = model.EmployeeId,
+                Amount = model.Amount,
+                ReasonId = model.ReasonId,
+            };
+
+            await context.Deductions.AddAsync(deduction);
+            await context.SaveChangesAsync();
+
+            return PaymentMessages.SuccessfullyAddedDeduction;
+        }
+
+        private async Task<bool> DoesEmployeeExist(string id)
+        {
+            var doesEmployeeExist = await context.Employees
+                .Select(e=>e.Id)
+                .AnyAsync(x => x == id);
+
+            return doesEmployeeExist;
+        }
+
+        private async Task<ICollection<MonthlyBonusTableModel>> GetBonusesForTheMonth(
+            TableBonusDeductionSearchModel model, DateTime? date)
+        {
+            var bonuses = await context.Bonuses.ToArrayAsync();
+
             return await context.Bonuses
-                .Where(b => b.EmployeeId == model.EmployeeId)
+                .Where(b => b.EmployeeId == model.EmployeeId &&
+                            b.CreatedOn.Value.Year == date!.Value.Year
+                            && b.CreatedOn.Value.Month == date.Value.Month)
                 .Select(b => new MonthlyBonusTableModel
                 {
                     BonusId = b.Id,
@@ -227,10 +354,12 @@
         }
 
         private async Task<ICollection<MonthlyDeductionTableModel>> GetDeductionForTheMonth(
-            TableBonusDeductionSearchModel model)
+            TableBonusDeductionSearchModel model, DateTime? date)
         {
             return await context.Deductions
-                .Where(d => d.EmployeeId == model.EmployeeId)
+                .Where(d => d.EmployeeId == model.EmployeeId &&
+                            d.CreatedOn.Value.Year == date!.Value.Year
+                            && d.CreatedOn.Value.Month == date.Value.Month)
                 .Select(b => new MonthlyDeductionTableModel
                 {
                     DeductionId = b.Id,

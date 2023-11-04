@@ -7,18 +7,23 @@
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.ChangeTracking;
+    using Microsoft.Extensions.Configuration;
 
     using Models;
 
     public partial class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext()
+        private readonly IConfiguration configuration;
+
+        public ApplicationDbContext(IConfiguration configuration)
         {
+            this.configuration = configuration;
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
             : base(options)
         {
+            this.configuration = configuration;
         }
 
         public virtual DbSet<AuditLog> AuditLogs { get; set; } = null!;
@@ -51,7 +56,7 @@
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HCM;Integrated Security=true");
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             }
         }
 
@@ -446,7 +451,8 @@
 
             var modifiedEntities = ChangeTracker
                 .Entries()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified ||
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
                             e.State == EntityState.Deleted)
                 .ToArray();
 
@@ -475,6 +481,14 @@
                     {
                         entity.ModifiedOn = currentTime;
                         entity.ModifiedBy = userName!;
+                    }
+                }
+                else if (modifiedEntity.Entity is ICreationEntity creationEntity)
+                {
+                    if (modifiedEntity.State == EntityState.Added)
+                    {
+                        creationEntity.CreatedOn = currentTime;
+                        creationEntity.CreatedBy = userName;
                     }
                 }
             }

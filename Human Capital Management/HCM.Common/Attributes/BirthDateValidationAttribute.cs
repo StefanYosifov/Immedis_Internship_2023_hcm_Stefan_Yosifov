@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 using Constants;
 
+using Helpers;
+
 public class BirthDateValidationAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -12,7 +14,7 @@ public class BirthDateValidationAttribute : ValidationAttribute
         {
             var birthdate = Convert.ToDateTime(value);
 
-            var age = DateTime.Today.Year - birthdate.Year;
+            var age = DateCalculator.CalculateAge(birthdate);
 
             if (age < ValidationConstants.EmployeeConstants.MinEmployeeAge)
             {

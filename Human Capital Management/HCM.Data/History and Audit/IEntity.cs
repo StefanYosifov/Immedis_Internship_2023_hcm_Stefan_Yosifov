@@ -1,6 +1,6 @@
 ﻿namespace HCM.Data.History_and_Audit
 {
-    internal interface IEntity
+    internal interface IEntity  : ICreationEntity
     {
         public DateTime? CreatedOn { get; set; }
         public string? CreatedBy { get; set; }

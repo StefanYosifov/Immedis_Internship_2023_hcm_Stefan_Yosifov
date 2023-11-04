@@ -4,263 +4,264 @@
     ViewData["Title"] = "Department Details";
 }
 
-<div class="container">
-<h1>Department Details</h1>
-<div class="row">
-    <div class="card">
-        <div class="card-header d-flex align-items-center border-bottom">
-            <span class="avatar text-bg-primary avatar-lg fs-5">
-                @if (Model.DepartmentName.Length > 3)
-                {
-                    @Model.DepartmentName.Substring(0, 3)
-                }
-                else
-                {
-                    @Model.DepartmentName
-                }
-            </span>
-            <div class="ms-3">
-                <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
-                <span class="text-muted fs-sm">@Model.CountryName</span>
-            </div>
-            <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
-                <i class="fas fa-ellipsis-v"></i>
-            </button>
-        </div>
-        <div class="card-body">
-            <h6>
-                <small>Id : </small>@Model.DepartmentId
-            </h6>
-            <h6>
-                <small>Average salary : </small>@Model.AverageSalary
-            </h6>
-            <h6>
-                <small>Employee count : </small>@Model.EmployeesCount
-            </h6>
-            <h6>
-                <small>Total positions : </small>@Model.EmployeeCapacity
-            </h6>
-            <h6></h6>
+<div>
+    <div class="card d-flex justify-content-center align-items-center my-5">
+    <h5 class="card-header-pills">Department Details</h5>
+        <div class="card-body w-auto">
+            <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
         </div>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="row">
+        <div class="card">
+            <div class="card-header d-flex align-items-center border-bottom">
+                <span class="avatar text-bg-primary avatar-lg fs-5">
+                    @if (Model.DepartmentName.Length > 3)
+                    {
+                        @Model.DepartmentName.Substring(0, 3)
+                    }
+                    else
+                    {
+                        @Model.DepartmentName
+                    }
+                </span>
+                <div class="ms-3">
+                    <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
+                    <span class="text-muted fs-sm">@Model.CountryName</span>
+                </div>
+                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-2">
+                    <small><strong>ID:</strong> @Model.DepartmentId</small>
+                </h6>
+                <h6 class="mb-2">
+                    <small><strong>Average Salary:</strong> @Model.AverageSalary</small>
+                </h6>
+                <h6 class="mb-2">
+                    <small><strong>Employee Count:</strong> @Model.EmployeesCount</small>
+                </h6>
+                <h6 class="mb-2">
+                    <small><strong>Total Positions:</strong> @Model.EmployeeCapacity</small>
+                </h6>
+            </div>
+
+        </div>
+
+        <div class="row">
         <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
-            <div role="document" class="class=modal-dialog modal-lg">
+            <div role="document" class="modal-dialog modal-dialog-centered modal-lg ms-lg-5">
                 <div class="modal-content">
-                    <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
-                        <div class="tabs" id="tab01">
-                            <h6 class="text-muted">Positions</h6>
+                        <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
+                            <div class="tabs" id="tab01">
+                                <h6 class="text-muted">Positions</h6>
+                            </div>
+                            <div class="tabs active" id="tab02">
+                                <h6 class="font-weight-bold">Knowledge Center</h6>
+                            </div>
+                            <div class="tabs" id="tab03">
+                                <h6 class="text-muted">Add Employees</h6>
+                            </div>
+                            <div class="tabs" id="tab04">
+                                <h6 class="text-muted">Edit</h6>
+                            </div>
                         </div>
-                        <div class="tabs active" id="tab02">
-                            <h6 class="font-weight-bold">Knowledge Center</h6>
-                        </div>
-                        <div class="tabs" id="tab03">
-                            <h6 class="text-muted">Add Employees</h6>
-                        </div>
-                        <div class="tabs" id="tab04">
-                            <h6 class="text-muted">Edit</h6>
-                        </div>
-                    </div>
-                    <div class="line"></div>
-                    <div class="modal-body p-0">
-                        <fieldset id="tab011">
-                            <div class="bg-light px-3">
-                                <h5 class="text-center mb-4 mt-0 pt-4">My Apps</h5>
-                                <ol class="list-group list-group-numbered">
-                                    @foreach (var position in Model.PositionsInDepartment)
+                        <div class="line"></div>
+                        <div class="modal-body p-0">
+                            <fieldset id="tab011">
+                                <div class="bg-light px-3">
+                                    <h5 class="text-center mb-4 mt-0 pt-4">My Apps</h5>
+                                    <ol class="list-group list-group-numbered">
+                                        @foreach (var position in Model.PositionsInDepartment)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div>@position.PositionName</div>
+                                                    <p class="mb-0 fs-6 text-muted">
+                                                        <strong>Id: </strong>
+                                                        <span>@position.PositionId</span>
+                                                        <i class="fa-solid fa-trash me-3" style="position: absolute; right: 0; cursor: pointer;"></i>
+                                                    </p>
+                                                </div>
+                                                <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
+                                            </li>
+                                        }
+                                    </ol>
+                                </div>
+                                <div class="px-3">
+                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-android"></span> Available positions to add to the department</h6>
+                                    @foreach (var position in Model.AvailablePositionsCollection)
                                     {
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div>@position.PositionName</div>
-                                                <p class="mb-0 fs-6 text-muted">
-                                                    <strong>Id: </strong>
-                                                    <span>@position.PositionId</span>
-                                                    <i class="fa-solid fa-trash me-3" style="position: absolute; right: 0; cursor: pointer;"></i>
-                                                </p>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <h6 class="text-primary pb-2">
+                                                    <a href="">@position.Name</a> <span class="text-secondary">- Available for @Model.DepartmentName</span>
+                                                </h6>
                                             </div>
-                                            <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
-                                        </li>
+                                            <div class="col-md-2">
+                                                <h6 class="text-primary pb-2">
+                                                    <a class="add-icon" data-position-id="@position.Id" href="#">
+                                                        <i class="fa-solid fa-plus pointer-event"></i>
+                                                    </a>
+                                                </h6>
+                                            </div>
+                                        </div>
                                     }
-                                </ol>
-                            </div>
-                            <div class="px-3">
-                                <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-android"></span> Suggested Apps</h6>
-                                @foreach (var position in Model.AvailablePositionsCollection)
-                                {
-                                    <div class="row">
-                                        <div class="col-md-10">
-                                            <h6 class="text-primary pb-2">
-                                                <a href="">@position.Name</a> <span class="text-secondary">- Available for @Model.DepartmentName</span>
-                                            </h6>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <h6 class="text-primary pb-2">
-                                                <a class="add-icon" data-position-id="@position.Id" href="#">
-                                                    <i class="fa-solid fa-plus pointer-event"></i>
-                                                </a>
-                                            </h6>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </fieldset>
-                        <fieldset class="show" id="tab021">
-                            <div class="bg-light">
-                                <h5 class="text-center mb-4 mt-0 pt-4">Knowledge Center</h5>
-                                <form>
-                                    <div class="form-group pb-5 px-3">
-                                        <select name="account" class="form-control">
-                                            <option selected disabled>Select Product</option>
-                                            <option>Product 1</option>
-                                            <option>Product 2</option>
-                                            <option>Product 3</option>
-                                            <option>Product 4</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                        </fieldset>
-                        <fieldset id="tab031">
-                            <div class="bg-light align-content-center">
-                                <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
-                                <div class="d-flex justify-content-center">
-                                    <form id="employeeForm">
-                                        <div class="custom-select">
-                                            <input type="text" id="custom-select-input" placeholder="Select an option">
-                                            <ul class="custom-select-options">
-                                            </ul>
-                                        </div>
-                                        <div class="card shadow mb-4 mt-5">
-                                            <div class="card-header py-3">
-                                                <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <p id="employeeDetails"></p>
-                                            </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="show" id="tab021">
+                                <div class="bg-light">
+                                    <h5 class="text-center mb-4 mt-0 pt-4">Knowledge Center</h5>
+                                    <form>
+                                        <div class="form-group pb-5 px-3">
+                                            <select name="account" class="form-control">
+                                                <option selected disabled>Select Product</option>
+                                                <option>Product 1</option>
+                                                <option>Product 2</option>
+                                                <option>Product 3</option>
+                                                <option>Product 4</option>
+                                            </select>
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </fieldset>
-                        <fieldset id="tab041">
-                            <div class="bg-light">
-                                <h5 class="text-center mb-4 mt-0 pt-4">Education</h5>
-                                <form id="detailsEdit">
-                                    <div class="form-group">
-                                        <div class="property">
-                                            <label for="Name">Department Name</label>
-                                            <input value="@Model.DepartmentName" type="text" name="Name" class="form-control"/>
-                                        </div>
+                            </fieldset>
+                            <fieldset id="tab031">
+                                <div class="bg-light align-content-center">
+                                    <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
+                                    <div class="d-flex justify-content-center">
+                                        <form id="employeeForm">
+                                            <div class="custom-select">
+                                                <input type="text" id="custom-select-input" placeholder="Select an option">
+                                                <ul class="custom-select-options">
+                                                </ul>
+                                            </div>
+                                            <div class="card shadow mb-4 mt-5">
+                                                <div class="card-header py-3">
+                                                    <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p id="employeeDetails"></p>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="property">
-                                            <label for="MaxPeopleCount">Employee Capacity</label>
-                                            <input value="@Model.EmployeeCapacity" type="number" name="MaxPeopleCount" class="form-control"/>
+                                </div>
+                            </fieldset>
+                            <fieldset id="tab041">
+                                <div class="bg-light">
+                                    <h5 class="text-center mb-4 mt-0 pt-4">Details</h5>
+                                    <form id="detailsEdit" class="m-5 p-5">
+                                        <div class="form-group">
+                                            <div class="property">
+                                                <label for="Name">Department Name</label>
+                                                <input value="@Model.DepartmentName" type="text" name="Name" class="form-control" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="property">
-                                            <label for="ImageURL">Department Image URL</label>
-                                            <input value="@Model.DepartmentImageUrl" type="text" name="ImageURL" class="form-control"/>
+
+                                        <div class="form-group">
+                                            <div class="property">
+                                                <label for="MaxPeopleCount">Employee Capacity</label>
+                                                <input value="@Model.EmployeeCapacity" type="number" name="MaxPeopleCount" class="form-control" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="property">
-                                            <label for="CountryId">Country Name</label>
-                                            <select name="CountryId">
-                                                @foreach (var country in Model.Countries)
-                                                {
-                                                    <option value="@country.Id">@country.Name</option>
-                                                }
-                                            </select>
+
+                                        <div class="form-group">
+                                            <div class="property">
+                                                <label for="ImageURL">Department Image URL</label>
+                                                <input value="@Model.DepartmentImageUrl" type="text" name="ImageURL" class="form-control" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
+
+                                        <div class="form-group">
+                                            <div class="property">
+                                                <label for="CountryId">Country Name</label>
+                                                <select name="CountryId" class="form-control">
+                                                    @foreach (var country in Model.Countries)
+                                                    {
+                                                        <option value="@country.Id">@country.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
 
 
-                            </div>
-                            <div class="px-3">
-                                <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
-                                <h6 class="text-primary pb-2">
-                                    <a href="#">Augmented Reality and Virtual Reality</a>
-                                </h6>
-                                <h6 class="text-primary pb-2">
-                                    <a href="#">Angular and React</a>
-                                </h6>
-                                <h6 class="text-primary pb-2">
-                                    <a href="#">Big Data and Hadoop</a>
-                                </h6>
-                                <h6 class="text-primary pb-4">
-                                    <a href="#">Internet of Things (IoT)</a>
-                                </h6>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="line"></div>
-                    <div class="modal-footer d-flex flex-column justify-content-center border-0">
-                        <p class="text-muted">Can't find what you're looking for?</p>
-                        <button type="button" class="btn btn-primary">Contact Support Team</button>
+                                </div>
+                                <div class="px-3">
+                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Augmented Reality and Virtual Reality</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Angular and React</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-2">
+                                        <a href="#">Big Data and Hadoop</a>
+                                    </h6>
+                                    <h6 class="text-primary pb-4">
+                                        <a href="#">Internet of Things (IoT)</a>
+                                    </h6>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
+    <h2>Department Employees</h2>
+    <div class="card shadow mb-4 mt-5 me-5">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Age</th>
+                    <th>Nationality</th>
+                    <th>Gender</th>
+                    <th>Position</th>
+                    <th>Seniority</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model.DepartmentEmployees)
+                {
+                    <tr>
+                        <td>@employee.EmployeeFullName</td>
+                        <td>@employee.EmployeeAge</td>
+                        <td>@employee.EmployeeNationalityISO</td>
+                        <td>@employee.EmployeeGender</td>
+                        <td>@employee.EmployeePosition</td>
+                        <td>@employee.EmployeeSeniority</td>
+                        <td>
+                            <button class="btn-primary edit-button">Edit</button>
+                        </td>
+                        <td>
+                            <button class="btn-primary  delete-button" value="@employee.EmployeeId">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</div>
-
-<h2>Department Employees</h2>
-<div class="card shadow mb-4 mt-5 me-5">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-    </div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>Age</th>
-            <th>Nationality</th>
-            <th>Gender</th>
-            <th>Position</th>
-            <th>Seniority</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var employee in Model.DepartmentEmployees)
-        {
-            <tr>
-                <td>@employee.EmployeeFullName</td>
-                <td>@employee.EmployeeAge</td>
-                <td>@employee.EmployeeNationalityISO</td>
-                <td>@employee.EmployeeGender</td>
-                <td>@employee.EmployeePosition</td>
-                <td>@employee.EmployeeSeniority</td>
-                <td>
-                    <button class="bg-primary text-white edit-button">Edit</button>
-                </td>
-                <td>
-                    <button class="bg-primary text-white delete-button" value="@employee.EmployeeId">Delete</button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
 </div>
 
 <style>
 
     body {
-        color: #000;
+        color: #252525;
         overflow-x: hidden;
         height: 100%;
-        background-color: #D1C4E9;
+        background-color: #f8f9fc;
         background-repeat: no-repeat;
     }
 
@@ -269,28 +270,27 @@
         position: relative;
         display: inline-block;
         width: 200px;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         border-radius: 4px;
     }
 
     #custom-select-input {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         border-radius: 5px;
     }
 
     .custom-select-options {
         position: absolute;
         top: 100%;
-        left: 0;
         display: none;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         border-top: none;
         list-style: none;
         padding: 0;
         margin: 0;
-        background-color: #fff;
+        background-color: #f8f9fc;
         max-height: 150px;
         overflow-y: auto;
     }
@@ -298,19 +298,25 @@
         .custom-select-options li {
             padding: 10px;
             cursor: pointer;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid #ddd;
         }
 
             .custom-select-options li:hover {
-                background-color: #f0f0f0;
+                background-color: #f8f9fc;
             }
 
+    .card-body {
+        background-color: #f8f9fa; 
+        border-radius: 5px;
+        padding:0px;
+        margin:0px;
+    }
 
     .card-body p {
         margin: 0;
-        padding: 5px 0;
+        padding: 0px 0;
         font-size: 16px;
-        color: #333;
+        color: #252525;
     }
 
         .card-body p strong {
@@ -318,6 +324,11 @@
             margin-right: 10px;
         }
 
+
+        .card-body h6 {
+            margin: 0px 0;
+            font-size: 14px; 
+        }
     fieldset {
         display: none;
     }
@@ -330,7 +341,7 @@
         -moz-box-shadow: none !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
-        border: 1px solid #2196F3 !important;
+        border: 1px solid #4e73df !important;
         outline-width: 0 !important;
         font-weight: 400;
     }
@@ -349,12 +360,12 @@
     }
 
         .tabs:hover, .tabs.active {
-            border-bottom: 1px solid #2196F3;
+            border-bottom: 1px solid #4e73df;
         }
 
     a:hover {
         text-decoration: none;
-        color: #1565C0;
+        color: #4e73df;
     }
 
     .box {
@@ -364,16 +375,14 @@
     }
 
     .modal-backdrop {
-        background-color: #64B5F6;
+        background-color: #4e73df;
     }
 
     .line {
-        background-color: #CFD8DC;
+        background-color: #ddd;
         height: 1px;
         width: 100%;
     }
-
-
 
     .modal.fade .modal-dialog {
         display: flex;
@@ -384,6 +393,29 @@
 
     .tabs h6 {
         font-size: 12px;
+    }
+
+    input[type="text"], input[type="number"] ,select {
+        width: 50%;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 14px;
+    }
+
+    button.btn-primary {
+        margin-top: 5px;
+        background-color: #4e73df;
+        color: #f8f9fc;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 15px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 99%;
+        padding: 1%;
     }
 </style>
 
@@ -396,7 +428,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 @section Scripts
-{
+    {
 
     <script type="text/javascript">
 
@@ -588,7 +620,7 @@
             });
 
             function doneTyping() {
-                SearchUsername($input.val()); // Use .val() to get the input value
+                SearchUsername($input.val());
             }
         }
 

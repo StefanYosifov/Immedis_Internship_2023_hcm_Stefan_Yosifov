@@ -1,13 +1,12 @@
 ﻿@using HCM.Common.Constants
 @model HCM.Models.ViewModels.Employees.EmployeeCreateRequestModel
 
-<div class="container">
+<div class="container my-5">
     <h2>Create Employee</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fileModal">
-        Open Modal
+    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#fileModal">
+       Click here to create an employee from File
     </button>
 
-    <!-- The Modal -->
     <div class="modal" id="fileModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -106,6 +105,43 @@
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </div>
+
+
+<style>
+    .form-group {
+        margin: 10px 0;
+    }
+
+    label b {
+        display: block;
+        font-weight: bold;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    select.form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .btn {
+        background-color: #4e73df;
+        color: #f8f9fc;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #4e73df;
+        }
+</style>
 
 
 @section Scripts

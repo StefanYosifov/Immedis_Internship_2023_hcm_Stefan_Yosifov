@@ -90,24 +90,32 @@
             </div>
         </div>
         <div class="p-3 border rounded bg-light shadow mt-2">
-            <input class="mt-2" type="month" id="date" name="start" value="2023-05"/>
+            <input class="mt-2" type="month" id="date" name="start" value="2023-05" />
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th class="col-2">Bonus ID</th>
-                            <th>Issued On</th>
-                            <th>Amount</th>
-                            <th>Reason</th>
-                            <th>Age</th>
-                            <th>Department Name</th>
-                            <th>Position Name</th>
-                            <th>Seniority</th>
-                            <th>Actions</th>
-                        </tr>
+                    <table id="bonusesTable">
+                        <thead>
+                            <tr>
+                                <th>BonusId</th>
+                                <th>Bonus Amount</th>
+                                <th>Bonus Reason</th>
+                            </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="bonusTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="deductionTable">
+                        <thead>
+                            <tr>
+                                <th>BonusId</th>
+                                <th>Bonus Amount</th>
+                                <th>Bonus Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deductionTableBody">
                         </tbody>
                     </table>
                 </div>
@@ -119,29 +127,42 @@
 
         <div class="p-3 border bg-light">
             <form id="changeSalary">
-                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                <label>Modify salary amount</label>
+                @if (Model.CurrentSalary == null)
+                {
+                    <input type="number" min="0" max="99999" value="0"/>
+                }
+                else
+                {
+                    <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                }
                 <button class="btn-primary">Change</button>
             </form>
         </div>
 
         <div class="p-3 border bg-light">
             <form id="addBonus">
-                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                <label>Bonus amount</label>
+                <input type="number" min="0" max="99999" value="0"/>
                 <div class="form-group">
-                    <label for="bonus">Select one or more countries</label>
+                    <label for="bonus">Select a reason</label>
                     <select id="bonus" class="form-control" data-role="select-dropdown">
                     </select>
                 </div>
-                <button class="btn-primary">Change</button>
+                <button class="btn-primary">Add bonus</button>
             </form>
         </div>
 
         <div class="p-3 border bg-light">
             <form id="addDeduction">
-                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
-                <select id="deduction" class="form-control" data-role="select-dropdown">
-                </select>
-                <button class="btn-primary">Change</button>
+                <label>Deduction amount</label>
+                <input type="number" min="0" max="99999" value="0"/>
+                <div class="form-group">
+                    <label for="deduction">Select a reason</label>
+                    <select id="deduction" class="form-control" data-role="select-dropdown">
+                    </select>
+                </div>
+                <button class="btn-primary">Add deduction</button>
             </form>
         </div>
     </div>
@@ -150,19 +171,20 @@
 
 <style>
     main {
-        background-color: #f4f5f4;
+        background-color: #f4f4f4;
     }
 
     .card {
-        border: 1px solid #e5e5e5;
+        border: 1px solid #f8f9fc;
         border-radius: 6px;
         margin-bottom: 20px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 32px;
     }
 
     /* Card header */
     .card-header {
-        background-color: #007bff;
+        background-color: #4e73df;
         color: #fff;
         border-bottom: 0;
         padding: 10px 15px;
@@ -171,27 +193,80 @@
     }
 
     .card-title {
-        font-size: 18px;
+        font-size: 24px;
         margin: 0;
     }
 
-    /* Card body */
     .card-body {
         padding: 15px;
     }
 
     .card-text {
-        font-size: 14px;
-        color: #212121;
+        font-size: 16px;
+        color: #151515;
     }
 
     .card:hover {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .p-3.border.bg-light {
+        background-color: #f8f9fc;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        margin-block: 2.5%;
+    }
+
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+
+    button.btn-primary {
+        margin-top: 10px;
+        background-color: #4e73df;
+        color: #f8f9fc;
+        border: none;
+        border-radius: 3px;
+        padding: 10px 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 99%;
+        padding:1%;
+    }
+
+        table th {
+            background-color: #4e73df;
+            color: #f8f9fc;
+            text-align: left;
+            padding: 10px;
+        }
+
+        table tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table td {
+            padding: 10px;
+        }
+
+        table tbody tr:hover {
+            background-color: #f8f9fc;
+        }
 </style>
 
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 @section Scripts
-{
+    {
     <script type="text/javascript">
 
         const token = "Bearer " + localStorage.getItem("Authorization");
@@ -256,40 +331,210 @@
                     "employeeId": id
                 },
                 success: function (data) {
-                    console.log(data);
+                    AddBonusesToTheTable(data);
                 }
             });
         }
 
-        function FetchMonthlyDataOnChange() {
-            let selectedDate = date.attr("value");
-            selectedDate += "-01";
-            console.log(selectedDate);
+        function FetchMonthlyDataOnChange(data) {
             $("#date").on("change", function () {
+                data = date.val();
+                const year = data.split("-")[0];
+                const month = data.split("-")[1];
+                const myDate = `01-${month}-${year}`;
+                console.log(myDate);
                 $.ajax({
-                    url: url + "/monthly/additions",
+                    url: url + `/monthly/additions?EmployeeId=${encodeURIComponent(id)}&MonthYearOfSearch=${encodeURIComponent(myDate)}`,
                     type: "GET",
                     headers: {
                         "Authorization": token
                     },
                     contentType: 'application/json',
-                    data: {
-                        "employeeId": id,
-                        "MonthYearOfSearch": selectedDate
-
-                    },
                     success: function (data) {
-                        console.log(data);
+                        AddBonusesToTheTable(data);
+                        AddDeductionsToTheTable(data);
                     }
                 });
             })
+        }
+
+        function AddBonusesToTheTable(data) {
+            const bonusTable = $("#bonusTableBody");
+            bonusTable.empty();
+
+            for (let i = 0; i < data.bonuses.length; i++) {
+                let row = $("<tr>");
+                row.append($("<td>").text(data.bonuses[i].bonusId));
+                row.append($("<td>").text(data.bonuses[i].bonusReason.reasonName));
+                row.append($("<td>").text(data.bonuses[i].deductionAmount));
+                bonusTable.append(row);
+            }
+        }
+
+        function AddDeductionsToTheTable(data) {
+            const deductionTable = $("#deductionTableBody");
+            deductionTable.empty();
+
+            for (let i = 0; i < data.bonuses.length; i++) {
+                let row = $("<tr>");
+                console.log(data.deductions[i]);
+                row.append($("<td>").text(data.deductions[i].deductionId));
+                row.append($("<td>").text(data.deductions[i].deductionReason.deductionReason));
+                row.append($("<td>").text(data.bonuses[i].deductionAmount));
+                deductionTable.append(row);
+            }
+        }
+
+        function CreateTableRows(tableId, data) {
+            var table = $("#" + tableId);
+            var thead = table.find("thead");
+            var tbody = table.find("tbody");
+
+            if (data.length > 0) {
+                var headerRow = "<tr>";
+                for (var prop in data[0]) {
+                    headerRow += "<th>" + prop + "</th>";
+                }
+                headerRow += "</tr>";
+                thead.html(headerRow);
+
+                data.forEach(function (item) {
+                    var row = "<tr>";
+                    for (var prop in item) {
+                        if (typeof item[prop] === 'object') {
+                            row += "<td>" + item[prop].ReasonName + "</td>";
+                        } else {
+                            row += "<td>" + item[prop] + "</td>";
+                        }
+                    }
+                    row += "</tr>";
+                    tbody.append(row);
+                });
+            }
+        }
+
+        function ChangeSalary() {
+            $("#changeSalary").on("submit", function (e) {
+                e.preventDefault();
+
+                const salary = $(this).find("input[type='number']").val();
+                const date = new Date();
+                $.ajax({
+                    url: url + "/salary/change",
+                    type: "Put",
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "EmployeeId": id,
+                        "SalaryAmount": salary,
+                    }),
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+                    }
+                });
+            });
+        }
+
+        function AddBonus() {
+            const form = ("#addBonus");
+            $("#addBonus").on("submit", function (e) {
+                e.preventDefault();
+
+                const bonus = $(this).find("input[type='number']").val();
+                const reasonId = $(this).find("#bonus").val();
+
+                $.ajax({
+                    url: url + "/bonus/add",
+                    type: "Post",
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "EmployeeId": id,
+                        "Amount": bonus,
+                        "ReasonId": reasonId
+                    }),
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+                    }
+                })
+            })
+        }
+
+        function AddDeduction() {
+            const form = $("#addDeduction");
+            form.on("submit", function (e) {
+                e.preventDefault();
+
+                const deduction = $(this).find("input[type='number']").val();
+                const reasonId = $(this).find("#deduction").val();
+
+                console.log(deduction);
+                console.log(reasonId);
+
+                $.ajax({
+                    url: url + "/deduction/add",
+                    type: "Post",
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "EmployeeId": id,
+                        "Amount": deduction,
+                        "ReasonId": reasonId
+                    }),
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+                    }
+                })
+            });
         }
 
         $(document).ready(function () {
             GetBonusReasons();
             GetDeductionReasons();
             LoadMonthlyDataForAdditions();
-            FetchMonthlyDataOnChange();
+            FetchMonthlyDataOnChange(date.attr("value"));
+            ChangeSalary();
+            AddBonus();
+            AddDeduction();
         })
 
     </script>

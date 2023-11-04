@@ -86,5 +86,59 @@
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpPut("salary/change")]
+        public async Task<IActionResult> ChangeSalary([FromQuery]SalaryChangeRequestModel model)
+        {
+            try
+            {
+                var result = await service.ChangeEmployeeSalary(model);
+                return Ok(result);
+            }
+            catch (PaymentServiceExceptions e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueUpdatingWithSalary);
+            }
+        }
+
+        [HttpPost("bonus/add")]
+        public async Task<IActionResult> AddBonus([FromBody]BonusAddModel model)
+        {
+            try
+            {
+                var result = await service.AddBonus(model);
+                return Ok(result);
+            }
+            catch (PaymentServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueAddingBonus);
+            }
+        }
+
+        [HttpPost("deduction/add")]
+        public async Task<IActionResult> AddDeduction([FromBody] DeductionAddModel model)
+        {
+            try
+            {
+                var result=await service.AddDeduction(model);
+                return Ok(result);
+            }
+            catch (PaymentServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueAddingDeduction);
+            }
+        }
     }
 }

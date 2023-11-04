@@ -14,5 +14,11 @@
         Task<ICollection<DeductionReasonModel>> GetAllDeductionReasonsForDeduction();
 
         Task<MonthlyBonusDeductionTableModel> GetMonthlySalaryAdditionsByMonth(TableBonusDeductionSearchModel model);
+
+        Task<string> ChangeEmployeeSalary(SalaryChangeRequestModel model);
+
+        Task<string> AddBonus(BonusAddModel model);
+
+        Task<string> AddDeduction(DeductionAddModel model);
     }
 }

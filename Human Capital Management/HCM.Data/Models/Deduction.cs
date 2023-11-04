@@ -1,6 +1,8 @@
 ﻿namespace HCM.Data.Models
 {
-    public class Deduction
+    using History_and_Audit;
+
+    public class Deduction : ICreationEntity
     {
         public long Id { get; set; }
         public decimal? Amount { get; set; }
@@ -11,5 +13,7 @@
         public virtual Employee? Employee { get; set; }
         public virtual Payroll? Payroll { get; set; }
         public virtual DeductionReason? Reason { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string? CreatedBy { get; set; }
     }
 }

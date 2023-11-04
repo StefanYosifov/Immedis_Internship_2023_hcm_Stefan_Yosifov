@@ -9,13 +9,13 @@
                 <div class="form-group mx-3">
                     <label for="countries" class="mr-2">Select an option:</label>
                     <select id="countries" name="CountryId" class="form-control" id="selectOption1">
-                        <!-- Add your select options here -->
+                  
                     </select>
                 </div>
                 <div class="form-group mx-3">
                     <label for="sort" class="mr-2">Select an option:</label>
                     <select id="sort" name="Sort" class="form-control" id="selectOption2">
-                        <!-- Add your select options here -->
+            
                     </select>
                 </div>
                 <div class="form-group mx-3">
@@ -27,11 +27,64 @@
 
     <div class="container mt-4">
         <div id="departmentContainer" class="row">
-            <!-- Your department content here -->
+
         </div>
     </div>
 </div>
 
+
+<style>
+    <style >
+    /* Navbar styles */
+    .navbar {
+        background-color: #3498db;
+        padding: 10px 0;
+    }
+
+    .navbar form {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar label {
+        color: white;
+        margin-right: 10px;
+    }
+
+    .navbar input,
+    .navbar select {
+        width: 200px;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .navbar select {
+        width: 250px;
+    }
+
+    .navbar .btn {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    /* Container styles */
+    .container {
+        margin-top: 20px;
+    }
+
+    /* Department container styles */
+    #departmentContainer {
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>
+
+</style>
 
 @if (false)
 {
@@ -48,7 +101,6 @@
         function FillDepartmentContainer(departments) {
             container.empty();
             departments.forEach(function (department) {
-                console.log(department);
                 let departmentCard = $('<div class="card col-md-3 mb-3 mx-5"></div>');
 
                 let departmentImage = $('<img class="card-img-top" src="' + department.departmentImageUrl + '" />');
@@ -67,7 +119,7 @@
 
                 let country = $('<small>' + department.departmentCountry + '</small>');
 
-                let detailsButton = $(`<div class="card-footer p-4 pt-0 border-top-0 bg-transparent"><div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/departments/details/2">Details</a></div></div>`);
+                let detailsButton = $(`<div class="card-footer p-4 pt-0 border-top-0 bg-transparent"><div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/departments/details/${department.departmentId}">Details</a></div></div>`);
 
 
                 departmentCard.append(departmentImage);
