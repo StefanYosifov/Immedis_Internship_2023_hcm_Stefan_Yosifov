@@ -192,5 +192,24 @@
 
             return NotFound(response.Data);
         }
+
+        [HttpPut("edit/data")]
+        public async Task<IActionResult> EditDepartmentData([FromBody] DepartmentEditDetails model)
+        {
+            var request = new RestRequestBuilder("/api/departments/edit/data", GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
     }
 }

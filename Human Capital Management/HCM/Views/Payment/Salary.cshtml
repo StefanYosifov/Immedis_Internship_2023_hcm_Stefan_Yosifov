@@ -4,9 +4,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
 
-
 <div class="row d-flex justify-content-center mt-100">
-    <div class="card mx-5">
+    <div class="card mx-5 mt-lg-5 mb-lg-5 ms-5 me-5">
         <div class="card-header">
             <h5>Select Options</h5>
             <div class="row">
@@ -48,35 +47,42 @@
             </div>
         </div>
         <table class="table">
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Salary ID</th>
+                <th>Salary Amount</th>
+                <th>Gender ID</th>
+                <th>Department Name</th>
+                <th>Position Name</th>
+                <th>Seniority Name</th>
+                <th>Actions</th>
+            </tr>
+            <tbody id="table-body">
+            </tbody>
         </table>
+
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">3</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+
     </div>
 </div>
-
-<h1>Beautiful Table with Pagination</h1>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-    </tbody>
-</table>
-
-<ul class="pagination">
-    <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-        <a class="page-link" href="#">Next</a>
-    </li>
-</ul>
-
 
 
 @if (false)
@@ -118,7 +124,7 @@
 </style>
 
 @section Scripts
-    {
+{
 
     <script type="text/javascript">
 
@@ -197,7 +203,7 @@
         function fetchData(page, query) {
             console.log(query);
             $.ajax({
-                url: baseUrl + "/salary/all/" + page +"?"+ query,
+                url: baseUrl + "/salary/all/" + page + "?" + query,
                 method: 'GET',
                 headers: { "Authorization": token },
                 contentType: 'application/json',
@@ -230,10 +236,55 @@
             })
         }
         function populateTable(data) {
+            function GetGenderIcon(genderId) {
+                if (genderId === 1) {
+                    return '<i class="fa-solid fa-mars"></i>';
+                } else if (genderId === 2) {
+                    return '<i class="fa-solid fa-venus"></i>';
+                }
+                return 'Unspecified'; // Return empty string if genderId is neither 1 nor 2
+            }
+
             $('#table-body').empty();
             data.forEach(item => {
                 console.log(item);
-                $('#table-body').append(`<tr><td>${item.employeeId}</td><td>${item.employeeFullname}</td><td>${item.departmentName}</td></tr>`);
+                $('#table-body').append(
+                    `<tr>
+                                    <td>${item.employeeId}</td>
+                                    <td>${item.employeeFullname}</td>
+                                    <td>${item.age}</td>
+                                    <td>${item.salaryId}</td>
+                                    <td>${item.salaryAmount}</td>
+                                    <td>${GetGenderIcon(item.genderId)}</td>
+                                     <td>${item.departmentName}</td>
+                                    <td>${item.positionName}</td>
+                                    <td>${item.seniorityName}</td>
+                                           <td>
+                <div class="btn-group dropstart">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#">Edit</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li>
+                            <a class "dropdown-item" href="#">Something else here</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+                        </tr>`
+                );
             });
         }
         function PopulatePagination(currentPage, totalPages) {
@@ -291,4 +342,4 @@
 
     </script>
 
-    }
+}

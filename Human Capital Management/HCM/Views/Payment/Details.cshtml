@@ -1,0 +1,297 @@
+﻿@model HCM.Models.ViewModels.Payments.SalaryChangeModel
+
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Departments</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    @if (Model.AverageDepartmentSalary == null)
+                    {
+                        <span class="text-uppercase">Average Salary for @Model.DepartmentName: $0</span>
+                    }
+                    else
+                    {
+                        <span class="text-uppercase">Average Salary: @Model.AverageDepartmentSalary</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Positions</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    @if (Model.AveragePositionSalary == null)
+                    {
+                        <span class="text-uppercase">Average Salary for @Model.PositionName: $0</span>
+                    }
+                    else
+                    {
+                        <span class="text-uppercase">Average Salary for @Model.PositionName: @Model.AveragePositionSalary</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Seniority</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    @if (Model.AverageSenioritySalary == null)
+                    {
+                        <span class="text-uppercase">Average Salary for @Model.SeniorityName: $0</span>
+                    }
+                    else
+                    {
+                        <span class="text-uppercase">Average Salary for @Model.SeniorityName: @Model.AverageSenioritySalary</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mx-md-n5">
+    <div class="col px-md-5 mb-4">
+        <div class="p-3 border rounded bg-light shadow">
+            <div class="d-flex justify-content-between">
+                <h4 class="font-weight-bold">Employee Name</h4>
+                <p>@Model.EmployeeFullName</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-muted mb-2">Years in the company</p>
+                <p>@Model.TimeInCompany</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="font-weight-bold">Department Name</p>
+                <p>@Model.DepartmentName</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p>Position Name</p>
+                <p>@Model.PositionName</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p>Seniority level</p>
+                <p>@Model.SeniorityName</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-muted">Age</p>
+                <p>@Model.Age years old</p>
+            </div>
+        </div>
+        <div class="p-3 border rounded bg-light shadow mt-2">
+            <input class="mt-2" type="month" id="date" name="start" value="2023-05"/>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th class="col-2">Bonus ID</th>
+                            <th>Issued On</th>
+                            <th>Amount</th>
+                            <th>Reason</th>
+                            <th>Age</th>
+                            <th>Department Name</th>
+                            <th>Position Name</th>
+                            <th>Seniority</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col px-md-5">
+
+        <div class="p-3 border bg-light">
+            <form id="changeSalary">
+                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                <button class="btn-primary">Change</button>
+            </form>
+        </div>
+
+        <div class="p-3 border bg-light">
+            <form id="addBonus">
+                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                <div class="form-group">
+                    <label for="bonus">Select one or more countries</label>
+                    <select id="bonus" class="form-control" data-role="select-dropdown">
+                    </select>
+                </div>
+                <button class="btn-primary">Change</button>
+            </form>
+        </div>
+
+        <div class="p-3 border bg-light">
+            <form id="addDeduction">
+                <input type="number" min="0" max="99999" value="@Model.CurrentSalary"/>
+                <select id="deduction" class="form-control" data-role="select-dropdown">
+                </select>
+                <button class="btn-primary">Change</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    main {
+        background-color: #f4f5f4;
+    }
+
+    .card {
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Card header */
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+        border-bottom: 0;
+        padding: 10px 15px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    .card-title {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    /* Card body */
+    .card-body {
+        padding: 15px;
+    }
+
+    .card-text {
+        font-size: 14px;
+        color: #212121;
+    }
+
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        const token = "Bearer " + localStorage.getItem("Authorization");
+        const url = "https://localhost:7153/payments";
+        const path = window.location.pathname;
+
+        const segments = path.split('/');
+        const id = segments[segments.length - 1];
+
+        const date = $("#date");
+
+        function GetBonusReasons() {
+            $.ajax({
+                url: url + "/bonus/reasons",
+                type: "Get",
+                headers: { "Authorization": token },
+                contentType: 'application/json',
+                success: function (data) {
+                    var bonus = $("#bonus");
+                    bonus.empty();
+
+                    data.forEach(function (item) {
+                        console.log(item);
+                        bonus.append($('<option>', {
+                            value: item.reasonId,
+                            text: item.reasonName
+                        }));
+                    });
+                }
+            })
+        }
+
+        function GetDeductionReasons() {
+            $.ajax({
+                url: url + "/deduction/reasons",
+                type: "Get",
+                headers: { "Authorization": token },
+                contentType: 'application/json',
+                success: function (data) {
+                    var deduction = $("#deduction");
+                    deduction.empty();
+
+                    data.forEach(function (item) {
+                        deduction.append($('<option>', {
+                            value: item.deductionId,
+                            text: item.deductionReason
+                        }));
+                    });
+                }
+            })
+        }
+
+        function LoadMonthlyDataForAdditions() {
+            $.ajax({
+                url: url + "/monthly/additions",
+                type: "GET",
+                headers: {
+                    "Authorization": token
+                },
+                contentType: 'application/json',
+                data: {
+                    "employeeId": id
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+        function FetchMonthlyDataOnChange() {
+            let selectedDate = date.attr("value");
+            selectedDate += "-01";
+            console.log(selectedDate);
+            $("#date").on("change", function () {
+                $.ajax({
+                    url: url + "/monthly/additions",
+                    type: "GET",
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: 'application/json',
+                    data: {
+                        "employeeId": id,
+                        "MonthYearOfSearch": selectedDate
+
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    }
+                });
+            })
+        }
+
+        $(document).ready(function () {
+            GetBonusReasons();
+            GetDeductionReasons();
+            LoadMonthlyDataForAdditions();
+            FetchMonthlyDataOnChange();
+        })
+
+    </script>
+
+}

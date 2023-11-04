@@ -29,6 +29,23 @@
             return this;
         }
 
+        public RestRequestBuilder AddQueryParameter(object obj)
+        {
+            if (obj != null)
+            {
+                var type = obj.GetType();
+                foreach (var property in type.GetProperties())
+                {
+                    var propertyName = property.Name;
+                    var propertyValue = property.GetValue(obj, null)?.ToString();
+
+                    request.AddQueryParameter(propertyName, propertyValue);
+                }
+            }
+
+            return this;
+        }
+
         public RestRequestBuilder AddParameter(params string[] queryParams)
         {
             foreach (var param in queryParams)

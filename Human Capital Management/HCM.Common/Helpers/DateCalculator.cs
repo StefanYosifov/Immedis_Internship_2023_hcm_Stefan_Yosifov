@@ -6,5 +6,10 @@
         {
             return (int)((DateTime.Now - date).Value.Days / 365.242199);
         }
+
+        public static int CalculateDays(DateTime? date)
+        {
+            return (DateTime.Now - date).Value.Days;
+        }
     }
 }

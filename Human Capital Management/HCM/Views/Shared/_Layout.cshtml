@@ -33,7 +33,7 @@
     }
     else
     {
-        <nav class="nav bg-dark">
+        <nav style="background:#212121">
             <button type="button" id="sidebarCollapse" class="btn btn-info">
                 <i class="fas fa-align-left"></i>
             </button>
@@ -74,7 +74,7 @@
                                 About
                             </a>
                             <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                    <i class="fa-solid fa-dollar-sign"></i>
+                                <i class="fa-solid fa-dollar-sign"></i>
                                 Payroll
                             </a>
                             <ul class="collapse list-unstyled" id="pageSubmenu">
@@ -82,7 +82,7 @@
                                     <a href="#">Payroll</a>
                                 </li>
                                 <li>
-                                    @Html.ActionLink("Salaries","Salary","Payment")
+                                    @Html.ActionLink("Salaries", "Salary", "Payment")
                                 </li>
                                 <li>
                                     <a href="#">Bonuses</a>
@@ -154,6 +154,10 @@
         min-height: 100%;
     }
 
+    nav{
+        padding:0px;
+        margin:0px;
+    }
         #sidebar.active {
             margin-left: -250px;
         }

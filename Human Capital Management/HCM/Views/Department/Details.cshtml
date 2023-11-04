@@ -5,260 +5,253 @@
 }
 
 <div class="container">
-    <h1>Department Details</h1>
-    <div class="row">
-        <div class="card">
-            <div class="card-header d-flex align-items-center border-bottom">
-                <span class="avatar text-bg-primary avatar-lg fs-5">
-                    @if (Model.DepartmentName.Length > 3)
-                    {
-                        @Model.DepartmentName.Substring(0, 3)
-                    }
-                    else
-                    {
-                        @Model.DepartmentName
-                    }
-                </span>
-                <div class="ms-3">
-                    <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
-                    <span class="text-muted fs-sm">@Model.CountryName</span>
-                </div>
-                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
-                    <i class="fas fa-ellipsis-v"></i>
-                </button>
+<h1>Department Details</h1>
+<div class="row">
+    <div class="card">
+        <div class="card-header d-flex align-items-center border-bottom">
+            <span class="avatar text-bg-primary avatar-lg fs-5">
+                @if (Model.DepartmentName.Length > 3)
+                {
+                    @Model.DepartmentName.Substring(0, 3)
+                }
+                else
+                {
+                    @Model.DepartmentName
+                }
+            </span>
+            <div class="ms-3">
+                <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
+                <span class="text-muted fs-sm">@Model.CountryName</span>
             </div>
-            <div class="card-body">
-                <h6>
-                    <small>Id : </small>@Model.DepartmentId
-                </h6>
-                <h6>
-                    <small>Average salary : </small>@Model.AverageSalary
-                </h6>
-                <h6>
-                    <small>Employee count : </small>@Model.EmployeesCount
-                </h6>
-                <h6>
-                    <small>Total positions : </small>@Model.EmployeeCapacity
-                </h6>
-                <h6></h6>
-            </div>
+            <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
         </div>
+        <div class="card-body">
+            <h6>
+                <small>Id : </small>@Model.DepartmentId
+            </h6>
+            <h6>
+                <small>Average salary : </small>@Model.AverageSalary
+            </h6>
+            <h6>
+                <small>Employee count : </small>@Model.EmployeesCount
+            </h6>
+            <h6>
+                <small>Total positions : </small>@Model.EmployeeCapacity
+            </h6>
+            <h6></h6>
+        </div>
+    </div>
 
-        <div class="row justify-content-center">
-            <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
-                <div role="document" class="class=modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
-                            <div class="tabs" id="tab01">
-                                <h6 class="text-muted">Positions</h6>
-                            </div>
-                            <div class="tabs active" id="tab02">
-                                <h6 class="font-weight-bold">Knowledge Center</h6>
-                            </div>
-                            <div class="tabs" id="tab03">
-                                <h6 class="text-muted">Add Employees</h6>
-                            </div>
-                            <div class="tabs" id="tab04">
-                                <h6 class="text-muted">Edit</h6>
-                            </div>
+    <div class="row justify-content-center">
+        <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+            <div role="document" class="class=modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
+                        <div class="tabs" id="tab01">
+                            <h6 class="text-muted">Positions</h6>
                         </div>
-                        <div class="line"></div>
-                        <div class="modal-body p-0">
-                            <fieldset id="tab011">
-                                <div class="bg-light px-3">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">My Apps</h5>
-                                    <ol class="list-group list-group-numbered">
-                                        @foreach (var position in Model.PositionsInDepartment)
-                                        {
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                    <div>@position.PositionName</div>
-                                                    <p class="mb-0 fs-6 text-muted">
-                                                        <strong>Id: </strong>
-                                                        <span>@position.PositionId</span>
-                                                        <i class="fa-solid fa-trash me-3" style="position: absolute; right: 0; cursor: pointer;"></i>
-                                                    </p>
-                                                </div>
-                                                <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
-                                            </li>
-                                        }
-                                    </ol>
-                                </div>
-                                <div class="px-3">
-                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-android"></span> Suggested Apps</h6>
-                                    @foreach (var position in Model.AvailablePositionsCollection)
+                        <div class="tabs active" id="tab02">
+                            <h6 class="font-weight-bold">Knowledge Center</h6>
+                        </div>
+                        <div class="tabs" id="tab03">
+                            <h6 class="text-muted">Add Employees</h6>
+                        </div>
+                        <div class="tabs" id="tab04">
+                            <h6 class="text-muted">Edit</h6>
+                        </div>
+                    </div>
+                    <div class="line"></div>
+                    <div class="modal-body p-0">
+                        <fieldset id="tab011">
+                            <div class="bg-light px-3">
+                                <h5 class="text-center mb-4 mt-0 pt-4">My Apps</h5>
+                                <ol class="list-group list-group-numbered">
+                                    @foreach (var position in Model.PositionsInDepartment)
                                     {
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <h6 class="text-primary pb-2">
-                                                    <a href="">@position.Name</a> <span class="text-secondary">- Available for @Model.DepartmentName</span>
-                                                </h6>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div>@position.PositionName</div>
+                                                <p class="mb-0 fs-6 text-muted">
+                                                    <strong>Id: </strong>
+                                                    <span>@position.PositionId</span>
+                                                    <i class="fa-solid fa-trash me-3" style="position: absolute; right: 0; cursor: pointer;"></i>
+                                                </p>
                                             </div>
-                                            <div class="col-md-2">
-                                                <h6 class="text-primary pb-2">
-                                                    <a class="add-icon" data-position-id="@position.Id" href="#">
-                                                        <i class="fa-solid fa-plus pointer-event"></i>
-                                                    </a>
-                                                </h6>
+                                            <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                            <div class="px-3">
+                                <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-android"></span> Suggested Apps</h6>
+                                @foreach (var position in Model.AvailablePositionsCollection)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h6 class="text-primary pb-2">
+                                                <a href="">@position.Name</a> <span class="text-secondary">- Available for @Model.DepartmentName</span>
+                                            </h6>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <h6 class="text-primary pb-2">
+                                                <a class="add-icon" data-position-id="@position.Id" href="#">
+                                                    <i class="fa-solid fa-plus pointer-event"></i>
+                                                </a>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                        <fieldset class="show" id="tab021">
+                            <div class="bg-light">
+                                <h5 class="text-center mb-4 mt-0 pt-4">Knowledge Center</h5>
+                                <form>
+                                    <div class="form-group pb-5 px-3">
+                                        <select name="account" class="form-control">
+                                            <option selected disabled>Select Product</option>
+                                            <option>Product 1</option>
+                                            <option>Product 2</option>
+                                            <option>Product 3</option>
+                                            <option>Product 4</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </fieldset>
+                        <fieldset id="tab031">
+                            <div class="bg-light align-content-center">
+                                <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
+                                <div class="d-flex justify-content-center">
+                                    <form id="employeeForm">
+                                        <div class="custom-select">
+                                            <input type="text" id="custom-select-input" placeholder="Select an option">
+                                            <ul class="custom-select-options">
+                                            </ul>
+                                        </div>
+                                        <div class="card shadow mb-4 mt-5">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p id="employeeDetails"></p>
                                             </div>
                                         </div>
-                                    }
+                                    </form>
                                 </div>
-                            </fieldset>
-                            <fieldset class="show" id="tab021">
-                                <div class="bg-light">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Knowledge Center</h5>
-                                    <form>
-                                        <div class="form-group pb-5 px-3">
-                                            <select name="account" class="form-control">
-                                                <option selected disabled>Select Product</option>
-                                                <option>Product 1</option>
-                                                <option>Product 2</option>
-                                                <option>Product 3</option>
-                                                <option>Product 4</option>
+                            </div>
+                        </fieldset>
+                        <fieldset id="tab041">
+                            <div class="bg-light">
+                                <h5 class="text-center mb-4 mt-0 pt-4">Education</h5>
+                                <form id="detailsEdit">
+                                    <div class="form-group">
+                                        <div class="property">
+                                            <label for="Name">Department Name</label>
+                                            <input value="@Model.DepartmentName" type="text" name="Name" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="property">
+                                            <label for="MaxPeopleCount">Employee Capacity</label>
+                                            <input value="@Model.EmployeeCapacity" type="number" name="MaxPeopleCount" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="property">
+                                            <label for="ImageURL">Department Image URL</label>
+                                            <input value="@Model.DepartmentImageUrl" type="text" name="ImageURL" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="property">
+                                            <label for="CountryId">Country Name</label>
+                                            <select name="CountryId">
+                                                @foreach (var country in Model.Countries)
+                                                {
+                                                    <option value="@country.Id">@country.Name</option>
+                                                }
                                             </select>
                                         </div>
-                                    </form>
-                                </div>
-                            </fieldset>
-                            <fieldset id="tab031">
-                                <div class="bg-light align-content-center">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
-                                    <div class="d-flex justify-content-center">
-                                        <form id="employeeForm">
-                                            <div class="custom-select">
-                                                <input type="text" id="custom-select-input" placeholder="Select an option">
-                                                <ul class="custom-select-options">
-                                                </ul>
-                                            </div>
-                                            <div class="card shadow mb-4 mt-5">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <p id="employeeDetails"></p>
-                                                </div>
-                                            </div>
-                                        </form>
                                     </div>
-                                </div>
-                            </fieldset>
-                            <fieldset id="tab041">
-                                <div class="bg-light">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Education</h5>
-                                    <form>
-                                        <div class="form-group pb-2 px-3">
-                                            <input type="text" placeholder="Enter College Name" class="form-control">
-                                        </div>
-                                        <div class="form-group row pb-2 px-3">
-                                            <div class="col-6">
-                                                <input type="text" placeholder="Percentage" class="form-control">
-                                            </div>
-                                            <div class="col-6">
-                                                <input type="text" placeholder="Grade" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group px-3 pb-2">
-                                            <label class="form-control-label">
-                                                <h6>What are you good at ?</h6>
-                                            </label>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" id="option1" type="checkbox" value="">
-                                                <label class="custom-control-label" for="option1">Web Development</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" id="option2" type="checkbox" value="">
-                                                <label class="custom-control-label" for="option2">Data Structures & Algorithms</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" id="option3" type="checkbox" value="">
-                                                <label class="custom-control-label" for="option3">Android Development</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" id="option4" type="checkbox" value="">
-                                                <label class="custom-control-label" for="option4">Blockchain</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" id="option5" type="checkbox" value="">
-                                                <label class="custom-control-label" for="option5">Machine Learning Algorithms</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group pb-5 row justify-content-center">
-                                            <button type="button" class="btn btn-primary px-3">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="px-3">
-                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Augmented Reality and Virtual Reality</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Angular and React</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Big Data and Hadoop</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-4">
-                                        <a href="#">Internet of Things (IoT)</a>
-                                    </h6>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <div class="line"></div>
-                        <div class="modal-footer d-flex flex-column justify-content-center border-0">
-                            <p class="text-muted">Can't find what you're looking for?</p>
-                            <button type="button" class="btn btn-primary">Contact Support Team</button>
-                        </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+
+
+                            </div>
+                            <div class="px-3">
+                                <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
+                                <h6 class="text-primary pb-2">
+                                    <a href="#">Augmented Reality and Virtual Reality</a>
+                                </h6>
+                                <h6 class="text-primary pb-2">
+                                    <a href="#">Angular and React</a>
+                                </h6>
+                                <h6 class="text-primary pb-2">
+                                    <a href="#">Big Data and Hadoop</a>
+                                </h6>
+                                <h6 class="text-primary pb-4">
+                                    <a href="#">Internet of Things (IoT)</a>
+                                </h6>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="line"></div>
+                    <div class="modal-footer d-flex flex-column justify-content-center border-0">
+                        <p class="text-muted">Can't find what you're looking for?</p>
+                        <button type="button" class="btn btn-primary">Contact Support Team</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
-        </div>
     </div>
 
-    <h2>Department Employees</h2>
-    <div class="card shadow mb-4 mt-5 me-5">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Age</th>
-                    <th>Nationality</th>
-                    <th>Gender</th>
-                    <th>Position</th>
-                    <th>Seniority</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var employee in Model.DepartmentEmployees)
-                {
-                    <tr>
-                        <td>@employee.EmployeeFullName</td>
-                        <td>@employee.EmployeeAge</td>
-                        <td>@employee.EmployeeNationalityISO</td>
-                        <td>@employee.EmployeeGender</td>
-                        <td>@employee.EmployeePosition</td>
-                        <td>@employee.EmployeeSeniority</td>
-                        <td>
-                            <button class="bg-primary text-white edit-button">Edit</button>
-                        </td>
-                        <td>
-                            <button class="bg-primary text-white delete-button" value="@employee.EmployeeId">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="col-md-6">
+        <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
     </div>
+</div>
+
+<h2>Department Employees</h2>
+<div class="card shadow mb-4 mt-5 me-5">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Nationality</th>
+            <th>Gender</th>
+            <th>Position</th>
+            <th>Seniority</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var employee in Model.DepartmentEmployees)
+        {
+            <tr>
+                <td>@employee.EmployeeFullName</td>
+                <td>@employee.EmployeeAge</td>
+                <td>@employee.EmployeeNationalityISO</td>
+                <td>@employee.EmployeeGender</td>
+                <td>@employee.EmployeePosition</td>
+                <td>@employee.EmployeeSeniority</td>
+                <td>
+                    <button class="bg-primary text-white edit-button">Edit</button>
+                </td>
+                <td>
+                    <button class="bg-primary text-white delete-button" value="@employee.EmployeeId">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
 </div>
 
 <style>
@@ -403,14 +396,59 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 @section Scripts
-    {
+{
 
     <script type="text/javascript">
 
+        const baseUrl = "https://localhost:7153";
         const url = "https://localhost:7153/departments";
         var currentUrl = window.location.pathname;
         var departmentId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
         const token = "Bearer " + localStorage.getItem("Authorization");
+
+        function DetailsEdit() {
+            $("#detailsEdit").submit(function (e) {
+                e.preventDefault();
+
+                var departmentName = $("input[name='Name']").val();
+                var employeeCapacity = $("input[name='MaxPeopleCount']").val();
+                var departmentImageUrl = $("input[name='ImageURL']").val();
+                var countryId = $("select[name='CountryId']").val();
+
+                console.log("Department Name: " + departmentName);
+                console.log("Employee Capacity: " + employeeCapacity);
+                console.log("Department Image URL: " + departmentImageUrl);
+                console.log("Country ID: " + countryId);
+                $.ajax({
+                    url: url + "/edit/data",
+                    type: "Put",
+                    data: JSON.stringify({
+                        departmentId: departmentId, Name: departmentName, MaxPeopleCount: employeeCapacity,
+                        ImageUrl: departmentImageUrl,
+                        countryId: countryId
+                    }),
+                    headers: { "Authorization": token },
+                    contentType: 'application/json',
+                    success: function (data) {
+                        Toastify({
+                            text: data,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                        }).showToast();
+                    },
+                    error: function (xhr, status, error) {
+
+                    }
+                });
+            });
+        }
 
         function KickEmployee() {
             $(".delete-button").click(function (e) {
@@ -787,6 +825,7 @@
         }
 
         $(document).ready(function () {
+            DetailsEdit();
             KickEmployee();
             AddToDepartment();
             AsyncSearch();
@@ -799,4 +838,4 @@
         });
     </script>
 
-    }
+}

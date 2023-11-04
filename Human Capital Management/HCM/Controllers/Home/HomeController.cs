@@ -17,6 +17,11 @@
                 return RedirectToAction("SignIn", "Identity");
             }
 
+            return RedirectToAction("DashBoard");
+        }
+
+        public IActionResult DashBoard()
+        {
             return View();
         }
 
