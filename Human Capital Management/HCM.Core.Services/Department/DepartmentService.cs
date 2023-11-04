@@ -15,6 +15,7 @@
     using Data.Models;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Caching.Memory;
 
     using Models.ViewModels.Departments;
     using Models.ViewModels.Departments.Enums;
@@ -23,6 +24,7 @@
 
     public class DepartmentService : IDepartmentService
     {
+        private readonly IMemoryCache cache;
         private readonly ApplicationDbContext context;
         private readonly ICountryService countryService;
         private readonly IMapper mapper;
@@ -30,18 +32,32 @@
         public DepartmentService(
             ApplicationDbContext context,
             IMapper mapper,
-            ICountryService countryService)
+            ICountryService countryService,
+            IMemoryCache cache)
         {
             this.context = context;
             this.mapper = mapper;
             this.countryService = countryService;
+            this.cache = cache;
         }
 
         public async Task<ICollection<DepartmentViewModel>> GetDepartments()
         {
-            return await context.Departments
+            const string cacheKey = "all_departments";
+
+            if (cache.TryGetValue(cacheKey, out ICollection<DepartmentViewModel> departments))
+            {
+                return departments;
+            }
+
+            var getDepartments = await context.Departments
+                .AsNoTracking()
                 .ProjectTo<DepartmentViewModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
+
+            cache.Set(cacheKey, getDepartments, TimeSpan.FromMinutes(30));
+
+            return getDepartments;
         }
 
         public async Task<ICollection<PositionViewModel>> GetPositionsByDepartmentId(int id)
@@ -165,7 +181,8 @@
                 EmployeesCount = employeesInDepartment.Count,
                 DepartmentEmployees = mappedEmployees,
                 AvailablePositionsCollection = await GetAvailablePositionsToAddToDepartmentById(id),
-                PositionsInDepartment = await GetPositionsInTheDepartmentById(id)
+                PositionsInDepartment = await GetPositionsInTheDepartmentById(id),
+                Countries = await countryService.GetCountries()
             };
         }
 
@@ -325,6 +342,24 @@
 
             await context.SaveChangesAsync();
             return DepartmentMessages.Success.SuccessfullyRemovedEmployeeFromDepartment;
+        }
+
+        public async Task<string> EditDepartmentDetails(DepartmentEditDetails model)
+        {
+            var findDepartment = await context.Departments.FindAsync(model.DepartmentId);
+
+            if (findDepartment == null)
+            {
+                throw new DepartmentServiceExceptions(DepartmentMessages.Department.NotFound);
+            }
+
+            findDepartment.CountryId = model.CountryId;
+            findDepartment.ImageUrl = model.ImageURL;
+            findDepartment.MaxPeopleCount = model.MaxPeopleCount;
+            findDepartment.Name = model.Name;
+
+            await context.SaveChangesAsync();
+            return DepartmentMessages.Success.SuccessfullyEditedDepartmentData;
         }
 
         private async Task<ICollection<Employee>> GetEmployeesInCurrentDepartment(int id)

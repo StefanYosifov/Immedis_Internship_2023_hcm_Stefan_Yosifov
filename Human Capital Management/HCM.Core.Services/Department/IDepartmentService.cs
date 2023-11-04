@@ -29,5 +29,7 @@
         Task<string> AddEmployeeToDepartmentById(DepartmentAddEmployee model);
 
         Task<string> RemoveEmployeeFromDepartmentById(DepartmentRemoveEmployee model);
+
+        Task<string> EditDepartmentDetails(DepartmentEditDetails model);
     }
 }

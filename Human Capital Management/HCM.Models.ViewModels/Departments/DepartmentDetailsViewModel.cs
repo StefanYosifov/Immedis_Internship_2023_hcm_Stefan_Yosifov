@@ -1,5 +1,7 @@
 ﻿namespace HCM.Models.ViewModels.Departments
 {
+    using Countries;
+
     using Positions;
 
     public class DepartmentDetailsViewModel
@@ -9,6 +11,7 @@
             DepartmentEmployees = new HashSet<DepartmentEmployeesModel>();
             PositionsInDepartment = new HashSet<DepartmentGetPositionsModel>();
             AvailablePositionsCollection = new HashSet<PositionViewModel>();
+            Countries = new HashSet<CountryViewModel>();
         }
 
         public int DepartmentId { get; set; }
@@ -24,6 +27,8 @@
         public string CountryName { get; set; }
 
         public int AverageSalary { get; set; }
+
+        public ICollection<CountryViewModel> Countries { get; set; }
 
         public ICollection<DepartmentEmployeesModel?>? DepartmentEmployees { get; set; }
 

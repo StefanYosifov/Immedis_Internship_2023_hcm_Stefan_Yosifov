@@ -10,6 +10,8 @@
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
     using Models.ViewModels.Genders;
+    using Models.ViewModels.Payments;
+    using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
 
@@ -81,6 +83,23 @@
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.AccountCreatedOn, opt => opt.MapFrom(src => src.CreatedOn))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateCalculator.CalculateAge(src.BirthDate)));
+
+            CreateMap<Employee, SalaryChangeModel>()
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateCalculator.CalculateAge(src.BirthDate)))
+                .ForMember(dest => dest.EmployeeFullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                .ForMember(dest => dest.CurrentSalary, opt => opt.MapFrom(src => src.Salary.SalaryAmount))
+                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.Name))
+                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Name))
+                .ForMember(dest => dest.SeniorityName, opt => opt.MapFrom(src => src.Seniority.Name));
+
+            CreateMap<BonusesReason, BonusReasonModel>()
+                .ForMember(dest => dest.ReasonId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ReasonName, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<DeductionReason, DeductionReasonModel>()
+                .ForMember(dest => dest.DeductionId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DeductionReason, opt => opt.MapFrom(src => src.Name));
         }
     }
 }

@@ -22,7 +22,6 @@
 
         public string? PositionName { get; set; }
 
-        public string? SeniorityName { get; set; } 
-
+        public string? SeniorityName { get; set; }
     }
 }

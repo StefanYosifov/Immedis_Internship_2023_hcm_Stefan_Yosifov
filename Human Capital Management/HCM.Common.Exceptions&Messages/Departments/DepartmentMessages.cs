@@ -22,6 +22,8 @@
         {
             public const string SuccessfullyRemovedEmployeeFromDepartment =
                 "You have successfully removed the employee from the department";
+
+            public const string SuccessfullyEditedDepartmentData = "You have successfully eddited departments data";
         }
     }
 }

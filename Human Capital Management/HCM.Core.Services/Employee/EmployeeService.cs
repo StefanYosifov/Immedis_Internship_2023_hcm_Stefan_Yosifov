@@ -1,5 +1,6 @@
 ﻿namespace HCM.Core.Services.Employee
 {
+    using System.Security.Claims;
     using System.Text;
 
     using AutoMapper;
@@ -20,6 +21,7 @@
 
     using Department;
 
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
 
     using Models.ViewModels.Countries;
@@ -36,6 +38,7 @@
         private readonly ICountryService countryService;
         private readonly IDepartmentService departmentService;
         private readonly IEmployeeManager employeeManager;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IMapper mapper;
 
         public EmployeeService(
@@ -43,13 +46,15 @@
             IMapper mapper,
             IEmployeeManager employeeManager,
             IDepartmentService departmentService,
-            ICountryService countryService)
+            ICountryService countryService,
+            IHttpContextAccessor httpContextAccessor)
         {
             this.context = context;
             this.mapper = mapper;
             this.employeeManager = employeeManager;
             this.departmentService = departmentService;
             this.countryService = countryService;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<EmployeeTableModel> GetEmployeeTable(int page, EmployeeQueryTableFilters query)
@@ -147,6 +152,7 @@
 
             var employee = new Employee
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = model.Firstname,
                 LastName = model.Lastname,
                 Email = model.Email,
@@ -158,9 +164,9 @@
                 NationalityId = model.NationalityId,
                 SeniorityId = model.SeniorityId,
                 CreatedOn = DateTime.UtcNow,
-                CreatedBy = "name",
+                CreatedBy = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name),
                 Username = model.Firstname[..2] + model.Lastname[..3] +
-                           random.Next(0, 999), //Compiler suggestion replacing .SubString(0,2)
+                           random.Next(0, 999),
                 PasswordHash = GenerateRandomPassword(random.Next(8, 15), random)
             };
 

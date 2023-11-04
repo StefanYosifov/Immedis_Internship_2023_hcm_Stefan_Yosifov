@@ -12,6 +12,5 @@
         public int SeniorityId { get; set; }
 
         public SalaryOptionsOrderModel Sort { get; set; }
-
     }
 }
