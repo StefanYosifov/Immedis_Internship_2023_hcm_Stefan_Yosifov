@@ -78,7 +78,7 @@
         {
             try
             {
-                var result = await service.GetMonthlySalaryAdditionsByMonth(model);
+                var result = await service.GetMonthlyAdditionTables(model);
                 return Ok(result);
             }
             catch (Exception e)

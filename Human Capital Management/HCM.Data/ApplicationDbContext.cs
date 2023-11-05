@@ -437,6 +437,11 @@
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.StatusId)
                     .HasConstraintName("FK__Tasks__StatusID__5EBF139D");
+
+                entity.HasOne(d => d.Issuer)
+                    .WithMany(p => p.TaskIssuers)
+                    .HasForeignKey(d => d.IssuerId)
+                    .HasConstraintName("FK_Tasks_Employees");
             });
 
             OnModelCreatingPartial(modelBuilder);

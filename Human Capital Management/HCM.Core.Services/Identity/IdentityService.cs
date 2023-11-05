@@ -59,16 +59,19 @@
             };
 
             var employeeRoles = findEmployee.EmployeeRoles
-                .Select(er => er.Role.Name).ToArray();
+                .Select(er => er.Role.Name)
+                .ToArray();
 
             foreach (var role in employeeRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var token = GetToken(authClaims);
+            JwtSecurityToken token = GetToken(authClaims);
 
-            return GetResponse(token, findEmployee);
+            Response response= GetResponse(token, findEmployee);
+
+            return response;
         }
 
         public async Task<string> ChangePassword(ChangePasswordModel model)

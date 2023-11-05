@@ -195,7 +195,7 @@
             return bonusesReasons;
         }
 
-        public async Task<MonthlyBonusDeductionTableModel> GetMonthlySalaryAdditionsByMonth(
+        public async Task<MonthlyBonusDeductionTableModel> GetMonthlyAdditionTables(
             TableBonusDeductionSearchModel model)
         {
             var doesEmployeeExist = await DoesEmployeeExist(model.EmployeeId);

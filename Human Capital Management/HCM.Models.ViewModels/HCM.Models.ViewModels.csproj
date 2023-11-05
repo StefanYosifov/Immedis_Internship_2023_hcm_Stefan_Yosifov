@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,6 +10,10 @@
     <ProjectReference Include="..\HCM.Common.Constants\HCM.Common.Constants.csproj" />
     <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />
     <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tasks\Enums\" />
   </ItemGroup>
 
 </Project>

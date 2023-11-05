@@ -14,6 +14,8 @@
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
+    using Models.ViewModels.Tasks.Priority;
+    using Models.ViewModels.Tasks.Status;
 
     public class MappingProfile : Profile
     {
@@ -93,6 +95,10 @@
                 .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Name))
                 .ForMember(dest => dest.SeniorityName, opt => opt.MapFrom(src => src.Seniority.Name));
 
+            CreateMap<PositionSeniority, SeniorityViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SeniorityId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Seniority!.Name));
+
             CreateMap<BonusesReason, BonusReasonModel>()
                 .ForMember(dest => dest.ReasonId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ReasonName, opt => opt.MapFrom(src => src.Name));
@@ -100,6 +106,14 @@
             CreateMap<DeductionReason, DeductionReasonModel>()
                 .ForMember(dest => dest.DeductionId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.DeductionReason, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<Priority, PriorityViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PriorityName, opt => opt.MapFrom(src => src.PriorityName));
+
+            CreateMap<Status, StatusViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.StatusName));
         }
     }
 }

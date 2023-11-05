@@ -6,6 +6,6 @@
 
         public decimal? DeductionAmount { get; set; }
 
-        public DeductionReasonModel DeductionReason { get; set; }
+        public DeductionReasonModel DeductionReason { get; set; } = null!;
     }
 }

@@ -13,6 +13,7 @@
             Payrolls = new HashSet<Payroll>();
             Tasks = new HashSet<Task>();
             EmployeeRoles = new HashSet<EmployeeRoles>();
+            TaskIssuers = new HashSet<Task>();
         }
 
         public string Id { get; set; } = null!;
@@ -40,6 +41,7 @@
         public virtual ICollection<Deduction> Deductions { get; set; }
         public virtual ICollection<Payroll> Payrolls { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<Task> TaskIssuers { get; set; }
 
         public virtual ICollection<EmployeeRoles> EmployeeRoles { get; set; }
         public DateTime? CreatedOn { get; set; }

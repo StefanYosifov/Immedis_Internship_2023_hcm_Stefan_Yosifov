@@ -176,7 +176,7 @@
             return true;
         }
 
-        public async Task<string> CreateFileFromEmployees(EmployeeFileInternalDTO file)
+        public async Task<string> CreateEmployeesFromFile(EmployeeFileInternalDTO file)
         {
             var factory = new CreateEmployeeFileFactory();
             var fileFromFactory = factory.CreateEmployeeFile(file.Extension);

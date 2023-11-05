@@ -101,7 +101,7 @@
         {
             try
             {
-                var result = await service.CreateFileFromEmployees(file);
+                var result = await service.CreateEmployeesFromFile(file);
                 return Ok(result);
             }
             catch (Exception ex)

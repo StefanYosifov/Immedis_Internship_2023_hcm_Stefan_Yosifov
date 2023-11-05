@@ -16,7 +16,7 @@
 
         Task<bool> CreateEmployee(EmployeeCreateResponseModel requestModel);
 
-        Task<string> CreateFileFromEmployees(EmployeeFileInternalDTO file);
+        Task<string> CreateEmployeesFromFile(EmployeeFileInternalDTO file);
 
         Task<EmployeeGetEditModel> GetEmployeeToEdit(string employeeId);
 

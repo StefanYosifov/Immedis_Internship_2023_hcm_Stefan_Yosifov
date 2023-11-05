@@ -72,11 +72,7 @@
         {
             return await context.PositionSeniorities
                 .Where(s => s.PositionId == id)
-                .Select(s => new SeniorityViewModel
-                {
-                    Id = s.SeniorityId,
-                    Name = s.Seniority!.Name
-                })
+                .ProjectTo<SeniorityViewModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
         }
 
@@ -135,7 +131,7 @@
 
             if (getDepartment == null)
             {
-                throw new InvalidOperationException("Such department does not exist");
+                throw new DepartmentServiceExceptions("Such department does not exist");
             }
 
             var employeesInDepartment = await GetEmployeesInCurrentDepartment(id);
@@ -156,8 +152,6 @@
                 averageSalary /= employeesInDepartment.Count;
             }
 
-            var datTimeToday = DateTime.UtcNow;
-
             var mappedEmployees = employeesInDepartment.Select(ed => new DepartmentEmployeesModel
             {
                 EmployeeId = ed.Id,
@@ -177,7 +171,7 @@
                 DepartmentImageUrl = getDepartment.ImageUrl,
                 EmployeeCapacity = getDepartment.MaxPeopleCount,
                 CountryName = getDepartment.Country.Name,
-                AverageSalary = (int)averageSalary,
+                AverageSalary = (int)averageSalary!,
                 EmployeesCount = employeesInDepartment.Count,
                 DepartmentEmployees = mappedEmployees,
                 AvailablePositionsCollection = await GetAvailablePositionsToAddToDepartmentById(id),
@@ -206,18 +200,18 @@
 
         public async Task<string> AddPositionToDepartmentById(DepartmentAddPosition model)
         {
-            var department = await context.Departments.FindAsync(model.DepartmentId);
+            var getDepartment = await context.Departments.FindAsync(model.DepartmentId);
 
-            if (department == null)
+            if (getDepartment == null)
             {
-                throw new InvalidOperationException("Invalid department");
+                throw new DepartmentServiceExceptions("Invalid department");
             }
 
             var getPosition = await context.Positions.FindAsync(model.PositionId);
 
             if (getPosition == null)
             {
-                throw new InvalidOperationException("Invalid position");
+                throw new DepartmentServiceExceptions("Invalid position");
             }
 
             var getPositionsInDepartment = await GetPositionsByDepartmentId(model.DepartmentId);
@@ -227,7 +221,7 @@
                 throw new InvalidOperationException("Position is already added");
             }
 
-            department.Positions.Add(getPosition);
+            getDepartment.Positions.Add(getPosition);
             await context.SaveChangesAsync();
 
             return "Success";
@@ -242,14 +236,14 @@
 
             if (department == null)
             {
-                throw new InvalidOleVariantTypeException("Invalid Department");
+                throw new DepartmentServiceExceptions("Invalid Department");
             }
 
             var position = await context.Positions.FindAsync(model.PositionId);
 
             if (position == null)
             {
-                throw new InvalidOperationException("Invalid position");
+                throw new DepartmentServiceExceptions("Invalid position");
             }
 
             var findPositionInDepartment = department.Positions
@@ -292,7 +286,8 @@
             }
 
             var doesDepartmentExist = await context.Departments
-                .AnyAsync(d => d.Id == model.DepartmentId);
+                .Select(d => d.Id)
+                .AnyAsync(x => x == model.DepartmentId);
 
             if (doesDepartmentExist == false)
             {
