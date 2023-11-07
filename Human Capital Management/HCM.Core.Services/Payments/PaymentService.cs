@@ -26,18 +26,18 @@
     {
         private readonly IMemoryCache cache;
         private readonly ApplicationDbContext context;
-        private readonly IDetailsService detailsService;
+        private readonly IStatisticsService _statisticsService;
         private readonly IMapper mapper;
 
         public PaymentService(
             ApplicationDbContext context,
             IMapper mapper,
-            IDetailsService detailsService,
+            IStatisticsService statisticsService,
             IMemoryCache cache)
         {
             this.context = context;
             this.mapper = mapper;
-            this.detailsService = detailsService;
+            this._statisticsService = statisticsService;
             this.cache = cache;
         }
 
@@ -101,10 +101,10 @@
             });
 
             var employeesPagination = await Pagination<SalaryTableModel>.CreateAsync(mappedEmployees, page,
-                ValidationConstants.PaginationConstants.ItemsPerPage);
+                ValidationConstants.PaginationConstants.DefaultItemsPerPage);
 
             var totalPages = (int)Math.Ceiling(
-                (decimal)employeesPagination.Count / ValidationConstants.PaginationConstants.ItemsPerPage);
+                (decimal)employeesPagination.Count / ValidationConstants.PaginationConstants.DefaultItemsPerPage);
 
             return new SalaryTablePagination
             {
@@ -139,10 +139,10 @@
 
             salaryChangeModel.TimeInCompany = daysInCompany;
             salaryChangeModel.AverageDepartmentSalary =
-                await detailsService.GetAverageSalaryInDepartmentById(departmentId);
-            salaryChangeModel.AveragePositionSalary = await detailsService.GetAverageSalaryInPositionById(departmentId);
+                await _statisticsService.GetAverageSalaryInDepartmentById(departmentId);
+            salaryChangeModel.AveragePositionSalary = await _statisticsService.GetAverageSalaryInPositionById(departmentId);
             salaryChangeModel.AverageSenioritySalary =
-                await detailsService.GetAverageSalaryInSeniorityById(departmentId);
+                await _statisticsService.GetAverageSalaryInSeniorityById(departmentId);
 
             return salaryChangeModel;
         }
@@ -158,7 +158,7 @@
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.BonusCachingConstant)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.Hours.BonusCachingConstant)
             };
 
             var getBonusesReasons = await context.BonusesReasons
@@ -182,7 +182,7 @@
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.DeductionCachingConstant)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.Hours.DeductionCachingConstant)
             };
 
             var getDeductionReason = await context.DeductionReasons

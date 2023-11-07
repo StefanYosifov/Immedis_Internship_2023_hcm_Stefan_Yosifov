@@ -1,5 +1,5 @@
 ﻿<div class="m-3">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <form id="query" class="d-flex">
                 <div class="form-group">
@@ -9,13 +9,12 @@
                 <div class="form-group mx-3">
                     <label for="countries" class="mr-2">Select an option:</label>
                     <select id="countries" name="CountryId" class="form-control" id="selectOption1">
-                  
+                        <option value="0">Choose an option</option>
                     </select>
                 </div>
                 <div class="form-group mx-3">
                     <label for="sort" class="mr-2">Select an option:</label>
                     <select id="sort" name="Sort" class="form-control" id="selectOption2">
-            
                     </select>
                 </div>
                 <div class="form-group mx-3">
@@ -25,66 +24,56 @@
         </div>
     </nav>
 
+
     <div class="container mt-4">
         <div id="departmentContainer" class="row">
-
         </div>
     </div>
 </div>
 
 
 <style>
-    <style >
-    /* Navbar styles */
-    .navbar {
-        background-color: #3498db;
-        padding: 10px 0;
-    }
-
-    .navbar form {
-        display: flex;
-        align-items: center;
-    }
-
-    .navbar label {
-        color: white;
-        margin-right: 10px;
-    }
-
-    .navbar input,
-    .navbar select {
-        width: 200px;
-        padding: 5px;
-        border: none;
-        border-radius: 5px;
-    }
-
-    .navbar select {
-        width: 250px;
-    }
-
-    .navbar .btn {
-        background-color: #2c3e50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 5px 10px;
-        cursor: pointer;
-    }
-
-    /* Container styles */
     .container {
         margin-top: 20px;
     }
 
-    /* Department container styles */
     #departmentContainer {
         display: flex;
         flex-wrap: wrap;
     }
+
+    img{
+        width:100px;
+        height:200px;
+    }
+
+    button.btn-primary, .btn {
+        margin-top: 5px;
+        background-color: #4e73df;
+        color: #f8f9fc;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 15px;
+        margin-bottom:5px;
+    }
+
+    .card {
+        border: 1px solid #f8f9fc;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .card-text {
+        font-size: 16px;
+        color: #151515;
+    }
 </style>
 
-</style>
 
 @if (false)
 {
@@ -92,130 +81,139 @@
 }
 
 @section Scripts
-{
+    {
     <script type="text/javascript">
 
         let token = "Bearer " + localStorage.getItem("Authorization");
         let container = $('#departmentContainer');
 
+        const countries = $("#countries");
+        const sort = $("#sort");
+        const search = $("#formSearch");
+
+
         function FillDepartmentContainer(departments) {
             container.empty();
             departments.forEach(function (department) {
-                let departmentCard = $('<div class="card col-md-3 mb-3 mx-5"></div>');
+                let departmentCard = $('<div class="card mb-4 mx-4" style="width: 18rem;"></div>');
 
-                let departmentImage = $('<img class="card-img-top" src="' + department.departmentImageUrl + '" />');
+                let departmentImage = $('<img class="card-img-top" src="' + department.departmentImageUrl + '" alt="' + department.departmentName + '" />');
 
-                let badge = $('<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">' + department.departmentName + '</div>');
+                departmentImage.on('error', function () {
+                    // If the image fails to load, replace it with a placeholder image
+                    departmentImage.attr('src', 'https://img.freepik.com/free-vector/gradient-technology-logo_52683-8565.jpg');
+                });
 
-                let departmentName = $('<h5 class="fw-bolder">' + department.departmentName + '</h5>');
+                let badge = $('<div class="badge bg-dark position-absolute" style="top: 0.5rem; right: 0.5rem">' + department.departmentName + '</div>');
 
-                let departmentLocation = $('<p class="text-center mt-1">' + department.location + '</p>');
+                let cardBody = $('<div class="card-body"></div>');
 
-                let departmentFooter = $('<div class="card-footer"></div>');
+                let departmentName = $('<h5 class="card-title">' + department.departmentName + '</h5>');
 
-                let employeeCount = $('<small>' + department.departmentEmployeeCount + ' employees</small>');
+                let employeeCount = $('<p class="card-text">' + department.departmentEmployeeCount + ' employees</p>');
 
-                let capacity = $('<small>Total capacity ' + department.departmentTotalEmployeeCapacity + '</small>');
+                let capacity = $('<p class="card-text">Total capacity: ' + department.departmentTotalEmployeeCapacity + '</p>');
 
-                let country = $('<small>' + department.departmentCountry + '</small>');
+                let country = $('<p class="card-text">Country: ' + department.departmentCountry + '</p>');
 
-                let detailsButton = $(`<div class="card-footer p-4 pt-0 border-top-0 bg-transparent"><div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/departments/details/${department.departmentId}">Details</a></div></div>`);
+                let detailsButton = $(`<a href="/departments/details/${department.departmentId}" class="btn btn-dark">Details</a>`);
 
+                cardBody.append(departmentName);
+                cardBody.append(employeeCount);
+                cardBody.append(capacity);
+                cardBody.append(country);
 
                 departmentCard.append(departmentImage);
                 departmentCard.append(badge);
-                departmentCard.append(departmentName);
-                departmentCard.append(departmentLocation);
-                departmentFooter.append(employeeCount);
-                departmentFooter.append(capacity);
-                departmentFooter.append(country);
-                departmentFooter.append(detailsButton);
-                departmentCard.append(departmentFooter);
+                departmentCard.append(cardBody);
+                departmentCard.append(detailsButton);
 
                 container.append(departmentCard);
             });
         };
 
-        $(document).ready(function () {
+        function LoadDataOptions() {
             $.ajax({
                 url: 'https://localhost:7153/departments/options',
                 type: 'GET',
                 headers: { "Authorization": token },
                 success: function (data) {
+                    console.log(data);
 
-                    let arr = JSON.parse(data);
-                    console.log(arr);
+                    $.each(data.countries, function (index, country) {
+                        $("#countries").append($('<option>', {
+                            value: country.id,
+                            text: country.name
+                        }));
+                    });
 
-                    let arguments = "";
-                    for (let i = 0; i < arr.countries.length; i++) {
-                        arguments += '<option value="' + arr.countries[i].id + '">' + arr.countries[i].name + '</option>';
-                    }
-                    $("#countries").html(arguments);
-
-                    arguments = "";
-                    for (let i = 0; i < arr.sort.length; i++) {
-                        arguments += '<option value="' + arr.sort[i] + '">' + arr.sort[i] + '</option>';
-                    }
-                    $("#sort").html(arguments);
+                    $.each(data.sort, function (index, sort) {
+                        console.log(sort);
+                        $("#sort").append($('<option>', {
+                            value: index,
+                            text: sort
+                        }));
+                    });
 
                 },
                 error: function (xhr, status, error) {
                 }
             });
+        }
 
+        function InitiallyLoadData() {
             $.ajax({
                 url: 'https://localhost:7153/departments/all/main',
                 type: 'GET',
                 headers: { "Authorization": token },
                 success: function (data) {
                     console.log(data);
-                    let departments = JSON.parse(data);
+                    let departments = data;
                     console.log(departments);
-
                     FillDepartmentContainer(departments);
                 },
                 error: function (xhr, status, error) {
-                    // Handle any errors
                 }
             });
+        }
 
+        function Search() {
             $("#formSearch").click(function () {
                 const department = $("#textInput").val();
                 const country = $("#countries").val();
                 const sort = $("#sort").val();
 
+
+                console.log(department);
+                console.log(country);
+                console.log(sort);
+
                 const baseUrl = 'https://localhost:7153/departments/all/main';
-                const queryParams = [];
 
-                if (department) {
-                    queryParams.push(`Search=${department}`);
-                }
-                if (country) {
-                    queryParams.push(`CountryId=${country}`);
-                }
-                if (sort) {
-                    queryParams.push(`Sort=${sort}`);
-                }
+                $.ajax({
+                    url: baseUrl,
+                    type: 'GET',
+                    headers: { "Authorization": token },
+                    data: ({ "search": department, "countryId": country, "sort": sort }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        let departments = (data);
+                        FillDepartmentContainer(departments);
+                    },
+                    error: function (xhr, status, error) {
 
-                if (queryParams.length > 0) {
-                    const urlWithParams = `${baseUrl}?${queryParams.join("&")}`;
-                    const currentUrl = `https://localhost:7153/departments?${queryParams.join("&")}`;
-                    window.history.pushState({}, '', currentUrl);
-                    $.ajax({
-                        url: urlWithParams,
-                        type: 'GET',
-                        headers: { "Authorization": token },
-                        success: function (data) {
-                            let departments = JSON.parse(data);
-                            console.log(`change`);
-                            FillDepartmentContainer(departments);
-                        },
-                        error: function (xhr, status, error) {
-                            // Handle any errors
-                        }
-                    });
-                }
+                    }
+                });
             });
+        }
+
+        $(document).ready(function () {
+
+            LoadDataOptions();
+
+            InitiallyLoadData();
+
+            Search();
         });
     </script>
 }

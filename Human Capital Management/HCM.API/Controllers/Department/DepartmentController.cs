@@ -136,7 +136,7 @@
             {
                 return NotFound(e.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("Bad request");
             }

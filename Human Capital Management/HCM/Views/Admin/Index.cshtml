@@ -1,0 +1,254 @@
+﻿<div class="tr-job-posted section-padding">
+    <div class="container">
+        <div class="job-tab text-center">
+            <ul class="nav nav-tabs justify-content-center" role="tablist">
+                <li role="presentation">
+                    <a class="show" href="#employees" aria-controls="employees" role="tab" data-toggle="tab" aria-selected="true">Employees</a>
+                </li>
+                <li role="presentation">
+                    <a href="#recent-jobs" aria-controls="recent-jobs" role="tab" data-toggle="tab" aria-selected="false">Roles</a>
+                </li>
+                <li role="presentation">
+                    <a href="#popular-jobs" aria-controls="popular-jobs" role="tab" data-toggle="tab" aria-selected="false">Positions</a>
+                </li>
+                <li role="presentation">
+                    <a href="#audit-logs" aria-controls="audit-logs" role="tab" data-toggle="tab" aria-selected="false">Audit logs</a>
+                </li>
+            </ul>
+            <div class="tab-content text-left">
+                <div role="tabpanel" class="tab-pane fade active show" id="employees">
+                    <div class="row">
+                        <div class="card mb-7">
+                            <div class="card-header">
+                                <h5 class="mb-0">Employees</h5>
+                                <div>
+                                    <div class="form-check form-switch text-start">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Search for HRs</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-nowrap">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">First name</th>
+                                            <th scope="col">Last name</th>
+                                            <th scope="col">Age</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Department</th>
+                                            <th scope="col">Position</th>
+                                            <th scope="col">Seniority</th>
+                                            <th scope="col">Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employeeTable">
+                                    </tbody>
+                                    <ul id="employeePages">
+
+                                    </ul>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="recent-jobs">
+                    <div class="row">
+                        <!-- Content for Roles tab -->
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="popular-jobs">
+                    <div class="row">
+                        <!-- Content for Positions tab -->
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="audit-logs">
+                    <div class="row">
+                        <div class="card mb-7">
+                            <div class="card-header">
+                                <h5 class="mb-0">Applications</h5>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-nowrap">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Company</th>
+                                            <th scope="col">Offer</th>
+                                            <th scope="col">Meeting</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="auditLogs">
+                                    </tbody>
+
+                                    <ul id="auditPages">
+                                    </ul>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f5f4f5;
+    }
+
+    .job-tab .nav-tabs {
+        margin-bottom: 60px;
+        border-bottom: 0;
+    }
+
+    .nav-tabs > li {
+        float: none;
+        display: inline;
+    }
+
+    .nav-tabs li {
+        margin-right: 15px;
+    }
+
+    label{
+        color:#4e73df;
+    }
+
+</style>
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        const baseUrl = "https://localhost:7153/admin";
+        const token = "Bearer " + localStorage.getItem("Authorization");
+        let page = 1;
+        const table = $("#auditLogs");
+        const auditPages = $("#auditPages");
+
+        console.log(page);
+
+        function Pagination(audit) {
+            const threePagesFromNow = audit.page + 3;
+
+            table.empty();
+            auditPages.empty();
+
+            $.each(audit.auditLogs, function (index, item) {
+                table.append(`<tr>
+                            <td>${item.id}</td>
+                            <td>${item.entityName}</td>
+                            <td>${item.action}</td>
+                            <td>${item.changes}</td>
+                            <td>${item.employeeId || ''}</td>
+                            <td>${item.timestamp}</td>
+                            </tr>`);
+            })
+
+            for (let i = audit.page - 2; i < threePagesFromNow; i++) {
+                if (i < 1) {
+                    continue;
+                }
+                if (i > audit.totalPages) {
+                    return;
+                }
+                auditPages.append(`<li>
+                        <div class="changeAuditPage">
+                        <a class="auditPage" data-page="${i}">${i}</a>
+                        </div>
+                        </li>`);
+            }
+        }
+
+        function ChangePage() {
+            $(".auditPage").off("click");
+            $(".auditPage").click(function () {
+                var newPage = $(this).data("page");
+                LoadAudit(newPage);
+            })
+        }
+
+        function LoadAudit(page) {
+            $.ajax({
+                url: baseUrl + "/audit",
+                type: "Get",
+                headers: { "Authorization": token },
+                data: { "page": page },
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data);
+                    Pagination(data);
+                }
+            });
+        }
+
+        function LoadEmployees() {
+            const employeeTable = $("#employeeTable")
+            const employeePages = $("employeePages");
+
+            $.ajax({
+                url: baseUrl + "/employees",
+                type: "Get",
+                headers: { "Authorization": token },
+                data: { "page": page },
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data);
+
+                    $.each(data.employees, function (_, employee) {
+                        employeeTable.append(`
+                              <tr>
+                    <td>${employee.employeeFirstName}</td>
+                    <td>${employee.employeeLastName}</td>
+                    <td>${employee.employeeAge}</td>
+                    <td>${employee.employeeUserName}</td>
+                    <td>${employee.employeeDepartmentName}</td>
+                    <td>${employee.employeePositionName}</td>
+                    <td>${employee.employeeSeniority}</td>
+                    <td>
+                        <select>
+                            <option value="0">No role</option>
+                            ${data.roles.map(role => `
+                                <option value="${role.id}">${role.name}</option>
+                            `)}
+                        </select>
+                    </td>
+                </tr>`);});
+
+                        const threePagesFromNow=data.page+3;
+
+                        for (let i = data.page - 2; i < threePagesFromNow; i++) {
+                            if (i < 1) {
+                                continue;
+                            }
+                            if (i > data.totalPages) {
+                                return;
+                            }
+                        employeePages.append(`<li>
+                                <div>
+                                <a data-page="${i}">${i}</a>
+                                </div>
+                                </li>`);
+                        }
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            LoadAudit(1);
+            LoadEmployees();
+
+            $(".auditPage").ready(function () {
+                ChangePage();
+            })
+        })
+
+    </script>
+        }
+
+

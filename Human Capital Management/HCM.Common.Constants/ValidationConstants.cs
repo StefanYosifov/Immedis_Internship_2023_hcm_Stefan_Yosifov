@@ -16,7 +16,10 @@
 
         public static class PaginationConstants
         {
-            public const int ItemsPerPage = 12;
+            public const int DefaultItemsPerPage = 12;
+            public const int TasksItemPerPage = 6;
+            public const int AuditItemsPerPage = 24;
+            public const int AdminEmployeesPerPage = 20;
         }
     }
 }

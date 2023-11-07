@@ -31,12 +31,4 @@
     <ProjectReference Include="..\HCM.Models.ViewModels\HCM.Models.ViewModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\Payment\Salaries.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\Payment\Salaries.cshtml" />
-  </ItemGroup>
-
 </Project>

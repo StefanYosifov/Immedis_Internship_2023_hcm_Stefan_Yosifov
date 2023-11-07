@@ -11,7 +11,6 @@
     public class PaymentController : BaseController
     {
         private const string DefaultRoute = "/payments";
-        private const string DefaultApiRoute = "/api/payments";
 
         public IActionResult Salary()
         {

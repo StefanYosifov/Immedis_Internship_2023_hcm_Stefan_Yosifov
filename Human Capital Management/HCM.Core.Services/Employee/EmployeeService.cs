@@ -32,7 +32,7 @@
     using Models.ViewModels.Genders;
     using Models.ViewModels.Roles;
 
-    public class EmployeeService : IEmployeeService
+    internal class EmployeeService : IEmployeeService
     {
         private readonly ApplicationDbContext context;
         private readonly ICountryService countryService;
@@ -103,14 +103,14 @@
             };
 
             var totalPages = (int)Math.Ceiling(
-                (decimal)await employeeTable.CountAsync() / ValidationConstants.PaginationConstants.ItemsPerPage);
+                (decimal)await employeeTable.CountAsync() / ValidationConstants.PaginationConstants.DefaultItemsPerPage);
 
             var mappedTable = new EmployeeTableModel();
 
             var employeesData = employeeTable.ProjectTo<EmployeeTableDataModel>(mapper.ConfigurationProvider);
 
             var pagination = await Pagination<EmployeeTableDataModel>
-                .CreateAsync(employeesData, page, ValidationConstants.PaginationConstants.ItemsPerPage);
+                .CreateAsync(employeesData, page, ValidationConstants.PaginationConstants.DefaultItemsPerPage);
 
             var paginatedResult = new EmployeeTableDataModel[pagination.Count];
 

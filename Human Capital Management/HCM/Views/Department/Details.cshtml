@@ -4,7 +4,7 @@
     ViewData["Title"] = "Department Details";
 }
 
-<div>
+<div class="container-xxl">
     <div class="card d-flex justify-content-center align-items-center my-5">
     <h5 class="card-header-pills">Department Details</h5>
         <div class="card-body w-auto">
@@ -58,9 +58,6 @@
                             <div class="tabs" id="tab01">
                                 <h6 class="text-muted">Positions</h6>
                             </div>
-                            <div class="tabs active" id="tab02">
-                                <h6 class="font-weight-bold">Knowledge Center</h6>
-                            </div>
                             <div class="tabs" id="tab03">
                                 <h6 class="text-muted">Add Employees</h6>
                             </div>
@@ -111,27 +108,11 @@
                                     }
                                 </div>
                             </fieldset>
-                            <fieldset class="show" id="tab021">
-                                <div class="bg-light">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Knowledge Center</h5>
-                                    <form>
-                                        <div class="form-group pb-5 px-3">
-                                            <select name="account" class="form-control">
-                                                <option selected disabled>Select Product</option>
-                                                <option>Product 1</option>
-                                                <option>Product 2</option>
-                                                <option>Product 3</option>
-                                                <option>Product 4</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                            </fieldset>
                             <fieldset id="tab031">
-                                <div class="bg-light align-content-center">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Communities</h5>
+                                <div class="bg-light align-content-center align-items-center">
+                                    <h5 class="text-center mb-4 mt-0 pt-4">Add Employees</h5>
                                     <div class="d-flex justify-content-center">
-                                        <form id="employeeForm">
+                                        <form id="employeeForm" class="mb-4 mt-0 pt-4">
                                             <div class="custom-select">
                                                 <input type="text" id="custom-select-input" placeholder="Select an option">
                                                 <ul class="custom-select-options">
@@ -188,23 +169,6 @@
 
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </form>
-
-
-                                </div>
-                                <div class="px-3">
-                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-rocket"></span> Trending Technologies</h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Augmented Reality and Virtual Reality</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Angular and React</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-2">
-                                        <a href="#">Big Data and Hadoop</a>
-                                    </h6>
-                                    <h6 class="text-primary pb-4">
-                                        <a href="#">Internet of Things (IoT)</a>
-                                    </h6>
                                 </div>
                             </fieldset>
                         </div>
@@ -217,9 +181,9 @@
     <h2>Department Employees</h2>
     <div class="card shadow mb-4 mt-5 me-5">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Employees</h6>
         </div>
-        <table class="table">
+        <table class="table px-2">
             <thead>
                 <tr>
                     <th>Full Name</th>
@@ -233,7 +197,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var employee in Model.DepartmentEmployees)
+            @if (Model.DepartmentEmployees != null)
+            {
+                foreach (var employee in Model.DepartmentEmployees)
                 {
                     <tr>
                         <td>@employee.EmployeeFullName</td>
@@ -250,6 +216,7 @@
                         </td>
                     </tr>
                 }
+            }
             </tbody>
         </table>
     </div>
@@ -315,7 +282,7 @@
     .card-body p {
         margin: 0;
         padding: 0px 0;
-        font-size: 16px;
+        font-size: 16.5px;
         color: #252525;
     }
 
@@ -327,7 +294,7 @@
 
         .card-body h6 {
             margin: 0px 0;
-            font-size: 14px; 
+            font-size: 18px; 
         }
     fieldset {
         display: none;
@@ -392,7 +359,7 @@
     }
 
     .tabs h6 {
-        font-size: 12px;
+        font-size: 14px;
     }
 
     input[type="text"], input[type="number"] ,select {
@@ -447,10 +414,6 @@
                 var departmentImageUrl = $("input[name='ImageURL']").val();
                 var countryId = $("select[name='CountryId']").val();
 
-                console.log("Department Name: " + departmentName);
-                console.log("Employee Capacity: " + employeeCapacity);
-                console.log("Department Image URL: " + departmentImageUrl);
-                console.log("Country ID: " + countryId);
                 $.ajax({
                     url: url + "/edit/data",
                     type: "Put",

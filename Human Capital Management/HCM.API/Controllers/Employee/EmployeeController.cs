@@ -146,7 +146,7 @@
                 var result = await service.GetEmployeesWithNoDepartmentByName(name);
                 return Ok(result);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return NotFound();
             }

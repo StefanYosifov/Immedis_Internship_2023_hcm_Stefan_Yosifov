@@ -10,9 +10,16 @@
         Task<ICollection<PriorityViewModel>> GetTaskPriorities();
 
         Task<ICollection<StatusViewModel>> GetTaskStatuses();
+
         Task<SearchTaskOptionsModel> GetTaskOptions();
 
-        Task<EmployeeTasks> GetEmployeeTasks(SearchTaskModel model);
+        Task<EmployeeTasksModel> GetEmployeeTasks(SearchTaskModel model);
+
+        Task<EmployeeTasksPagination> GetEmployeeTasksInPaginationFormat(SearchEmployeeTasksPagination model);
+
+        Task<ICollection<TaskModel>> GetTasksXDaysFromNowByEmployeeId(SearchTasksByDays model);
+
+        Task<string> CreateTask(CreateTaskModel model);
 
     }
 }

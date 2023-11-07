@@ -82,10 +82,8 @@
 
             if (!string.IsNullOrEmpty(query.Search))
             {
-                var wildcard = $"%{query.Search.ToLower()}%";
-
                 departments = departments
-                    .Where(c => EF.Functions.Like(c.Name.ToLower(), wildcard));
+                    .Where(d => d.Name.ToLower() == query.Search.ToLower());
             }
 
             if (query.CountryId > 0)

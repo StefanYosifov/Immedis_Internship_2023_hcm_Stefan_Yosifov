@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "title";
+
+}
+
+
+
+
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        const url = "https://localhost:7153/tasks";
+        const token="Bearer "+localStorage.getItem("Authorization");
+        var id=""
+
+        function LoadMyTasks() {
+            $.ajax({
+                url: url + "/pagination",
+                type: "GET",
+                headers: { "Authorization": token },
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+
+        $(document).ready(function(){
+            LoadMyTasks();
+        })
+
+    </script>
+}
+

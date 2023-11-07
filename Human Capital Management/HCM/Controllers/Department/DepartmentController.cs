@@ -14,7 +14,7 @@
     public class DepartmentController : BaseController
     {
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public  IActionResult Index()
         {
             return View();
         }
@@ -59,12 +59,12 @@
         }
 
         [HttpGet("all/main")]
-        public async Task<IActionResult> GetAllDepartments([FromRoute] DepartmentSendQueryFilters query)
+        public async Task<IActionResult> GetAllDepartments([FromQuery] DepartmentSendQueryFilters query)
         {
             var request = new RestRequestBuilder("/api/departments/all/main",
                     GetAuthenticationClaim())
                 .SetMethod(Method.Get)
-                .AddParameter(query.Search, query.CountryId.ToString(), query.Sort.ToString())
+                .AddQueryParameter(query)
                 .AddAuthentication()
                 .Build();
 
@@ -72,7 +72,7 @@
 
             if (response.IsSuccessful)
             {
-                return Ok(response.Content);
+                return Ok(response.Data);
             }
 
             return BadRequest();
@@ -91,7 +91,7 @@
 
             if (response.IsSuccessful)
             {
-                return Ok(response.Content);
+                return Ok(response.Data);
             }
 
             return BadRequest();

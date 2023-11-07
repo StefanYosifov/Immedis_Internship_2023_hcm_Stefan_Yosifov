@@ -4,9 +4,13 @@
     using AutoMapper.QueryableExtensions;
 
     using Common.Constants;
+    using Common.Exceptions_Messages.Employees;
+    using Common.Exceptions_Messages.Tasks;
+    using Common.Helpers;
     using Common.Manager;
 
     using Data;
+    using Data.Models;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Caching.Memory;
@@ -50,7 +54,7 @@
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.DeductionCachingConstant)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.Hours.DeductionCachingConstant)
             };
 
             cache.Set(cacheKey, getTaskPriorities, cacheEntryOptions);
@@ -73,7 +77,7 @@
 
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.DeductionCachingConstant)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(CachingConstants.Hours.DeductionCachingConstant)
             };
 
             cache.Set(cacheKey, getTaskStatuses, cacheEntryOptions);
@@ -89,7 +93,7 @@
             };
         }
 
-        public async Task<ICollection<EmployeeTasks>> GetEmployeeTasks(SearchTaskModel model)
+        public async Task<EmployeeTasksModel> GetEmployeeTasks(SearchTaskModel model)
         {
             var tasks = context.Tasks.AsQueryable();
 
@@ -114,7 +118,8 @@
                 tasks = tasks.Where(t => t.DueDate >= DateTime.UtcNow);
             }
 
-            tasks = await tasks.Select(t => new EmployeeTasks()
+
+            var employeeTasks = tasks.Select(t => new TaskModel()
             {
                 Id = t.Id,
                 EmployeeId = t.EmployeeId,
@@ -122,8 +127,82 @@
                 Description = t.Description,
                 IssuerId = t.IssuerId,
                 DueDate = t.DueDate,
-
+                Priority = new PriorityViewModel()
+                {
+                    Id = t.PriorityId,
+                    PriorityName = t.Priority!.PriorityName
+                },
+                Status = new StatusViewModel()
+                {
+                    Id = t.StatusId,
+                    StatusName = t.Status!.StatusName
+                }
             }).ToArrayAsync();
+
+            return new EmployeeTasksModel()
+            {
+                Tasks = await employeeTasks,
+                Options = await GetTaskOptions(),   
+            };
+
+
+        }
+
+        public async Task<EmployeeTasksPagination> GetEmployeeTasksInPaginationFormat(SearchEmployeeTasksPagination model)
+        {
+                if(string.IsNullOrEmpty(model.EmployeeId))
+                {
+                    model.EmployeeId = employeeManager.GetUserId();
+                }
+
+            var tasks = context.Tasks
+                .Include(t=>t.Status)
+                .Include(t=>t.Priority)
+                .Where(t => t.EmployeeId == model.EmployeeId)
+                .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
+                .AsQueryable();
+
+            var paginatedTasks = await Pagination<TaskModel>.CreateAsync(tasks, model.Page,ValidationConstants.PaginationConstants.TasksItemPerPage);
+
+            var totalPages = (int)Math.Ceiling((double)(await tasks.CountAsync()) / ValidationConstants.PaginationConstants.TasksItemPerPage);
+
+
+            return new EmployeeTasksPagination()
+            {
+                Tasks = paginatedTasks,
+                TotalPages = totalPages,
+                Page = model.Page,
+            };
+        }
+
+        public async Task<ICollection<TaskModel>> GetTasksXDaysFromNowByEmployeeId(SearchTasksByDays model)
+        {
+            var searchUntil = DateTime.UtcNow.AddDays(model.DaysFromNow);
+
+            return await context.Tasks
+                .Include(t=>t.Status)
+                .Include(t=>t.Priority)
+                .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
+                .Where(t => t.DueDate >= searchUntil && t.EmployeeId == model.EmployeeId)
+                .ToArrayAsync();
+        }
+
+        public async Task<string> CreateTask(CreateTaskModel model)
+        {
+            var findEmployee = await context.Employees.FindAsync(model.EmployeeId);
+
+            if (findEmployee == null)
+            {
+                throw new TaskServiceExceptions(EmployeeMessages.NotFound);
+            }
+
+            var task = mapper.Map<Task>(findEmployee);
+            task.IssuerId = employeeManager.GetUserId();
+
+            await context.Tasks.AddAsync(task);
+            await context.SaveChangesAsync();
+
+            return TaskMessages.SuccessfullyCreatedATask;
         }
     }
 }

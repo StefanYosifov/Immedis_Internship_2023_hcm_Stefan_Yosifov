@@ -2,143 +2,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HCM</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 
 
 <body>
-<header>
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HCM</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <header>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HCM</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+        }
+        else
+        {
+            <nav style="background:#212121">
+                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="SignIn">Home</a>
-                        </li>
-                    </ul>
+            </nav>
+        }
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="flex">
+            <div class="row">
+                <div class="col-auto">
+                    <nav id="sidebar" class="sidebar-header">
+                        <div class="sidebar-header border border-bottom">
+                            <h3>Human Capital Management</h3>
+                            <strong>Welcome @User.FindFirstValue(ClaimTypes.Name)</strong>
+                            @if (User.IsInRole("HR"))
+                            {
+                                <strong>You are in HR role</strong>
+                            }
+                        </div>
+                        <ul class="list-unstyled components">
+                            <li class="active">
+                                <i class="fa fa-home" aria-hidden="true"></i>
+                                <a 
+                                    href="@Html.ActionLink("Home page", "DashBoard", "Home")"
+                                />
+                                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                    <i class="fa-solid fa-users"></i>
+                                    Employees
+                                </a>
+                                <ul class="collapse list-unstyled" id="homeSubmenu">
+                                    <li>
+                                        @Html.ActionLink("Employees", "All", "Employee")
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("Create", "Create", "Employee")
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                    Payroll
+                                </a>
+                                <ul class="collapse list-unstyled" id="pageSubmenu">
+                                    <li>
+                                        <a href="#">Payroll</a>
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("Salaries", "Salary", "Payment")
+                                    </li>
+                                    <li>
+                                        <a href="#">Bonuses</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Department")">
+                                    <i class="fas fa-image"></i>
+                                    Departments
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fas fa-question"></i>
+                                    FAQ
+                                </a>
+                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index","Admin")">
+                                        <i class="fa-solid fa-hammer"></i>
+                                        Administrator area
+                                    </a>
+                                </li>
+                            }
+                            <li>
+                                <a href="@Url.Action("SignOut", "Identity")">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col">
+                    @RenderBody()
                 </div>
             </div>
-        </nav>
-    }
-    else
-    {
-        <nav style="background:#212121">
-            <button type="button" id="sidebarCollapse" class="btn btn-info">
-                <i class="fas fa-align-left"></i>
-            </button>
-        </nav>
-    }
-</header>
-<div class="container-fluid">
-    <main role="main" class="flex">
-        <div class="row">
-            <div class="col-auto">
-                <nav id="sidebar" class="sidebar-header">
-                    <div class="sidebar-header border border-bottom">
-                        <h3>Human Capital Management</h3>
-                        <strong>Welcome @User.FindFirstValue(ClaimTypes.Name)</strong>
-                        @if (User.IsInRole("HR"))
-                        {
-                            <strong>You are in HR role</strong>
-                        }
-                    </div>
-                    <ul class="list-unstyled components">
-                        <li class="active">
-                            <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fa-solid fa-users"></i>
-                                Employees
-                            </a>
-                            <ul class="collapse list-unstyled" id="homeSubmenu">
-                                <li>
-                                    @Html.ActionLink("Employees", "All", "Employee")
-                                </li>
-                                <li>
-                                    @Html.ActionLink("Create", "Create", "Employee")
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-briefcase"></i>
-                                About
-                            </a>
-                            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fa-solid fa-dollar-sign"></i>
-                                Payroll
-                            </a>
-                            <ul class="collapse list-unstyled" id="pageSubmenu">
-                                <li>
-                                    <a href="#">Payroll</a>
-                                </li>
-                                <li>
-                                    @Html.ActionLink("Salaries", "Salary", "Payment")
-                                </li>
-                                <li>
-                                    <a href="#">Bonuses</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Index", "Department")">
-                                <i class="fas fa-image"></i>
-                                Departments
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-question"></i>
-                                FAQ
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("SignOut", "Identity")">
-                                <i class="fas fa-paper-plane"></i>
-                                Logout
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="col">
-                @RenderBody()
-            </div>
-        </div>
-    </main>
-</div>
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2023 - HCM - Immedis - Stefan Yosifov
+        </main>
     </div>
-</footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="~/js/site.js" asp-append-version="true"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-<script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/fe8dcd4536.js" crossorigin="anonymous"></script>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - HCM - Immedis - Stefan Yosifov
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="~/js/site.js" asp-append-version="true"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/fe8dcd4536.js" crossorigin="anonymous"></script>
 
 
-<script>
+    <script>
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
             });
         });
     </script>
-@await RenderSectionAsync("Scripts", false)
+    @await RenderSectionAsync("Scripts", false)
 </body>
 </html>
 <style>
@@ -154,13 +156,14 @@
         min-height: 100%;
     }
 
-    nav{
-        padding:0px;
-        margin:0px;
+    nav {
+        padding: 0px;
+        margin: 0px;
     }
-        #sidebar.active {
-            margin-left: -250px;
-        }
+
+    #sidebar.active {
+        margin-left: -250px;
+    }
 
     a[data-toggle="collapse"] {
         position: relative;

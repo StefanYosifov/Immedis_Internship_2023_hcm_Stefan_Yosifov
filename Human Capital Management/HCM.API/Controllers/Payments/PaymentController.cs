@@ -99,7 +99,7 @@
             {
                 return NotFound(e.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest(PaymentMessages.IssueUpdatingWithSalary);
             }
@@ -117,7 +117,7 @@
             {
                 return BadRequest(e.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest(PaymentMessages.IssueAddingBonus);
             }
@@ -135,7 +135,7 @@
             {
                 return BadRequest(e.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest(PaymentMessages.IssueAddingDeduction);
             }

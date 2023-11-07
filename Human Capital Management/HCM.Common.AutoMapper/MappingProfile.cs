@@ -6,6 +6,7 @@
 
     using Helpers;
 
+    using Models.ViewModels.Admin;
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
@@ -14,8 +15,10 @@
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
+    using Models.ViewModels.Tasks;
     using Models.ViewModels.Tasks.Priority;
     using Models.ViewModels.Tasks.Status;
+
 
     public class MappingProfile : Profile
     {
@@ -114,6 +117,48 @@
             CreateMap<Status, StatusViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.StatusName));
+
+            CreateMap<Task, TaskModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+                .ForMember(dest=>dest.EmployeeName,opt=>opt.MapFrom(src=>src.Employee.FirstName + " " +src.Employee.LastName))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.DueDate))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.TaskName, opt => opt.MapFrom(src => src.TaskName))
+                .ForMember(dest => dest.IssuerId, opt => opt.MapFrom(src => src.IssuerId))
+                .ForMember(dest=>dest.IssuerName,opt=>opt.MapFrom(src=>src.Issuer.FirstName+" " + src.Issuer.LastName))
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src =>
+                    new PriorityViewModel
+                    {
+                        Id = src.PriorityId,
+                        PriorityName = src.Priority.PriorityName
+                    }))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                    new StatusViewModel
+                    {
+                        Id = src.StatusId,
+                        StatusName = src.Status.StatusName
+                    }));
+
+            CreateMap<CreateTaskModel, Task>()
+                .ForMember(dest => dest.TaskName, opt => opt.MapFrom(src => src.TaskName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.DueDate))
+                .ForMember(dest => dest.PriorityId, opt => opt.MapFrom(src => src.PriorityId))
+                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => src.StatusId))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId));
+
+            CreateMap<AuditLog, AuditLogs>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+                .ForMember(dest => dest.EntityName, opt => opt.MapFrom(src => src.EntityName))
+                .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.Action))
+                .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => src.Timestamp))
+                .ForMember(dest => dest.Changes, opt => opt.MapFrom(src => src.Changes));
+
+            CreateMap<Role, RoleViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
         }
     }
 }

@@ -13,13 +13,12 @@
     public class EmployeeManager : IEmployeeManager
     {
         private readonly ApplicationDbContext context;
-
         private readonly ClaimsPrincipal user;
 
         public EmployeeManager(IHttpContextAccessor httpContext,
             ApplicationDbContext context)
         {
-            user = httpContext.HttpContext.User;
+            user = httpContext.HttpContext!.User;
             this.context = context;
         }
 

@@ -1,0 +1,27 @@
+﻿@model HCM.Models.ViewModels.Tasks.EmployeeTasksPagination
+
+@{
+    Layout = null;
+}
+
+
+
+<body>
+<div class="card">
+    pesho 
+    @if (Model != null && Model.Tasks.Count > 0)
+    {
+        @foreach (var task in Model.Tasks)
+        {
+            <p>@task.Id</p>
+            <p>@task.TaskName</p>
+            <p>@task.Description</p>
+            <p>@task.DueDate</p>
+            <p>@task.Status.StatusName</p>
+            <p>@task.Priority.PriorityName</p>
+            <p>@task.Id</p>
+            <p>@task.Id</p>
+        }
+    }
+</div>
+</body>
