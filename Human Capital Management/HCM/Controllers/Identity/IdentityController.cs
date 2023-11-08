@@ -30,11 +30,6 @@
         [HttpPost("/identity/SignIn")]
         public async Task<IActionResult> SignIn(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             var request = new RestRequestBuilder("/api/authorize/SignIn", "")
                 .SetMethod(Method.Post)
                 .AddBody(model)

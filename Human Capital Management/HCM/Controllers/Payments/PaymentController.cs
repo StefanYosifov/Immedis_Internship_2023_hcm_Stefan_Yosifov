@@ -4,8 +4,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
+    using Models.ViewModels.Payments.Payroll;
     using RestSharp;
-    using System.Globalization;
     using System.Net;
 
     public class PaymentController : BaseController
@@ -198,6 +198,98 @@
                 .Build();
 
             var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Payroll(PayRollSearchModel model)
+        {
+            var request = new RestRequestBuilder("/api/payments/payroll/pagination", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddQueryParameter(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteGetAsync<PayrollPaginationModel>(request);
+
+            if (response.IsSuccessful)
+            {
+                return View(response.Data);
+            }
+
+            return RedirectToAction("DashBoard", "Home");
+        }
+
+        [HttpPost("payments/payroll/create")]
+        public async Task<IActionResult> CreatePayroll([FromBody] PayrollCreateModel model)
+        {
+            var request = new RestRequestBuilder("api/payments/payroll/create", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return RedirectToAction("Payroll", "Payment");
+        }
+
+        [HttpGet("payments/payroll/unpaid")]
+        public async Task<IActionResult> GetUnpaidPayrolls()
+        {
+            var request = new RestRequestBuilder("/api/payments/payroll/unpaid", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteGetAsync<ICollection<PayrollAllUnpaidSalaries>>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpPut("payments/payroll/complete/{id}")]
+        public async Task<IActionResult> CompletePayroll(int id)
+        {
+            var request = new RestRequestBuilder($"/api/payments/payroll/complete/{id}", GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpDelete("payments/payroll/remove/{id}")]
+        public async Task<IActionResult> RemovePayroll(int id)
+        {
+            var request = new RestRequestBuilder($"/api/payments/payroll/remove/{id}", GetAuthenticationClaim())
+                .SetMethod(Method.Delete)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteAsync<string>(request);
 
             if (response.IsSuccessful)
             {

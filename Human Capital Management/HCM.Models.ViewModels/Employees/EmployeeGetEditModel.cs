@@ -8,6 +8,8 @@
 
     using Seniorities;
 
+    using Tasks;
+
     public class EmployeeGetEditModel
     {
         public EmployeeGetEditModel()
@@ -44,5 +46,7 @@
         public int SeniorityId { get; set; }
 
         public ICollection<SeniorityViewModel> Senioritys { get; set; }
+
+        public SearchTaskOptionsModel Tasks { get; set; }
     }
 }

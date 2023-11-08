@@ -31,6 +31,24 @@
             return View(model);
         }
 
+        [HttpGet("tasks/options")]
+        public async Task<IActionResult> CreateTasksPartial()
+        {
+            var request=new RestRequestBuilder("/api/tasks/options",GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecuteGetAsync<TaskCreationOptions>(request);
+
+            if (response.IsSuccessful)
+            {
+                return PartialView(response.Data);
+            }
+
+            return BadRequest();
+        }
+
         public async Task<IActionResult> My(int? id)
         {
             return View();
@@ -55,7 +73,7 @@
             return BadRequest(response.Data);
         }
 
-        [HttpPost("create")]
+        [HttpPost("tasks/create")]
         public async Task<IActionResult> CreateTask([FromBody] CreateTaskModel model)
         {
             var request=new RestRequestBuilder("/api/tasks/create",GetAuthenticationClaim())
@@ -65,6 +83,25 @@
                 .Build();
 
             var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpPut("tasks/complete")]
+        public async Task<IActionResult> CompleteTask([FromBody] int id)
+        {
+            var request=new RestRequestBuilder("/api/tasks/complete",GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddBody(id)
+                .AddAuthentication()
+                .Build();
+
+            var response=await client.ExecutePutAsync<string>(request);
 
             if (response.IsSuccessful)
             {

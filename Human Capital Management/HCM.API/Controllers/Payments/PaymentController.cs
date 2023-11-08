@@ -10,6 +10,7 @@
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Payments.Enums;
+    using Models.ViewModels.Payments.Payroll;
 
     [Route("/api/payments")]
     public class PaymentController : ApiController
@@ -88,7 +89,7 @@
         }
 
         [HttpPut("salary/change")]
-        public async Task<IActionResult> ChangeSalary([FromQuery]SalaryChangeRequestModel model)
+        public async Task<IActionResult> ChangeSalary([FromQuery] SalaryChangeRequestModel model)
         {
             try
             {
@@ -106,7 +107,7 @@
         }
 
         [HttpPost("bonus/add")]
-        public async Task<IActionResult> AddBonus([FromBody]BonusAddModel model)
+        public async Task<IActionResult> AddBonus([FromBody] BonusAddModel model)
         {
             try
             {
@@ -128,7 +129,7 @@
         {
             try
             {
-                var result=await service.AddDeduction(model);
+                var result = await service.AddDeduction(model);
                 return Ok(result);
             }
             catch (PaymentServiceExceptions e)
@@ -140,5 +141,70 @@
                 return BadRequest(PaymentMessages.IssueAddingDeduction);
             }
         }
+
+        [HttpGet("payroll/pagination")]
+        public async Task<IActionResult> GetPayrollPagination([FromQuery] PayRollSearchModel model)
+        {
+            var result = await service.GetPayrolls(model);
+            return Ok(result);
+        }
+
+        [HttpPost("payroll/create")]
+        public async Task<IActionResult> CreatePayroll([FromBody] PayrollCreateModel model)
+        {
+            try
+            {
+                var result = await service.CreatePayrollForDepartments(model);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueAddingPayroll);
+            }
+        }
+
+        [HttpGet("payroll/unpaid")]
+        public async Task<IActionResult> GetUnpaidPayrolls()
+        {
+            var result = await service.GetAllUnpaidSalaries();
+            return Ok(result);
+        }
+
+        [HttpPut("payroll/complete/{id}")]
+        public async Task<IActionResult> CompletePayroll(int id)
+        {
+            try
+            {
+                var result = await service.CompletePayrollById(id);
+                return Ok(result);
+            }
+            catch (PaymentServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueCompletingPayroll);
+            }
+        }
+
+        [HttpDelete("payroll/remove/{id}")]
+        public async Task<IActionResult> RemovePayroll(int id)
+        {
+            try
+            {
+                var result = await service.RemovePayrollById(id);
+                return Ok(result);
+            }
+            catch (PaymentServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(PaymentMessages.IssueCompletingPayroll);
+            }
+        }
+
     }
 }

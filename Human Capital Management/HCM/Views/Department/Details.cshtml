@@ -6,7 +6,7 @@
 
 <div class="container-xxl">
     <div class="card d-flex justify-content-center align-items-center my-5">
-    <h5 class="card-header-pills">Department Details</h5>
+        <h5 class="card-header-pills">Department Details</h5>
         <div class="card-body w-auto">
             <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
         </div>
@@ -51,9 +51,9 @@
         </div>
 
         <div class="row">
-        <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
-            <div role="document" class="modal-dialog modal-dialog-centered modal-lg ms-lg-5">
-                <div class="modal-content">
+            <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                <div role="document" class="modal-dialog modal-dialog-centered modal-lg ms-lg-5">
+                    <div class="modal-content">
                         <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
                             <div class="tabs" id="tab01">
                                 <h6 class="text-muted">Positions</h6>
@@ -197,26 +197,26 @@
                 </tr>
             </thead>
             <tbody>
-            @if (Model.DepartmentEmployees != null)
-            {
-                foreach (var employee in Model.DepartmentEmployees)
+                @if (Model.DepartmentEmployees != null)
                 {
-                    <tr>
-                        <td>@employee.EmployeeFullName</td>
-                        <td>@employee.EmployeeAge</td>
-                        <td>@employee.EmployeeNationalityISO</td>
-                        <td>@employee.EmployeeGender</td>
-                        <td>@employee.EmployeePosition</td>
-                        <td>@employee.EmployeeSeniority</td>
-                        <td>
-                            <button class="btn-primary edit-button">Edit</button>
-                        </td>
-                        <td>
-                            <button class="btn-primary  delete-button" value="@employee.EmployeeId">Delete</button>
-                        </td>
-                    </tr>
+                    foreach (var employee in Model.DepartmentEmployees)
+                    {
+                        <tr>
+                            <td>@employee.EmployeeFullName</td>
+                            <td>@employee.EmployeeAge</td>
+                            <td>@employee.EmployeeNationalityISO</td>
+                            <td>@employee.EmployeeGender</td>
+                            <td>@employee.EmployeePosition</td>
+                            <td>@employee.EmployeeSeniority</td>
+                            <td>
+                                <button class="btn-primary edit-button">Edit</button>
+                            </td>
+                            <td>
+                                <button class="btn-primary  delete-button" value="@employee.EmployeeId">Delete</button>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
             </tbody>
         </table>
     </div>
@@ -273,29 +273,30 @@
             }
 
     .card-body {
-        background-color: #f8f9fa; 
+        background-color: #f8f9fa;
         border-radius: 5px;
-        padding:0px;
-        margin:0px;
+        padding: 0px;
+        margin: 0px;
     }
 
-    .card-body p {
-        margin: 0;
-        padding: 0px 0;
-        font-size: 16.5px;
-        color: #252525;
-    }
-
-        .card-body p strong {
-            font-weight: bold;
-            margin-right: 10px;
+        .card-body p {
+            margin: 0;
+            padding: 0px 0;
+            font-size: 16.5px;
+            color: #252525;
         }
+
+            .card-body p strong {
+                font-weight: bold;
+                margin-right: 10px;
+            }
 
 
         .card-body h6 {
             margin: 0px 0;
-            font-size: 18px; 
+            font-size: 18px;
         }
+
     fieldset {
         display: none;
     }
@@ -362,7 +363,7 @@
         font-size: 14px;
     }
 
-    input[type="text"], input[type="number"] ,select {
+    input[type="text"], input[type="number"], select {
         width: 50%;
         padding: 5px;
         border: 1px solid #ddd;
@@ -570,7 +571,7 @@
 
         function AsyncSearch() {
             var typingTimer;
-            var doneTypingInterval = 3000;
+            var doneTypingInterval = 2000;
             var $input = $('#custom-select-input');
 
             $input.on('keyup', function () {
@@ -636,7 +637,7 @@
                                 seniorityCell.html(updatedSeniorityDropdown);
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
-                                // Handle errors here
+
                             }
                         });
                     });
@@ -662,7 +663,7 @@
                     console.log(selectedSeniorityId);
                     console.log(employeeId);
 
-                    var model = {
+                    let model = {
                         employeeId: employeeId,
                         positionId: selectedPositionId,
                         seniorityId: selectedSeniorityId
@@ -672,7 +673,7 @@
 
                     $.ajax({
                         url: "https://localhost:7153/employees/position/seniority",
-                        type: "PUT",
+                        type: "Put",
                         headers: { "Authorization": token },
                         contentType: 'application/json',
                         data: JSON.stringify(model),

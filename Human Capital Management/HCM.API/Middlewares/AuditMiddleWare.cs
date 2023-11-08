@@ -32,7 +32,7 @@
 
                 if (request.Method == "GET")
                 {
-                    return;
+                    next(context);
                 }
 
                 switch (request.Method)

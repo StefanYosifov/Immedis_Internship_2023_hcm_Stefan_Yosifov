@@ -47,11 +47,13 @@
                             }
                         </div>
                         <ul class="list-unstyled components">
+                            <li>
+                                    <a href="@Url.Action("DashBoard", "Home")">
+                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                        Home
+                                    </a>
+                            </li>
                             <li class="active">
-                                <i class="fa fa-home" aria-hidden="true"></i>
-                                <a 
-                                    href="@Html.ActionLink("Home page", "DashBoard", "Home")"
-                                />
                                 <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                                     <i class="fa-solid fa-users"></i>
                                     Employees
@@ -72,7 +74,7 @@
                                 </a>
                                 <ul class="collapse list-unstyled" id="pageSubmenu">
                                     <li>
-                                        <a href="#">Payroll</a>
+                                        @Html.ActionLink("Payroll","Payroll","Payment")
                                     </li>
                                     <li>
                                         @Html.ActionLink("Salaries", "Salary", "Payment")
@@ -97,7 +99,7 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li>
-                                    <a href="@Url.Action("Index","Admin")">
+                                    <a href="@Url.Action("Index", "Admin")">
                                         <i class="fa-solid fa-hammer"></i>
                                         Administrator area
                                     </a>

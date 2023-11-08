@@ -1,9 +1,5 @@
 ﻿namespace HCM.Models.ViewModels.Tasks
 {
-    using Priority;
-
-    using Status;
-
     public class EmployeeTasksModel
     {
         public EmployeeTasksModel()

@@ -1,0 +1,11 @@
+﻿
+
+
+button, button.btn-primary, .btn-primary {
+    margin-top: 5px;
+    background-color: #4e73df;
+    color: #f8f9fc;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 15px;
+}

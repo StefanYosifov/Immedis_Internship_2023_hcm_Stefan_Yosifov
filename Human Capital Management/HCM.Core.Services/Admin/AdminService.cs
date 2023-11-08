@@ -58,12 +58,12 @@
             var mappedEmployees = employees.Select(e => new AdminEmployeeModel()
             {
                 EmployeeId = e.Id,
-                EmployeeSeniority = e.Seniority.Name,
-                EmployeeDepartmentName = e.Department.Name,
+                EmployeeSeniority = e.Seniority!.Name,
+                EmployeeDepartmentName = e.Department!.Name,
                 RoleId = e.EmployeeRoles.FirstOrDefault(r => r.Role.Name != "Admin")!.RoleId,
-                EmployeeFirstName = e.FirstName,
-                EmployeeLastName = e.LastName,
-                EmployeePositionName = e.Position.Name,
+                EmployeeFirstName = e.FirstName!,
+                EmployeeLastName = e.LastName!,
+                EmployeePositionName = e.Position!.Name,
                 EmployeeUserName = e.Username,
                 EmployeeAge = DateCalculator.CalculateAge(e.BirthDate),
             });

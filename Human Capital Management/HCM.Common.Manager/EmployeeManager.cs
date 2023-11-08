@@ -1,14 +1,11 @@
 ﻿namespace HCM.Common.Manager
 {
-    using System.Security.Claims;
-
     using Data;
     using Data.Models;
-
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
-
     using Models.ViewModels.Roles;
+    using System.Security.Claims;
 
     public class EmployeeManager : IEmployeeManager
     {

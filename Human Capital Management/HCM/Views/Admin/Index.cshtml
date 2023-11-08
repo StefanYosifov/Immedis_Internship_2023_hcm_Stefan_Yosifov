@@ -45,7 +45,6 @@
                                     <tbody id="employeeTable">
                                     </tbody>
                                     <ul id="employeePages">
-
                                     </ul>
                                 </table>
                             </div>
@@ -114,8 +113,8 @@
         margin-right: 15px;
     }
 
-    label{
-        color:#4e73df;
+    label {
+        color: #4e73df;
     }
 
 </style>
@@ -141,13 +140,13 @@
 
             $.each(audit.auditLogs, function (index, item) {
                 table.append(`<tr>
-                            <td>${item.id}</td>
-                            <td>${item.entityName}</td>
-                            <td>${item.action}</td>
-                            <td>${item.changes}</td>
-                            <td>${item.employeeId || ''}</td>
-                            <td>${item.timestamp}</td>
-                            </tr>`);
+                                    <td>${item.id}</td>
+                                    <td>${item.entityName}</td>
+                                    <td>${item.action}</td>
+                                    <td>${item.changes}</td>
+                                    <td>${item.employeeId || ''}</td>
+                                    <td>${item.timestamp}</td>
+                                    </tr>`);
             })
 
             for (let i = audit.page - 2; i < threePagesFromNow; i++) {
@@ -158,10 +157,10 @@
                     return;
                 }
                 auditPages.append(`<li>
-                        <div class="changeAuditPage">
-                        <a class="auditPage" data-page="${i}">${i}</a>
-                        </div>
-                        </li>`);
+                                <div class="changeAuditPage">
+                                <a class="auditPage" data-page="${i}">${i}</a>
+                                </div>
+                                </li>`);
             }
         }
 
@@ -202,39 +201,40 @@
 
                     $.each(data.employees, function (_, employee) {
                         employeeTable.append(`
-                              <tr>
-                    <td>${employee.employeeFirstName}</td>
-                    <td>${employee.employeeLastName}</td>
-                    <td>${employee.employeeAge}</td>
-                    <td>${employee.employeeUserName}</td>
-                    <td>${employee.employeeDepartmentName}</td>
-                    <td>${employee.employeePositionName}</td>
-                    <td>${employee.employeeSeniority}</td>
-                    <td>
-                        <select>
-                            <option value="0">No role</option>
-                            ${data.roles.map(role => `
-                                <option value="${role.id}">${role.name}</option>
-                            `)}
-                        </select>
-                    </td>
-                </tr>`);});
+                                      <tr>
+                            <td>${employee.employeeFirstName}</td>
+                            <td>${employee.employeeLastName}</td>
+                            <td>${employee.employeeAge}</td>
+                            <td>${employee.employeeUserName}</td>
+                            <td>${employee.employeeDepartmentName}</td>
+                            <td>${employee.employeePositionName}</td>
+                            <td>${employee.employeeSeniority}</td>
+                            <td>
+                                <select>
+                                    <option value="0">No role</option>
+                                    ${data.roles.map(role => `
+                                        <option value="${role.id}">${role.name}</option>
+                                    `)}
+                                </select>
+                            </td>
+                        </tr>`);
+                    });
 
-                        const threePagesFromNow=data.page+3;
+                    const threePagesFromNow = data.page + 3;
 
-                        for (let i = data.page - 2; i < threePagesFromNow; i++) {
-                            if (i < 1) {
-                                continue;
-                            }
-                            if (i > data.totalPages) {
-                                return;
-                            }
-                        employeePages.append(`<li>
-                                <div>
-                                <a data-page="${i}">${i}</a>
-                                </div>
-                                </li>`);
+                    for (let i = data.page - 2; i < threePagesFromNow; i++) {
+                        if (i < 1) {
+                            continue;
                         }
+                        if (i > data.totalPages) {
+                            return;
+                        }
+                        employeePages.append(`<li>
+                                        <div>
+                                        <a data-page="${i}">${i}</a>
+                                        </div>
+                                        </li>`);
+                    }
                 }
             })
         }

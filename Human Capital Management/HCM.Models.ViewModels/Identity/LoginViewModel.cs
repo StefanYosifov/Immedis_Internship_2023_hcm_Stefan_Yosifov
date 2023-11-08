@@ -1,9 +1,13 @@
 ﻿namespace HCM.Models.ViewModels.Identity
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class LoginViewModel
     {
-        public string LoginParameter { get; set; }
+        [Required]
+        public string LoginParameter { get; set; } = null!;
 
-        public string Password { get; set; }
+        [Required]
+        public string Password { get; set; } = null!;
     }
 }

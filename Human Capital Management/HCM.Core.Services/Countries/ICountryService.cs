@@ -5,5 +5,7 @@
     public interface ICountryService
     {
         Task<ICollection<CountryViewModel>> GetCountries();
+
+        Task<Dictionary<int,decimal?>> GetCountriesTaxRates();
     }
 }

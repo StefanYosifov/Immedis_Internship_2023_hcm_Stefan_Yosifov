@@ -3,7 +3,11 @@
 using System.Reflection;
 using System.Text;
 
+using Data;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -53,6 +57,22 @@ public static class BuilderCustomExtensionMethods
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
                 };
             });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection RegisterDatabase(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        serviceCollection.AddDbContext<ApplicationDbContext>(
+            options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection RegisterAuthenticationCookie(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie();
 
         return serviceCollection;
     }

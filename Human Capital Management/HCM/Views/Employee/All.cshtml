@@ -86,7 +86,7 @@
                                             <a class="dropdown-item" href="@Url.Action("Edit", "Employee", new { id = employee.EmployeeId })">Edit</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#">Another action</a>
+                                                <a class="dropdown-item" href="@Url.Action("Details","Payment",new { id = employee.EmployeeId })">Salary details</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">Something else here</a>
@@ -113,7 +113,6 @@
                 </li>
                 @{
                     var loopUntil = Model.CurrentPage + 3;
-
                     for (var i = Model.CurrentPage - 2; i < loopUntil; i++)
                     {
                         if (i <= 0 || i > Model.TotalPages)
@@ -153,7 +152,6 @@
                     }
                     $("#departments").html(sDepartments);
 
-                    // Populate Genders dropdown
                     var sGenders = '<option value="-1">Please Select a Gender</option>';
                     var genders = data.genders;
                     for (var i = 0; i < genders.length; i++) {
@@ -161,7 +159,6 @@
                     }
                     $("#genders").html(sGenders);
 
-                    // Populate Counties dropdown
                     var sCounties = '<option value="-1">Please Select a County</option>';
                     var counties = data.counties;
                     for (var i = 0; i < counties.length; i++) {
@@ -169,7 +166,6 @@
                     }
                     $("#countries").html(sCounties);
 
-                    // Populate Sort dropdown
                     var sSort = '<option value="-1">Please Select a Sort Option</option>';
                     var sortOptions = data.sort;
                     for (var i = 0; i < sortOptions.length; i++) {

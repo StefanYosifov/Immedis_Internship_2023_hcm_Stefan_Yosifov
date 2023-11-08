@@ -13,6 +13,7 @@
     using Models.ViewModels.Genders;
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
+    using Models.ViewModels.Payments.Payroll;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
     using Models.ViewModels.Tasks;
@@ -40,6 +41,8 @@
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
+            CreateMap<Country, CountryTaxModel>();
+
             CreateMap<Gender, GenderViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
@@ -63,7 +66,8 @@
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
-                .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId));
+                .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId))
+                .ForMember(dest=>dest.Tasks,opt=>opt.Ignore());
 
             CreateMap<Department, DepartmentGetAllModel>()
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
@@ -159,6 +163,32 @@
             CreateMap<Role, RoleViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<Payroll, PayrollModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+                .ForMember(dest=>dest.EmployeeName,opt=>opt.MapFrom(src=>$"{src.Employee.FirstName} {src.Employee.LastName}"))
+                .ForMember(dest=>dest.DepartmentName,opt=>opt.MapFrom(src=>src.Employee.Department.Name))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+                .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary))
+                .ForMember(dest => dest.Bonuses, opt => opt.MapFrom(src => src.Bonuses))
+                .ForMember(dest => dest.Deductions, opt => opt.MapFrom(src => src.Deductions))
+                .ForMember(dest => dest.GrossPay, opt => opt.MapFrom(src => src.GrossPay))
+                .ForMember(dest => dest.NetPay, opt => opt.MapFrom(src => src.NetPay))
+                .ForMember(dest => dest.TaxRate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => src.CreatedOn))
+                .ForMember(dest => dest.PaidOn, opt => opt.MapFrom(src => src.PaidOn))
+                .ForMember(dest => dest.Bonuses, opt => opt.MapFrom(src => src.BonusesNavigation.Select(b => new BonusModel
+                {
+                    Amount = b.Amount,
+                    Id = b.Id
+                }).ToArray()))
+                .ForMember(dest => dest.Deductions, opt => opt.MapFrom(src => src.DeductionsNavigation.Select(d => new DeductionModel
+                {
+                    Amount = d.Amount,
+                    Id = d.Id
+                }).ToArray()));
         }
     }
 }

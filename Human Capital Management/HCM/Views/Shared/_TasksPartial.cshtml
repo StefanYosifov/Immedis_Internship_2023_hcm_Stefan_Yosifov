@@ -1,4 +1,7 @@
-﻿
+﻿@model HCM.Models.ViewModels.Tasks.EmployeeTasksModel
+
+<link rel="stylesheet" href="~/css/button.css" />
+<link rel="stylesheet" href="~/css/inputs.css" />
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
     Open Modal
@@ -6,19 +9,42 @@
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-              
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+        <div class="modal-content m-md-2 p-4">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2>Task Details</h2>
+            <form id="taskForm" class="container-fluid">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" name="taskName" required><br>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea><br>
+
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate" required><br>
+
+                <div class="my-2">
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        @foreach (var priority in Model.Options.Priorities)
+                        {
+                            <option value="@priority.Id">@priority.PriorityName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="my-2">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        @foreach (var status in Model.Options.Statuses)
+                        {
+                            <option value="@status.Id">@status.StatusName</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="button" id="saveTaskBtn">Save Task</button>
+            </form>
         </div>
     </div>
+
 </div>

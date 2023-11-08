@@ -23,7 +23,7 @@
         {
             var result = await service.SignIn(model);
 
-            if (!result.isValid)
+            if (result == null || result.isValid==false)
             {
                 return BadRequest();
             }

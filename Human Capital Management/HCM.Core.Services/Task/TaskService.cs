@@ -15,6 +15,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Caching.Memory;
 
+    using Models.ViewModels.Roles;
     using Models.ViewModels.Tasks;
     using Models.ViewModels.Tasks.Priority;
     using Models.ViewModels.Tasks.Status;
@@ -25,7 +26,6 @@
         private readonly IMapper mapper;
         private readonly IMemoryCache cache;
         private readonly IEmployeeManager employeeManager;
-
         public TaskService(
             ApplicationDbContext context,
             IMapper mapper,
@@ -142,7 +142,7 @@
             return new EmployeeTasksModel()
             {
                 Tasks = await employeeTasks,
-                Options = await GetTaskOptions(),   
+                Options = await GetTaskOptions(),
             };
 
 
@@ -150,19 +150,19 @@
 
         public async Task<EmployeeTasksPagination> GetEmployeeTasksInPaginationFormat(SearchEmployeeTasksPagination model)
         {
-                if(string.IsNullOrEmpty(model.EmployeeId))
-                {
-                    model.EmployeeId = employeeManager.GetUserId();
-                }
+            if (string.IsNullOrEmpty(model.EmployeeId))
+            {
+                model.EmployeeId = employeeManager.GetUserId();
+            }
 
             var tasks = context.Tasks
-                .Include(t=>t.Status)
-                .Include(t=>t.Priority)
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
                 .Where(t => t.EmployeeId == model.EmployeeId)
                 .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
                 .AsQueryable();
 
-            var paginatedTasks = await Pagination<TaskModel>.CreateAsync(tasks, model.Page,ValidationConstants.PaginationConstants.TasksItemPerPage);
+            var paginatedTasks = await Pagination<TaskModel>.CreateAsync(tasks, model.Page, ValidationConstants.PaginationConstants.TasksItemPerPage);
 
             var totalPages = (int)Math.Ceiling((double)(await tasks.CountAsync()) / ValidationConstants.PaginationConstants.TasksItemPerPage);
 
@@ -180,8 +180,8 @@
             var searchUntil = DateTime.UtcNow.AddDays(model.DaysFromNow);
 
             return await context.Tasks
-                .Include(t=>t.Status)
-                .Include(t=>t.Priority)
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
                 .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
                 .Where(t => t.DueDate >= searchUntil && t.EmployeeId == model.EmployeeId)
                 .ToArrayAsync();
@@ -196,13 +196,49 @@
                 throw new TaskServiceExceptions(EmployeeMessages.NotFound);
             }
 
-            var task = mapper.Map<Task>(findEmployee);
+            var task = mapper.Map<Task>(model);
             task.IssuerId = employeeManager.GetUserId();
 
             await context.Tasks.AddAsync(task);
             await context.SaveChangesAsync();
 
             return TaskMessages.SuccessfullyCreatedATask;
+        }
+
+        public async Task<string> MarkAsCompleted(int id)
+        {
+            var findTask = await context.Tasks.FindAsync(id);
+
+            if (findTask == null)
+            {
+                throw new TaskServiceExceptions(TaskMessages.NotFound);
+            }
+
+            Console.WriteLine(employeeManager.IsInRole(RolesEnum.Admin));
+            Console.WriteLine(employeeManager.IsInRole(RolesEnum.HR));
+
+
+            var currentUserId = employeeManager.GetUserId();
+
+            if (currentUserId != findTask.EmployeeId && (employeeManager.IsInRole(RolesEnum.HR) == false || employeeManager.IsInRole(RolesEnum.Admin) == false))
+            {
+                throw new TaskServiceExceptions(TaskMessages.NoAccess);
+            }
+
+            var newStatus = await GetCompletedTaskId();
+            findTask.StatusId = newStatus;
+            await context.SaveChangesAsync();
+
+            return TaskMessages.SuccessfullyCompletedThisTask;
+        }
+
+
+        private async Task<int> GetCompletedTaskId()
+        {
+            return context.Statuses
+                .Where(s => s.StatusName == "Completed")
+                .Select(s => s.Id)
+                .SingleOrDefault();
         }
     }
 }

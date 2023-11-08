@@ -25,6 +25,13 @@
             return Ok(result);
         }
 
+        [HttpGet("options")]
+        public async Task<IActionResult> GetTaskOptions()
+        {
+            var result = await service.GetTaskOptions();
+            return Ok(result);
+        }
+
         [HttpGet("pagination")]
         public async Task<IActionResult> GetEmployeePaginatedTasks([FromQuery]SearchEmployeeTasksPagination model)
         {
@@ -45,6 +52,24 @@
                 return BadRequest(e.Message);
             }
             catch (Exception)
+            {
+                return BadRequest(TaskMessages.InvalidRequest);
+            }
+        }
+
+        [HttpPut("complete")]
+        public async Task<IActionResult> CompleteTask([FromBody] int id)
+        {
+            try
+            {
+                var result = await service.MarkAsCompleted(id);
+                return Ok(result);
+            }
+            catch (TaskServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception ca)
             {
                 return BadRequest(TaskMessages.InvalidRequest);
             }

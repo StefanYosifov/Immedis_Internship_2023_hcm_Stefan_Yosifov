@@ -1,25 +1,18 @@
 using AutoMapper;
 
-using HCM.Data;
-
-using Microsoft.AspNetCore.Authentication.Cookies;
+using HCM.Common;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMvc();
 
 builder.Services.AddAutoMapper(typeof(Profile));
 
-builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+builder.Services.RegisterDatabase(builder.Configuration)
+    .RegisterAuthenticationCookie();
 
 builder.Services.AddCors(options =>
 {

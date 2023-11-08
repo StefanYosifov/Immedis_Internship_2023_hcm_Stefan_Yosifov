@@ -44,25 +44,10 @@
                                     <i class="fa fa-globe"></i>
                                 </div>
                                 <div class="list-details">
-                                    <span>www.example.com</span>
-                                    <small>Website Address</small>
+                                    <small>@Model.BirthDate.ToShortDateString()</small>
                                 </div>
                             </li>
                         </ul>
-                        <div class="row text-center mt-4">
-                            <div class="col p-2">
-                                <h4 class="mb-1 line-height-5">154</h4>
-                                <small class="mb-0 font-weight-bold">Projects</small>
-                            </div>
-                            <div class="col p-2">
-                                <h4 class="mb-1 line-height-5">2.2k</h4>
-                                <small class="mb-0 font-weight-bold">Followers</small>
-                            </div>
-                            <div class="col p-2">
-                                <h4 class="mb-1 line-height-5">9.1k</h4>
-                                <small class="mb-0 font-weight-bold">Views</small>
-                            </div>
-                        </div>
                     </div>
                     <div class="card-footer text-center">
                         <a href="javascript:void()" class="btn-social btn-facebook waves-effect waves-light m-1">
@@ -126,9 +111,6 @@
                                     <a href="javascript:void();" class="badge badge-dark badge-pill">bootstrap</a>
                                     <a href="javascript:void();" class="badge badge-dark badge-pill">responsive-design</a>
                                     <hr>
-                                    <span class="badge badge-primary"><i class="fa fa-user"></i> 900 Followers</span>
-                                    <span class="badge badge-success"><i class="fa fa-cog"></i> 43 Forks</span>
-                                    <span class="badge badge-danger"><i class="fa fa-eye"></i> 245 Views</span>
                                 </div>
                                 <div class="col-md-12">
                                     <h5 class="mt-2 mb-3"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
@@ -165,6 +147,7 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="messages">
+                            @await Html.PartialAsync("_CreateTasksPartial",Model.Tasks)
                             <table class="table table-hover table-striped">
                                 <thead>
                                     <tr>
@@ -175,6 +158,7 @@
                                         <th>Issuer ID</th>
                                         <th>Priority</th>
                                         <th>Status</th>
+                                        <th>Mark as complete</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tasks" class="">
@@ -322,8 +306,12 @@
 }
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<link rel="stylesheet" href="~/css/button.css"/>
+<link rel="stylesheet" href="~/css/tables.css"/>
+<link rel="stylesheet" href="~/css/inputs.css"/>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script type="module" src="~/js/abstractAjax.js"></script>
 
 @section Scripts
     {
@@ -335,6 +323,7 @@
 
         function ChangePassword() {
             $("#changePassword").click(function (e) {
+                const url = "https://localhost:7153/identity/ChangePass"
                 e.preventDefault();
 
                 let newPassword = $("#newPassword").val();
@@ -353,7 +342,6 @@
                     newPassword: newPassword,
                 };
 
-                const url = "https://localhost:7153/identity/ChangePass"
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -400,7 +388,6 @@
             })
         }
         function ShowTasks() {
-
             $.ajax({
                 url: tasksUrl + "/pagination",
                 type: "Get",
@@ -409,16 +396,41 @@
                 success: function (data) {
                     console.log(data);
 
-                    var tasks = $('#tasks');
+                    const tasks = $('#tasks');
                     $.each(data.tasks, function (index, task) {
-                        tasks.append('<td>' + task.taskName + '</td>');
-                        tasks.append('<td> ' + task.description + '</td>');
-                        tasks.append('<td>' + task.dueDate + '</td>');
-                        tasks.append('<td> ' + task.employeeId + '</td>');
-                        tasks.append('<td> ' + task.issuerId + '</td>');
-                        tasks.append('<td>Priority: ' + task.priority.priorityName + '</td>');
-                        tasks.append('<td>Status: ' + task.status.statusName + '</td>');
+                        const newRow = $('<tr>'); 
+                        newRow.append('<td>' + task.taskName + '</td>');
+                        newRow.append('<td>' + task.description + '</td>');
+                        newRow.append('<td>' + task.dueDate.split('T')[0] + '</td>');
+                        newRow.append('<td>' + task.employeeId + '</td>');
+                        newRow.append('<td>' + task.issuerId + '</td>');
+                        newRow.append('<td>Priority: ' + task.priority.priorityName + '</td>');
+                        newRow.append('<td>Status: ' + task.status.statusName + '</td>');
+
+                        if (task.status.statusName === "Completed") {
+                            const completed = $(`<td><button>Completed already :)</button></td>`);
+                            newRow.append(completed); // Append the completed message to the newRow
+                        } else {
+                            const completeButton = $(`<td><button value="${task.id}">Complete</button></td>`);
+
+                            completeButton.click(function () {
+                                $.ajax({
+                                    url: tasksUrl + "/complete",
+                                    type: "Put",
+                                    headers: { "Authorization": token },
+                                    data: JSON.stringify({ id: task.id }),
+                                    contentType: 'application/json',
+                                    success: function (data) {
+
+                                    }
+                                })
+                            });
+
+                            newRow.append(completeButton); // Append the complete button to the newRow
+                        }
+                        tasks.append(newRow);
                     });
+
 
                     GeneratePagination(data.page, data.totalPages);
                 }
@@ -441,10 +453,44 @@
                 pages.append(page);
             }
         }
+        function CreateTask() {
+            $("#saveTaskBtn").click(function () {
+                console.log(`click`);
+
+                var taskName = $("#taskName").val();
+                var description = $("#description").val();
+                var dueDate = $("#dueDate").val();
+                var priority = $("#priority option:selected").val();
+                var status = $("#status option:selected").val();
+
+
+                var data = {
+                    employeeId: id,
+                    taskName: taskName,
+                    description: description,
+                    dueDate: dueDate,
+                    priorityId: priority,
+                    statusId: status
+                };
+
+                $.ajax({
+                    url: tasksUrl + "/create",
+                    type: "Post",
+                    headers: { "Authorization": token },
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function (data) {
+
+                    }
+                })
+
+            });
+        }
 
         $(document).ready(function () {
             ChangePassword();
             ShowTasks();
+            CreateTask();
             $("#DepartmentId").on("change", function () {
                 $("#PositionId").val('');
                 $("#SeniorityId").val('');

@@ -20,6 +20,7 @@
             public const int TasksItemPerPage = 6;
             public const int AuditItemsPerPage = 24;
             public const int AdminEmployeesPerPage = 20;
+            public const int PayrollItemsPerPage = 16;
         }
     }
 }

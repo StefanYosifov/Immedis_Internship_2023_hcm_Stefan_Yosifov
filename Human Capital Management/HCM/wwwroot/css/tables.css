@@ -1,0 +1,20 @@
+﻿body {
+    color: #252525;
+    overflow-x: hidden;
+    height: 100%;
+    background-color: #f8f9fc;
+    background-repeat: no-repeat;
+}
+
+h1, h6 {
+    color: #4e73df;
+}
+
+thead {
+    background: #4e73df;
+    color: #f8f9fc;
+}
+
+th {
+    color: #f8f9fc;
+}

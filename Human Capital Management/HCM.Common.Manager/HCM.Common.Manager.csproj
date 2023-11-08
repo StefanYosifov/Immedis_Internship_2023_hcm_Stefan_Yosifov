@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
+    <ProjectReference Include="..\HCM.Models.ViewModels\HCM.Models.ViewModels.csproj" />
     <ProjectReference Include="..\HCM\HCM.csproj" />
   </ItemGroup>
 

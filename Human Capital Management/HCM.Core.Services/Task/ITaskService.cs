@@ -21,5 +21,7 @@
 
         Task<string> CreateTask(CreateTaskModel model);
 
+        Task<string> MarkAsCompleted(int id);
+
     }
 }

@@ -14,7 +14,7 @@
     public class DepartmentController : BaseController
     {
         [HttpGet]
-        public  IActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }

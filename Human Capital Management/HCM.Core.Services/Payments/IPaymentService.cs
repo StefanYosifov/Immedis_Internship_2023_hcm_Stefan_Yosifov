@@ -2,6 +2,7 @@
 {
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
+    using Models.ViewModels.Payments.Payroll;
 
     public interface IPaymentService
     {
@@ -20,5 +21,15 @@
         Task<string> AddBonus(BonusAddModel model);
 
         Task<string> AddDeduction(DeductionAddModel model);
+
+        Task<PayrollPaginationModel> GetPayrolls(PayRollSearchModel model);
+
+        Task<string> CreatePayrollForDepartments(PayrollCreateModel model);
+
+        Task<ICollection<PayrollAllUnpaidSalaries>> GetAllUnpaidSalaries();
+
+        Task<string> CompletePayrollById(int payrollId);
+
+        Task<string> RemovePayrollById(int payrollId);
     }
 }

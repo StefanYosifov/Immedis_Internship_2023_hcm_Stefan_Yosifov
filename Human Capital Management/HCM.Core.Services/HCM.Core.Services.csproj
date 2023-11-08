@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HCM.Common.AutoMapper\HCM.Common.AutoMapper.csproj" />
     <ProjectReference Include="..\HCM.Common.Exceptions&amp;Messages\HCM.Common.Exceptions&amp;Messages.csproj" />
     <ProjectReference Include="..\HCM.Common.Manager\HCM.Common.Manager.csproj" />
     <ProjectReference Include="..\HCM.Common\HCM.Common.csproj" />

@@ -32,6 +32,8 @@
     using Models.ViewModels.Genders;
     using Models.ViewModels.Roles;
 
+    using Task;
+
     internal class EmployeeService : IEmployeeService
     {
         private readonly ApplicationDbContext context;
@@ -39,6 +41,7 @@
         private readonly IDepartmentService departmentService;
         private readonly IEmployeeManager employeeManager;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ITaskService taskService;
         private readonly IMapper mapper;
 
         public EmployeeService(
@@ -47,7 +50,8 @@
             IEmployeeManager employeeManager,
             IDepartmentService departmentService,
             ICountryService countryService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, 
+            ITaskService taskService)
         {
             this.context = context;
             this.mapper = mapper;
@@ -55,6 +59,7 @@
             this.departmentService = departmentService;
             this.countryService = countryService;
             this.httpContextAccessor = httpContextAccessor;
+            this.taskService = taskService;
         }
 
         public async Task<EmployeeTableModel> GetEmployeeTable(int page, EmployeeQueryTableFilters query)
@@ -214,6 +219,7 @@
                 await departmentService.GetSenioritiesByPositionId(mappedEmployeeDetails.PositionId);
 
             mappedEmployeeDetails.Nationalities = await countryService.GetCountries();
+            mappedEmployeeDetails.Tasks = await taskService.GetTaskOptions();
 
             return mappedEmployeeDetails;
         }

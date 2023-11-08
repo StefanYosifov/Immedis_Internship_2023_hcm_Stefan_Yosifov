@@ -143,7 +143,7 @@ namespace HCM.Controllers.Employee
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             var request = new RestRequestBuilder($"/api/employees/edit/{id}",
-                    HttpContext.User.FindFirstValue(ClaimTypes.Authentication))
+                    GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddAuthentication()
                 .Build();
@@ -201,9 +201,9 @@ namespace HCM.Controllers.Employee
         }
 
         [HttpPut("employees/position/seniority")]
-        public async Task<IActionResult> EditEmployeesPositionAndSeniority(EmployeeEditPositionAndSeniority model)
+        public async Task<IActionResult> EditEmployeesPositionAndSeniority([FromBody]EmployeeEditPositionAndSeniority model)
         {
-            var request = new RestRequestBuilder("/api/employees/edit/positionSeniority", GetAuthenticationClaim())
+            var request = new RestRequestBuilder("/api/employees/edit/position/seniority", GetAuthenticationClaim())
                 .SetMethod(Method.Put)
                 .AddBody(model)
                 .Build();

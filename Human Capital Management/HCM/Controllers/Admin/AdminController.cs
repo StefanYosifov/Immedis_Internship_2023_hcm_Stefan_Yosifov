@@ -6,7 +6,6 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 
     using Models.ViewModels.Admin;
 

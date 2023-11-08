@@ -28,5 +28,16 @@
                 .ProjectTo<CountryViewModel>(mapper.ConfigurationProvider)
                 .ToArrayAsync();
         }
+
+        public async Task<Dictionary<int, decimal?>> GetCountriesTaxRates()
+        {
+            return await context.Countries
+                .Select(c => new
+                {
+                    c.Id,
+                    c.TaxRate
+                })
+                .ToDictionaryAsync(entry => entry.Id, entry => entry.TaxRate);
+        }
     }
 }

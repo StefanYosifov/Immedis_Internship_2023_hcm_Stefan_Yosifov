@@ -49,7 +49,7 @@
             <label>
                 <b>Birth Date</b>
             </label>
-            <input name="birthDate" type="date" class="form-control" id="BirthDate" value="@DateTime.Today.AddYears(-20).ToString("yyyy-MM-dd")"
+            <input name="birthDate" type="date" class="form-control" id="BirthDate" value="@DateTime.Today.AddYears(-20):yyyy-MM-dd"
                    min="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MaxEmployeeAge).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddYears(-ValidationConstants.EmployeeConstants.MinEmployeeAge).ToString("yyyy-MM-dd")" asp-for="BirthDate">
 
         </div>

@@ -2,7 +2,7 @@
 {
     public class EmployeeEditPositionAndSeniority
     {
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; } = null!;
 
         public int PositionId { get; set; }
 

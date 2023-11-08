@@ -1,0 +1,97 @@
+﻿@using Microsoft.CodeAnalysis.Scripting
+@model HCM.Models.ViewModels.Tasks.SearchTaskOptionsModel
+
+<link rel="stylesheet" href="~/css/button.css" />
+<link rel="stylesheet" href="~/css/inputs.css" />
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    Create a task
+</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content m-md-2 p-4">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2>Task Details</h2>
+            <form id="taskForm" class="container-fluid">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" name="taskName" required><br>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea><br>
+
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate" required><br>
+
+                <div class="my-2">
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        @foreach (var priority in Model.Priorities)
+                        {
+                            <option value="@priority.Id">@priority.PriorityName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="my-2">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        @foreach (var status in Model.Statuses)
+                        {
+                            <option value="@status.Id">@status.StatusName</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="button" id="saveTaskBtn">Save Task</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="~/js/abstractAjax.js"></script>
+<script type="module" src="~/js/constants.js"></script>
+
+@section Scripts
+{
+    
+    <script>
+        import abstractAjax from "../../wwwroot/js/abstractAjax"
+        const url = DEFAULT_URL + "/tasks";
+
+        var currentUrl = window.location.pathname;
+        var segments = currentUrl.split('/');
+        var id = segments[segments.length - 1];
+
+        $(document).ready(function () {
+            console.log(`ready`);
+            createTask();
+            abstractAjax(url + "/create", "Post", null, showSuccessToast, null);
+        });
+
+        function createTask() {
+            $("#saveTaskBtn").click(function () {
+                console.log(`click`);
+
+                var taskName = $("#taskName").val();
+                var description = $("#description").val();
+                var dueDate = $("#dueDate").val();
+                var priority = $("#priority").val();
+                var status = $("#status").val();
+
+                var data = {
+                    employeeId: id,
+                    taskName: taskName,
+                    description: description,
+                    dueDate: dueDate,
+                    priority: priority,
+                    status: status
+                };
+
+                abstractAjax(url + "/create", "Post", data, showSuccessToast, null);
+            });
+        }
+    </script>
+
+
+}

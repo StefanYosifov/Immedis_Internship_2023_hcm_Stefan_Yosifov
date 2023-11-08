@@ -1,44 +1,55 @@
 ﻿namespace HCM.Core.Services.Payments
 {
-    using System.Globalization;
-
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-
     using Common.Constants;
     using Common.Exceptions_Messages.Employees;
     using Common.Exceptions_Messages.Payments;
     using Common.Helpers;
-
+    using Countries;
     using Data;
     using Data.Models;
-
+    using Department;
     using Details;
-
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Caching.Memory;
-
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Payments.Enums;
+    using Models.ViewModels.Payments.Payroll;
+    using NuGet.Packaging;
+    using System.Globalization;
+
+    using Common.Manager;
+
+    using Models.ViewModels.Roles;
 
     internal class PaymentService : IPaymentService
     {
         private readonly IMemoryCache cache;
         private readonly ApplicationDbContext context;
-        private readonly IStatisticsService _statisticsService;
+        private readonly IStatisticsService statisticsService;
         private readonly IMapper mapper;
+        private readonly IDepartmentService departmentService;
+        private readonly ICountryService countyService;
+        private readonly IEmployeeManager employeeManager;
 
         public PaymentService(
             ApplicationDbContext context,
             IMapper mapper,
             IStatisticsService statisticsService,
-            IMemoryCache cache)
+            IMemoryCache cache,
+            IDepartmentService departmentService,
+            ICountryService countyService,
+            IEmployeeManager employeeManager)
         {
             this.context = context;
             this.mapper = mapper;
-            this._statisticsService = statisticsService;
+            this.statisticsService = statisticsService;
             this.cache = cache;
+            this.departmentService = departmentService;
+            this.countyService = countyService;
+            this.employeeManager = employeeManager;
         }
 
         public async Task<SalaryTablePagination> GetEmployeeSalaryInformation(int page, SalaryTableQueryModel query)
@@ -139,10 +150,10 @@
 
             salaryChangeModel.TimeInCompany = daysInCompany;
             salaryChangeModel.AverageDepartmentSalary =
-                await _statisticsService.GetAverageSalaryInDepartmentById(departmentId);
-            salaryChangeModel.AveragePositionSalary = await _statisticsService.GetAverageSalaryInPositionById(departmentId);
+                await statisticsService.GetAverageSalaryInDepartmentById(departmentId);
+            salaryChangeModel.AveragePositionSalary = await statisticsService.GetAverageSalaryInPositionById(departmentId);
             salaryChangeModel.AverageSenioritySalary =
-                await _statisticsService.GetAverageSalaryInSeniorityById(departmentId);
+                await statisticsService.GetAverageSalaryInSeniorityById(departmentId);
 
             return salaryChangeModel;
         }
@@ -323,10 +334,268 @@
             return PaymentMessages.SuccessfullyAddedDeduction;
         }
 
+        public async Task<PayrollPaginationModel> GetPayrolls(PayRollSearchModel model)
+        {
+            var allPayrolls = context.Payrolls.AsQueryable();
+
+            if (model.DepartmentId > 0)
+            {
+                allPayrolls = allPayrolls
+                    .Where(p => p.Employee.DepartmentId == model.DepartmentId);
+            }
+
+            var today = DateTime.UtcNow;
+
+            if (model.StartDate != null)
+            {
+                var startDate = DateTime.Parse(model.StartDate);
+                allPayrolls = allPayrolls
+                    .Where(p => p.StartDate >= startDate);
+            }
+
+            if (model.EndDate != null)
+            {
+                var endDate = DateTime.Parse(model.EndDate);
+                allPayrolls = allPayrolls
+                    .Where(p => p.EndDate <= endDate);
+            }
+
+            var mappedPayroll = allPayrolls.ProjectTo<PayrollModel>(mapper.ConfigurationProvider);
+
+            var payroll = await Pagination<PayrollModel>.CreateAsync(mappedPayroll, model.Page,
+                ValidationConstants.PaginationConstants.PayrollItemsPerPage);
+
+            foreach (var currentPayroll in payroll)
+            {
+                currentPayroll.BonusAmount = currentPayroll.Bonuses.Sum(b => b.Amount);
+                currentPayroll.DeductionAmount = (decimal)currentPayroll.Deductions.Sum(d => d.Amount);
+
+                var country = await context.Countries.Select(c => new
+                {
+                    c.Employees,
+                    c.TaxRate
+                })
+                    .FirstOrDefaultAsync(x => x.Employees.Select(e => e.Id).Any(x => x == currentPayroll.EmployeeId));
+
+                if (country == null || country.TaxRate == null)
+                {
+                    currentPayroll.TaxRate = 20;
+                }
+                else
+                {
+                    currentPayroll.TaxRate = (decimal)country.TaxRate!;
+                }
+            }
+
+            return new PayrollPaginationModel()
+            {
+                Payroll = payroll,
+                Page = model.Page,
+                TotalPages = payroll.TotalPages,
+                Departments = await departmentService.GetDepartments()
+            };
+        }
+
+        public async Task<string> CreatePayrollForDepartments(PayrollCreateModel model)
+        {
+            var employeesInOneOfChosenDepartments = await context.Employees
+                .Include(e => e.Salary)
+                .Include(e => e.Bonuses)
+                .Include(e => e.Deductions)
+                .Include(e => e.Payrolls)
+                .Select(e => new
+                {
+                    e.Id,
+                    e.DepartmentId,
+                    e.Salary,
+                    e.Bonuses,
+                    e.Deductions,
+                    e.Payrolls,
+                    e.NationalityId
+                })
+                .Where(e => e.DepartmentId.HasValue)
+                .Where(e => model.DepartmentIds.Any(d => d == e.DepartmentId.Value))
+                .ToArrayAsync();
+
+
+            ICollection<Payroll> payrolls = new List<Payroll>(employeesInOneOfChosenDepartments.Length);
+
+            var result = await context.Payrolls
+                .GroupBy(p => new { p.Employee.DepartmentId, p.EndDate })
+                .Select(groupedData => new
+                {
+                    DepartmentId = groupedData.Key.DepartmentId,
+                    EndDate = groupedData.Key.EndDate
+                }).ToArrayAsync();
+
+
+            var countriesTaxRates = await countyService.GetCountriesTaxRates();
+
+            var today = DateTime.Today;
+
+            foreach (var employee in employeesInOneOfChosenDepartments)
+            {
+                DateTime? startDate = null;
+
+
+                if (string.IsNullOrEmpty(model.StartDate))
+                {
+                    if (result.Length > 0)
+                    {
+                        startDate = result.FirstOrDefault(r => r.DepartmentId == employee.DepartmentId).EndDate;
+                    }
+
+                    if (startDate == null)
+                    {
+                        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+                        startDate = firstDayOfMonth;
+                    }
+                }
+                else
+                {
+                    startDate = DateTime.Parse(model.StartDate);
+                }
+
+                DateTime? endDate = null;
+
+                if (string.IsNullOrEmpty(model.EndDate))
+                {
+                    endDate = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
+                }
+                else
+                {
+                    endDate = DateTime.Parse(model.EndDate);
+                }
+
+                ICollection<Bonuse> bonus = new List<Bonuse>();
+
+                if (model.IncludeBonuses)
+                {
+                    var getBonuses = await context.Bonuses
+                        .Where(b => b.PayrollId == null && b.EmployeeId == employee.Id)
+                        .ToArrayAsync();
+
+                    if (getBonuses.Length > 0)
+                    {
+                        bonus.AddRange(getBonuses);
+                    }
+                }
+
+                ICollection<Deduction> deductions = new List<Deduction>();
+
+                if (model.IncludeDeductions)
+                {
+                    var getDeductions = await context.Deductions
+                          .Where(b => b.PayrollId == null && b.EmployeeId == employee.Id)
+                          .ToArrayAsync();
+
+                    if (getDeductions.Length > 0)
+                    {
+                        deductions.AddRange(getDeductions);
+                    }
+                }
+
+                var calculateSalary = employee.Salary?.SalaryAmount * (model.Percentage / 100) ?? 0;
+
+                var payroll = new Payroll()
+                {
+                    Bonuses = employee.Bonuses.Sum(b => b.Amount),
+                    StartDate = (DateTime)startDate,
+                    EndDate = (DateTime)endDate,
+                    Salary = calculateSalary,
+                    BonusesNavigation = bonus,
+                    DeductionsNavigation = deductions,
+                    CreatedOn = DateTime.UtcNow,
+                    EmployeeId = employee.Id,
+                    Deductions = deductions.Sum(d => d.Amount) ?? 0,
+                };
+
+                var taxRate = countriesTaxRates[employee.NationalityId ?? 1];
+
+                if (taxRate is 0 or null)
+                {
+                    taxRate = 20;
+                }
+
+                payroll.GrossPay = payroll.Salary + payroll.Bonuses - payroll.Deductions;
+                payroll.NetPay = (decimal)(payroll.GrossPay * (1 - (taxRate / 100)))!;
+                payrolls.Add(payroll);
+                await context.Payrolls.AddAsync(payroll);
+            }
+
+            await context.SaveChangesAsync();
+            return string.Format(PaymentMessages.SuccessfullyAddedPayroll, employeesInOneOfChosenDepartments.Length);
+        }
+
+        public async Task<ICollection<PayrollAllUnpaidSalaries>> GetAllUnpaidSalaries()
+        {
+            var unpaidSalaries = await context.Payrolls
+                .Where(p => p.PaidOn == null)
+                .GroupBy(p => new
+                {
+                    p.Employee.DepartmentId,
+                    p.Employee.Department!.Name,
+                    p.Employee.Department.ImageUrl
+                })
+                .Select(g => new PayrollAllUnpaidSalaries
+                {
+                    DepartmentId = (int)g.Key.DepartmentId!,
+                    DepartmentName = g.Key.Name,
+                    TotalPayment = g.Sum(p => p.Salary),
+                    EmployeeCount = g.Count(),
+                    DepartmentImageUrl = g.Key.ImageUrl
+                })
+                .ToArrayAsync();
+
+            return unpaidSalaries;
+        }
+
+        public async Task<string> CompletePayrollById(int payrollId)
+        {
+            var getUserId = employeeManager.GetUserId();
+
+            if (employeeManager.IsInRole(RolesEnum.Admin) == false || employeeManager.IsInRole(RolesEnum.HR)==false)
+            {
+                throw new PaymentServiceExceptions(EmployeeMessages.NoAccess);
+            }
+
+            var payroll = await context.Payrolls.FindAsync(payrollId);
+
+            if (payroll == null)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.InvalidPayroll);
+            }
+
+            payroll.PaidOn = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+            return String.Format(PaymentMessages.SuccessfullyAddedPayroll, payroll.Id);
+        }
+
+        public async Task<string> RemovePayrollById(int payrollId)
+        {
+            var getUserId = employeeManager.GetUserId();
+
+            if (employeeManager.IsInRole(RolesEnum.Admin) == false || employeeManager.IsInRole(RolesEnum.HR) == false)
+            {
+                throw new PaymentServiceExceptions(EmployeeMessages.NoAccess);
+            }
+
+            var payroll = await context.Payrolls.FindAsync(payrollId);
+
+            if (payroll == null)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.InvalidPayroll);
+            }
+
+             context.Remove(payroll);
+             await context.SaveChangesAsync();
+             return String.Format(PaymentMessages.SuccessfullyRemovedPayroll,payroll.Id);
+        }
+
         private async Task<bool> DoesEmployeeExist(string id)
         {
             var doesEmployeeExist = await context.Employees
-                .Select(e=>e.Id)
+                .Select(e => e.Id)
                 .AnyAsync(x => x == id);
 
             return doesEmployeeExist;
