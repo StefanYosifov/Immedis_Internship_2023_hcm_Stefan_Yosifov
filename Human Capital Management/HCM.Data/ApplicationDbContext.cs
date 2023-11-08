@@ -111,7 +111,7 @@
                     .HasConstraintName("FK__Bonuses__Employe__4E88ABD4");
 
                 entity.HasOne(d => d.Payroll)
-                    .WithMany(p => p.Bonuses)
+                    .WithMany(p => p.BonusesNavigation)
                     .HasForeignKey(d => d.PayrollId)
                     .HasConstraintName("FK__Bonuses__Payroll__5070F446");
 
@@ -279,31 +279,39 @@
             });
 
             modelBuilder.Entity<Payroll>(entity =>
-            {
-                entity.ToTable("Payroll");
+               {
+                   entity.ToTable("Payroll");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                   entity.Property(e => e.Bonuses).HasColumnType("decimal(10, 2)");
 
-                entity.Property(e => e.Deductions).HasColumnType("decimal(10, 2)");
+                   entity.Property(e => e.Deductions).HasColumnType("decimal(10, 2)");
 
-                entity.Property(e => e.EmployeeId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false)
-                    .HasColumnName("EmployeeID");
+                   entity.Property(e => e.EmployeeId)
+                       .HasMaxLength(450)
+                       .IsUnicode(false)
+                       .HasColumnName("EmployeeID");
 
-                entity.Property(e => e.EndDate).HasColumnType("date");
+                   entity.Property(e => e.EndDate).HasColumnType("date");
 
-                entity.Property(e => e.NetPay).HasColumnType("decimal(10, 2)");
+                   entity.Property(e => e.GrossPay).HasColumnType("decimal(10, 2)");
 
-                entity.Property(e => e.Salary).HasColumnType("decimal(10, 2)");
+                   entity.Property(e => e.NetPay).HasColumnType("decimal(10, 2)");
 
-                entity.Property(e => e.StartDate).HasColumnType("date");
+                   entity.Property(e => e.Salary).HasColumnType("decimal(10, 2)");
 
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.Payrolls)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("FK__Payroll__Employe__49C3F6B7");
-            });
+                   entity.Property(e => e.StartDate).HasColumnType("date");
+
+                   entity.Property(e => e.IsDeleted)
+                       .HasDefaultValue(false);
+
+                   entity.HasQueryFilter(e => !e.IsDeleted);
+                   
+                   entity.HasOne(d => d.Employee)
+                       .WithMany(p => p.Payrolls)
+                       .HasForeignKey(d => d.EmployeeId)
+                       .OnDelete(DeleteBehavior.ClientSetNull)
+                       .HasConstraintName("FK__Payroll__Employe__49C3F6B7");
+               });
 
             modelBuilder.Entity<Position>(entity =>
             {
@@ -340,8 +348,6 @@
             modelBuilder.Entity<Priority>(entity =>
             {
                 entity.ToTable("Priority");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.PriorityName)
                     .HasMaxLength(50)
@@ -395,8 +401,6 @@
             {
                 entity.ToTable("Status");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.StatusName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -404,8 +408,6 @@
 
             modelBuilder.Entity<Task>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Description).HasColumnType("text");
 
                 entity.Property(e => e.DueDate).HasColumnType("date");
@@ -414,6 +416,10 @@
                     .HasMaxLength(450)
                     .IsUnicode(false)
                     .HasColumnName("EmployeeID");
+
+                entity.Property(e => e.IssuerId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.PriorityId).HasColumnName("PriorityID");
 
@@ -428,6 +434,11 @@
                     .HasForeignKey(d => d.EmployeeId)
                     .HasConstraintName("FK__Tasks__EmployeeI__5FB337D6");
 
+                entity.HasOne(d => d.Issuer)
+                    .WithMany(p => p.TaskIssuers)
+                    .HasForeignKey(d => d.IssuerId)
+                    .HasConstraintName("FK_Tasks_Employees");
+
                 entity.HasOne(d => d.Priority)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.PriorityId)
@@ -437,12 +448,8 @@
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.StatusId)
                     .HasConstraintName("FK__Tasks__StatusID__5EBF139D");
-
-                entity.HasOne(d => d.Issuer)
-                    .WithMany(p => p.TaskIssuers)
-                    .HasForeignKey(d => d.IssuerId)
-                    .HasConstraintName("FK_Tasks_Employees");
             });
+
 
             OnModelCreatingPartial(modelBuilder);
         }
@@ -463,18 +470,7 @@
 
             foreach (var modifiedEntity in modifiedEntities)
             {
-                var auditLog = new AuditLog
-                {
-                    EntityName = modifiedEntity.Entity.GetType().Name,
-                    Action = modifiedEntity.State.ToString(),
-                    Timestamp = DateTime.UtcNow,
-                    Changes = GetChanges(modifiedEntity)
-                };
-
-                var id = modifiedEntity.OriginalValues.Properties[0];
-
-                AuditLogs.Add(auditLog);
-
+                
                 if (modifiedEntity.Entity is IEntity entity)
                 {
                     if (modifiedEntity.State == EntityState.Added)
@@ -496,6 +492,24 @@
                         creationEntity.CreatedBy = userName;
                     }
                 }
+                else if (modifiedEntity.Entity is IDeletableEntity deletedEntity)
+                {
+                    if (modifiedEntity.State == EntityState.Modified)
+                    {
+                        deletedEntity.DeletedOn = currentTime;
+                        deletedEntity.DeletedBy = userName;
+                    }
+                }
+
+                var auditLog = new AuditLog
+                {
+                    EntityName = modifiedEntity.Entity.GetType().Name,
+                    Action = modifiedEntity.State.ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    Changes = GetChanges(modifiedEntity)
+                };
+
+                AuditLogs.Add(auditLog);
             }
         }
 

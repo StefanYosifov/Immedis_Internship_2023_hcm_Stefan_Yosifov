@@ -12,6 +12,8 @@
         public string Name { get; set; } = null!;
         public string Iso { get; set; } = null!;
 
+        public decimal? TaxRate { get; set; }
+
         public virtual ICollection<Department> Departments { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
     }
