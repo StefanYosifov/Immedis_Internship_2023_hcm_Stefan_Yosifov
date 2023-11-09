@@ -9,7 +9,7 @@
 
     using Models.ViewModels.Countries;
 
-    public class CountryService : ICountryService
+    internal class CountryService : ICountryService
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;

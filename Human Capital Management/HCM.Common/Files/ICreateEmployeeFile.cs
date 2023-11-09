@@ -4,6 +4,6 @@
 
     public interface IEmployeeCreateFile
     {
-        List<Employee> ProcessFile(byte[] fileContent);
+        ICollection<Employee>ProcessFile(byte[] fileContent);
     }
 }

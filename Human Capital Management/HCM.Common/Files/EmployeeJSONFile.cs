@@ -5,9 +5,9 @@
 
     using Data.Models;
 
-    public class EmployeeCreateFileFromJson : IEmployeeCreateFile
+    public class EmployeeJSONFile: IEmployeeCreateFile
     {
-        public List<Employee> ProcessFile(byte[] fileContent)
+        public ICollection<Employee> ProcessFile(byte[] fileContent)
         {
             var data = Encoding.UTF8.GetString(fileContent);
             var employees = JsonSerializer.Deserialize<List<Employee>>(data);

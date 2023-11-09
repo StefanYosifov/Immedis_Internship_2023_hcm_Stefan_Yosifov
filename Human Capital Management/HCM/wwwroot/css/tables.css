@@ -18,3 +18,11 @@ thead {
 th {
     color: #f8f9fc;
 }
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+    margin-top: 20px;
+}

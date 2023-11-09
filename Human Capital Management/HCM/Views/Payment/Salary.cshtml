@@ -64,21 +64,6 @@
         </table>
 
         <ul class="pagination">
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1">Previous</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-            </li>
         </ul>
 
     </div>
@@ -124,8 +109,8 @@
     .table {
         border-collapse: collapse;
         width: 95%;
-        padding:2%;
-        margin:25px;
+        padding: 2%;
+        margin: 25px;
     }
 
         .table th, .table td {
@@ -167,7 +152,7 @@
 </style>
 
 @section Scripts
-{
+    {
 
     <script type="text/javascript">
 
@@ -243,13 +228,17 @@
                 });
             });
         }
-        function fetchData(page, query) {
+
+        function fetchData(page) {
+
+            const query = window.location.search;
             console.log(query);
+
             $.ajax({
-                url: baseUrl + "/salary/all/" + page + "?" + query,
-                method: 'GET',
+                url: baseUrl + "/salary/all/" + page,
+                method: 'Get',
                 headers: { "Authorization": token },
-                contentType: 'application/json',
+                data: query,
                 success: function (response) {
                     console.log(response);
                     populateTable(response.employees);
@@ -263,19 +252,18 @@
         function Search() {
             $("#search").on("click", function (e) {
                 e.preventDefault();
-                let searchValue = $("input[name='Search']").val();
-                let selectedDepartment = $("#departmentDropDown option:selected").attr("value");
-                let selectedPosition = $("#positionDropDown option:selected").attr("value");
-                let selectedSeniority = $("#seniorityDropDown option:selected").attr("value");
-                let selectedSort = $("#sortDropDown").val();
-                var page = 1;
-
-                var queryString = `Search=${searchValue}&departmentId=${selectedDepartment}&positionId=${selectedPosition}&seniorityId=${selectedSeniority}&sort=${selectedSort}`;
+                const searchValue = $("input[name='Search']").val();
+                const departmentValue = $("select[name='DepartmentId']").val();
+                const positionValue = $("select[name='PositionId']").val();
+                const seniorityValue = $("select[name='SeniorityId']").val();
+                const sortValue = $("select[name='Sort']").val();
 
 
-                var stateObj = { query: queryString };
+                const queryString = `search=${searchValue}&DepartmentId=${departmentValue}&PositionId=${positionValue}&SeniorityId=${seniorityValue}&Sort=${sortValue}`;
+
+                const stateObj = { query: queryString };
                 window.history.pushState(stateObj, "Search Results", "?" + queryString);
-                fetchData(page, queryString);
+                fetchData(page);
             })
         }
         function populateTable(data) {
@@ -293,40 +281,40 @@
                 console.log(item);
                 $('#table-body').append(
                     `<tr>
-                                    <td>${item.employeeId}</td>
-                                    <td>${item.employeeFullname}</td>
-                                    <td>${item.age}</td>
-                                    <td>${item.salaryId}</td>
-                                    <td>${item.salaryAmount}</td>
-                                    <td>${GetGenderIcon(item.genderId)}</td>
-                                     <td>${item.departmentName}</td>
-                                    <td>${item.positionName}</td>
-                                    <td>${item.seniorityName}</td>
-                                           <td>
-                <div class="btn-group dropstart">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="/Payment/Details/${item.employeeId}">Edit</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Another action</a>
-                        </li>
-                        <li>
-                            <a class "dropdown-item" href="#">Something else here</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Separated link</a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
-                        </tr>`
+                                                            <td>${item.employeeId}</td>
+                                                            <td>${item.employeeFullname}</td>
+                                                            <td>${item.age}</td>
+                                                            <td>${item.salaryId}</td>
+                                                            <td>${item.salaryAmount}</td>
+                                                            <td>${GetGenderIcon(item.genderId)}</td>
+                                                             <td>${item.departmentName}</td>
+                                                            <td>${item.positionName}</td>
+                                                            <td>${item.seniorityName}</td>
+                                                                   <td>
+                                        <div class="btn-group dropstart">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="/Payment/Details/${item.employeeId}">Edit</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#">Another action</a>
+                                                </li>
+                                                <li>
+                                                    <a class "dropdown-item" href="#">Something else here</a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#">Separated link</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                                </tr>`
                 );
             });
         }
@@ -334,14 +322,14 @@
             var paginationElement = $('.pagination');
             paginationElement.empty();
 
-            // Add "Previous" button
+            // PREVIOUS
             if (currentPage > 1) {
                 paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
             } else {
                 paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>`);
             }
 
-            // Add page numbers
+            // Numbers
             for (let i = 1; i <= totalPages; i++) {
                 if (i === currentPage) {
                     paginationElement.append(`<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
@@ -350,18 +338,17 @@
                 }
             }
 
-            // Add "Next" button
+            // NEXT
             if (currentPage < totalPages) {
-                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">Next</a></li>`);
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage}">Next</a></li>`);
             } else {
                 paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
             }
 
-            // Add click event handler for page links
             paginationElement.find('a.page-link').click(function (e) {
                 e.preventDefault();
                 var clickedPage = $(this).data('page');
-                fetchData(clickedPage, queryString);
+                fetchData(clickedPage);
             });
         }
 
@@ -371,7 +358,7 @@
             FillSeniorityDropDown();
             Search();
 
-            fetchData(1);
+            fetchData(1, null);
 
             $('#pagination a.page-link').click(function (e) {
                 e.preventDefault();

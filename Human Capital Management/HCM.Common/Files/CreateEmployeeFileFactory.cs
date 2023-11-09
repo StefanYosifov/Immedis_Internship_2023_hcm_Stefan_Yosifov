@@ -6,12 +6,12 @@
         {
             if (extension == ".json")
             {
-                return new EmployeeCreateFileFromJson();
+                return new EmployeeJSONFile();
             }
 
             if (extension == ".xml")
             {
-                return null;
+                return new EmployeeXMLFile();
             }
 
             return null;

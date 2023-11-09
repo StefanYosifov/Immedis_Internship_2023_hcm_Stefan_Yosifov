@@ -197,7 +197,6 @@
         {
             var currentUserId = employeeManager.GetUserId();
 
-            Console.WriteLine(employeeManager.IsInRole(RolesEnum.HR));
 
             if (employeeId != currentUserId && employeeManager.IsInRole(RolesEnum.HR) == false)
             {

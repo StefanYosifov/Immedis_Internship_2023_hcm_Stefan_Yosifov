@@ -214,10 +214,6 @@
                 throw new TaskServiceExceptions(TaskMessages.NotFound);
             }
 
-            Console.WriteLine(employeeManager.IsInRole(RolesEnum.Admin));
-            Console.WriteLine(employeeManager.IsInRole(RolesEnum.HR));
-
-
             var currentUserId = employeeManager.GetUserId();
 
             if (currentUserId != findTask.EmployeeId && (employeeManager.IsInRole(RolesEnum.HR) == false || employeeManager.IsInRole(RolesEnum.Admin) == false))

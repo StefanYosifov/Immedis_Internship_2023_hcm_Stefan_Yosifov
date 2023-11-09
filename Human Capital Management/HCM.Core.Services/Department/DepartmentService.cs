@@ -22,7 +22,7 @@
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
 
-    public class DepartmentService : IDepartmentService
+    internal class DepartmentService : IDepartmentService
     {
         private readonly IMemoryCache cache;
         private readonly ApplicationDbContext context;

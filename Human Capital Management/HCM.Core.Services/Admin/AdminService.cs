@@ -11,6 +11,8 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Models.ViewModels.Roles;
+
     internal class AdminService : IAdminService
     {
         private readonly ApplicationDbContext context;
@@ -52,7 +54,8 @@
             if (model.IsHR == true)
             {
                 employees = employees
-                    .Where(e => e.EmployeeRoles.Any(er => er.Role.Name == "HR"));
+                    .Where(e => e.EmployeeRoles
+                        .Any(er => er.Role.Name == RolesEnum.Admin.ToString()));
             }
 
             var mappedEmployees = employees.Select(e => new AdminEmployeeModel()
@@ -60,7 +63,7 @@
                 EmployeeId = e.Id,
                 EmployeeSeniority = e.Seniority!.Name,
                 EmployeeDepartmentName = e.Department!.Name,
-                RoleId = e.EmployeeRoles.FirstOrDefault(r => r.Role.Name != "Admin")!.RoleId,
+                RoleId = e.EmployeeRoles.FirstOrDefault(r => r.Role.Name != RolesEnum.Admin.ToString())!.RoleId,
                 EmployeeFirstName = e.FirstName!,
                 EmployeeLastName = e.LastName!,
                 EmployeePositionName = e.Position!.Name,

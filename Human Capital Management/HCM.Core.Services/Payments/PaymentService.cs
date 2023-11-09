@@ -114,8 +114,7 @@
             var employeesPagination = await Pagination<SalaryTableModel>.CreateAsync(mappedEmployees, page,
                 ValidationConstants.PaginationConstants.DefaultItemsPerPage);
 
-            var totalPages = (int)Math.Ceiling(
-                (decimal)employeesPagination.Count / ValidationConstants.PaginationConstants.DefaultItemsPerPage);
+            var totalPages = employeesPagination.TotalPages;
 
             return new SalaryTablePagination
             {
@@ -149,9 +148,12 @@
             var departmentId = findEmployee.DepartmentId ?? 0;
 
             salaryChangeModel.TimeInCompany = daysInCompany;
+
             salaryChangeModel.AverageDepartmentSalary =
                 await statisticsService.GetAverageSalaryInDepartmentById(departmentId);
+
             salaryChangeModel.AveragePositionSalary = await statisticsService.GetAverageSalaryInPositionById(departmentId);
+
             salaryChangeModel.AverageSenioritySalary =
                 await statisticsService.GetAverageSalaryInSeniorityById(departmentId);
 
@@ -508,6 +510,7 @@
                     CreatedOn = DateTime.UtcNow,
                     EmployeeId = employee.Id,
                     Deductions = deductions.Sum(d => d.Amount) ?? 0,
+                    IsDeleted = false
                 };
 
                 var taxRate = countriesTaxRates[employee.NationalityId ?? 1];

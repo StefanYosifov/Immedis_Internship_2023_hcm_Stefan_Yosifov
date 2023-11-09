@@ -10,8 +10,6 @@
 
     public class PaymentController : BaseController
     {
-        private const string DefaultRoute = "/payments";
-
         public IActionResult Salary()
         {
             return View();

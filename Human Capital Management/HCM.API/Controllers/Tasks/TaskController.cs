@@ -51,7 +51,7 @@
             {
                 return BadRequest(e.Message);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return BadRequest(TaskMessages.InvalidRequest);
             }

@@ -420,7 +420,6 @@
                 entity.Property(e => e.IssuerId)
                     .HasMaxLength(450)
                     .IsUnicode(false);
-
                 entity.Property(e => e.PriorityId).HasColumnName("PriorityID");
 
                 entity.Property(e => e.StatusId).HasColumnName("StatusID");
@@ -437,7 +436,7 @@
                 entity.HasOne(d => d.Issuer)
                     .WithMany(p => p.TaskIssuers)
                     .HasForeignKey(d => d.IssuerId)
-                    .HasConstraintName("FK_Tasks_Employees");
+                    .HasConstraintName("FK__Tasks__IssuerId__60A75C0F");
 
                 entity.HasOne(d => d.Priority)
                     .WithMany(p => p.Tasks)
@@ -470,6 +469,17 @@
 
             foreach (var modifiedEntity in modifiedEntities)
             {
+                var auditLog = new AuditLog
+                {
+                    EntityName = modifiedEntity.Entity.GetType().Name,
+                    Action = modifiedEntity.State.ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    Changes = GetChanges(modifiedEntity)
+                };
+
+                var id = modifiedEntity.OriginalValues.Properties[0];
+
+                AuditLogs.Add(auditLog);
                 
                 if (modifiedEntity.Entity is IEntity entity)
                 {
@@ -500,16 +510,6 @@
                         deletedEntity.DeletedBy = userName;
                     }
                 }
-
-                var auditLog = new AuditLog
-                {
-                    EntityName = modifiedEntity.Entity.GetType().Name,
-                    Action = modifiedEntity.State.ToString(),
-                    Timestamp = DateTime.UtcNow,
-                    Changes = GetChanges(modifiedEntity)
-                };
-
-                AuditLogs.Add(auditLog);
             }
         }
 

@@ -10,6 +10,7 @@
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
+    using Models.ViewModels.Files;
     using Models.ViewModels.Genders;
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
@@ -67,7 +68,7 @@
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
                 .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId))
-                .ForMember(dest=>dest.Tasks,opt=>opt.Ignore());
+                .ForMember(dest => dest.Tasks, opt => opt.Ignore());
 
             CreateMap<Department, DepartmentGetAllModel>()
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
@@ -125,12 +126,12 @@
             CreateMap<Task, TaskModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
-                .ForMember(dest=>dest.EmployeeName,opt=>opt.MapFrom(src=>src.Employee.FirstName + " " +src.Employee.LastName))
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
                 .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.DueDate))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.TaskName, opt => opt.MapFrom(src => src.TaskName))
                 .ForMember(dest => dest.IssuerId, opt => opt.MapFrom(src => src.IssuerId))
-                .ForMember(dest=>dest.IssuerName,opt=>opt.MapFrom(src=>src.Issuer.FirstName+" " + src.Issuer.LastName))
+                .ForMember(dest => dest.IssuerName, opt => opt.MapFrom(src => src.Issuer.FirstName + " " + src.Issuer.LastName))
                 .ForMember(dest => dest.Priority, opt => opt.MapFrom(src =>
                     new PriorityViewModel
                     {
@@ -167,8 +168,8 @@
             CreateMap<Payroll, PayrollModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
-                .ForMember(dest=>dest.EmployeeName,opt=>opt.MapFrom(src=>$"{src.Employee.FirstName} {src.Employee.LastName}"))
-                .ForMember(dest=>dest.DepartmentName,opt=>opt.MapFrom(src=>src.Employee.Department.Name))
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => $"{src.Employee.FirstName} {src.Employee.LastName}"))
+                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Employee.Department.Name))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
                 .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary))
@@ -189,6 +190,8 @@
                     Amount = d.Amount,
                     Id = d.Id
                 }).ToArray()));
+
+            CreateMap<EmployeeXmlFileDto, Employee>();
         }
     }
 }
