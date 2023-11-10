@@ -3,27 +3,33 @@
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Common.Constants;
+    using Common.Exceptions_Messages.Admin;
     using Common.Helpers;
+    using Countries;
     using Data;
     using Microsoft.EntityFrameworkCore;
     using Models.ViewModels.Admin;
+    using Models.ViewModels.Roles;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Models.ViewModels.Roles;
+    using Data.Models;
 
     internal class AdminService : IAdminService
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly ICountryService countryService;
 
         public AdminService(
             ApplicationDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            ICountryService countryService)
         {
             this.context = context;
             this.mapper = mapper;
+            this.countryService = countryService;
         }
 
         public async Task<AuditLogsPagination> GetAuditLogs(int page)
@@ -55,7 +61,7 @@
             {
                 employees = employees
                     .Where(e => e.EmployeeRoles
-                        .Any(er => er.Role.Name == RolesEnum.Admin.ToString()));
+                        .Any(er => er.Role.Name == RolesEnum.HR.ToString() && er.Role.Name != RolesEnum.Admin.ToString()));
             }
 
             var mappedEmployees = employees.Select(e => new AdminEmployeeModel()
@@ -77,7 +83,7 @@
             var paginationOfMappedEmployees = await Pagination<AdminEmployeeModel>.CreateAsync(mappedEmployees,
                 model.Page, ValidationConstants.PaginationConstants.AdminEmployeesPerPage);
 
-            return  new AdminEmployeePagination()
+            return new AdminEmployeePagination()
             {
                 Employees = paginationOfMappedEmployees,
                 TotalPages = totalPages,
@@ -90,7 +96,68 @@
         {
             return await context.Roles
                 .ProjectTo<RoleViewModel>(mapper.ConfigurationProvider)
+                .Where(r => r.Name != RolesEnum.Admin.ToString())
                 .ToArrayAsync();
         }
+
+        public Task<string> ChangeEmployeeRole(AdminChangeRole model)
+        {
+            if (model.RoleId > 0)
+            {
+
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public async Task<AdminDepartmentsCollection> GetDepartments()
+        {
+            var countries = await countryService.GetCountries();
+
+            var departments = await context.Departments
+                .Include(d => d.Country)
+                .Select(d => new AdminDepartmentsModel()
+                {
+                    DepartmentId = d.Id,
+                    DepartmentName = d.Name,
+                    DepartmentImageUrl = d.ImageUrl,
+                    EmployeeCapacity = d.MaxPeopleCount,
+                    CountryName = d.Country!.Name,
+                }).ToListAsync();
+
+            return new AdminDepartmentsCollection()
+            {
+                Countries = countries,
+                Departments = (ICollection<AdminDepartmentsModel>)departments
+            };
+
+        }
+
+        async Task<string> IAdminService.CreateDepartment(AdminCreateDepartment model)
+        {
+            var doesCountryExist = await countryService.DoesCountryExist(model.CountryId);
+
+            if (doesCountryExist == false)
+            {
+                throw new AdminServiceExceptions(AdminMessages.InvalidCountry);
+            }
+
+            var doesDepartmentWithTheSameNameExist = await context.Departments.Select(d => new
+            {
+                d.Name
+            }).AnyAsync(d => d.Name == model.Name);
+
+            if (doesDepartmentWithTheSameNameExist == true)
+            {
+                throw new AdminServiceExceptions(AdminMessages.DepartmentAlreadyExists);
+            }
+
+            var department = mapper.Map<Department>(model);
+            await context.Departments.AddAsync(department);
+            await context.SaveChangesAsync();
+
+            return AdminMessages.SuccessfullyCreatedDepartment;
+        }
+
     }
 }

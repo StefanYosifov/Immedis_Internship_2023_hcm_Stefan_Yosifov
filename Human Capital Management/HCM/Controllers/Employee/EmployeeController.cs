@@ -2,8 +2,6 @@
 
 namespace HCM.Controllers.Employee
 {
-    using System.Security.Claims;
-
     using Common.Helpers;
     using Common.Requests;
 

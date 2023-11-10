@@ -6,6 +6,7 @@
     using Common.Exceptions_Messages.Employees;
     using Common.Exceptions_Messages.Payments;
     using Common.Helpers;
+    using Common.Manager;
     using Countries;
     using Data;
     using Data.Models;
@@ -17,12 +18,9 @@
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Payments.Enums;
     using Models.ViewModels.Payments.Payroll;
+    using Models.ViewModels.Roles;
     using NuGet.Packaging;
     using System.Globalization;
-
-    using Common.Manager;
-
-    using Models.ViewModels.Roles;
 
     internal class PaymentService : IPaymentService
     {
@@ -336,7 +334,7 @@
             return PaymentMessages.SuccessfullyAddedDeduction;
         }
 
-        public async Task<PayrollPaginationModel> GetPayrolls(PayRollSearchModel model)
+        public async Task<PayrollPaginationModel> GetPayrolls(int id, PayRollSearchModel model)
         {
             var allPayrolls = context.Payrolls.AsQueryable();
 
@@ -345,8 +343,6 @@
                 allPayrolls = allPayrolls
                     .Where(p => p.Employee.DepartmentId == model.DepartmentId);
             }
-
-            var today = DateTime.UtcNow;
 
             if (model.StartDate != null)
             {
@@ -364,7 +360,7 @@
 
             var mappedPayroll = allPayrolls.ProjectTo<PayrollModel>(mapper.ConfigurationProvider);
 
-            var payroll = await Pagination<PayrollModel>.CreateAsync(mappedPayroll, model.Page,
+            var payroll = await Pagination<PayrollModel>.CreateAsync(mappedPayroll, id,
                 ValidationConstants.PaginationConstants.PayrollItemsPerPage);
 
             foreach (var currentPayroll in payroll)
@@ -510,7 +506,6 @@
                     CreatedOn = DateTime.UtcNow,
                     EmployeeId = employee.Id,
                     Deductions = deductions.Sum(d => d.Amount) ?? 0,
-                    IsDeleted = false
                 };
 
                 var taxRate = countriesTaxRates[employee.NationalityId ?? 1];
@@ -523,9 +518,9 @@
                 payroll.GrossPay = payroll.Salary + payroll.Bonuses - payroll.Deductions;
                 payroll.NetPay = (decimal)(payroll.GrossPay * (1 - (taxRate / 100)))!;
                 payrolls.Add(payroll);
-                await context.Payrolls.AddAsync(payroll);
             }
 
+            await context.AddRangeAsync(payrolls);
             await context.SaveChangesAsync();
             return string.Format(PaymentMessages.SuccessfullyAddedPayroll, employeesInOneOfChosenDepartments.Length);
         }
@@ -555,8 +550,6 @@
 
         public async Task<string> CompletePayrollById(int payrollId)
         {
-            var getUserId = employeeManager.GetUserId();
-
             if (employeeManager.IsInRole(RolesEnum.Admin) == false || employeeManager.IsInRole(RolesEnum.HR)==false)
             {
                 throw new PaymentServiceExceptions(EmployeeMessages.NoAccess);
@@ -590,9 +583,23 @@
                 throw new PaymentServiceExceptions(PaymentMessages.InvalidPayroll);
             }
 
+            if (payroll.PaidOn != null)
+            {
+                throw new PaymentServiceExceptions(PaymentMessages.RemovingCompletedPayroll);
+            }
+
              context.Remove(payroll);
              await context.SaveChangesAsync();
              return String.Format(PaymentMessages.SuccessfullyRemovedPayroll,payroll.Id);
+        }
+
+        public async Task<ICollection<PayrollEmployeeDetails>> GetPayRollDetailsByEmployeeId(string employeeId)
+        {
+            return await context.Payrolls
+                .ProjectTo<PayrollEmployeeDetails>(mapper.ConfigurationProvider)
+                .Where(p=>p.EmployeeId == employeeId && p.IsPaid==true)
+                .Take(5)
+                .ToArrayAsync();
         }
 
         private async Task<bool> DoesEmployeeExist(string id)

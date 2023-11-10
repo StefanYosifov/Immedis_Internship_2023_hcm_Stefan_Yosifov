@@ -22,7 +22,7 @@
 
         Task<string> AddDeduction(DeductionAddModel model);
 
-        Task<PayrollPaginationModel> GetPayrolls(PayRollSearchModel model);
+        Task<PayrollPaginationModel> GetPayrolls(int id, PayRollSearchModel model);
 
         Task<string> CreatePayrollForDepartments(PayrollCreateModel model);
 
@@ -31,5 +31,7 @@
         Task<string> CompletePayrollById(int payrollId);
 
         Task<string> RemovePayrollById(int payrollId);
+
+        Task<ICollection<PayrollEmployeeDetails>> GetPayRollDetailsByEmployeeId(string employeeId);
     }
 }

@@ -1,5 +1,8 @@
 ﻿namespace HCM.API.Controllers.Admin
 {
+    using Common.Exceptions_Messages.Admin;
+    using Common.Exceptions_Messages.Departments;
+
     using Core.Services.Admin;
 
     using Microsoft.AspNetCore.Authorization;
@@ -19,17 +22,42 @@
         }
 
         [HttpGet("audit")]
-        public async Task<IActionResult> GetAuditLogs([FromQuery]int page)
+        public async Task<IActionResult> GetAuditLogs([FromQuery] int page)
         {
-            var result=await service.GetAuditLogs(page);
+            var result = await service.GetAuditLogs(page);
             return Ok(result);
         }
 
         [HttpGet("employees")]
-        public async Task<IActionResult> GetEmployees([FromQuery]AdminSearchEmployee model)
+        public async Task<IActionResult> GetEmployees([FromQuery] AdminSearchEmployee model)
         {
-            var result=await service.GetEmployees(model);
+            var result = await service.GetEmployees(model);
             return Ok(result);
+        }
+
+        [HttpGet("departments")]
+        public async Task<IActionResult> GetDepartments()
+        {
+            var result = await service.GetDepartments();
+            return Ok(result);
+        }
+
+        [HttpPost("departments/create")]
+        public async Task<IActionResult> CreateDepartment([FromBody]AdminCreateDepartment model)
+        {
+            try
+            {
+                var result = await service.CreateDepartment(model);
+                return Ok(result);
+            }
+            catch (DepartmentServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest(AdminMessages.InvalidRequest);
+            }
         }
 
     }

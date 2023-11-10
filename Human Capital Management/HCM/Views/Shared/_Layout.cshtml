@@ -79,21 +79,12 @@
                                     <li>
                                         @Html.ActionLink("Salaries", "Salary", "Payment")
                                     </li>
-                                    <li>
-                                        <a href="#">Bonuses</a>
-                                    </li>
                                 </ul>
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "Department")">
                                     <i class="fas fa-image"></i>
                                     Departments
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="fas fa-question"></i>
-                                    FAQ
                                 </a>
                             </li>
                             @if (User.IsInRole("Admin"))

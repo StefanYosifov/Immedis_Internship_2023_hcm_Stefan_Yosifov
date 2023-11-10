@@ -39,5 +39,13 @@
                 })
                 .ToDictionaryAsync(entry => entry.Id, entry => entry.TaxRate);
         }
+
+        public async Task<bool> DoesCountryExist(int countryId)
+        {
+            return await context
+                .Countries
+                .Select(c=>c.Id)
+                .AnyAsync(c=>c==countryId);
+        }
     }
 }

@@ -206,9 +206,9 @@
         }
 
         [HttpGet]
-        public async Task<IActionResult> Payroll(PayRollSearchModel model)
+        public async Task<IActionResult> Payroll(int id, PayRollSearchModel model)
         {
-            var request = new RestRequestBuilder("/api/payments/payroll/pagination", GetAuthenticationClaim())
+            var request = new RestRequestBuilder($"/api/payments/payroll/pagination/{id}", GetAuthenticationClaim())
                 .SetMethod(Method.Get)
                 .AddQueryParameter(model)
                 .AddAuthentication()
@@ -288,6 +288,26 @@
                 .Build();
 
             var response = await client.ExecuteAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpGet("payroll/employee/details")]
+        public async Task<IActionResult> GetPayrollByEmployeeId([FromQuery] string employeeId)
+        {
+            var request = new RestRequestBuilder("/api/payments/payroll/employee/details", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            request.AddParameter(nameof(employeeId), employeeId);
+
+            var response = await client.ExecuteGetAsync<ICollection<PayrollEmployeeDetails>>(request);
 
             if (response.IsSuccessful)
             {

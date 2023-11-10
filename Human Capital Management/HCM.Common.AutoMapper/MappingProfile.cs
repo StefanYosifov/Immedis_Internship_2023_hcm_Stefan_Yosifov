@@ -192,6 +192,18 @@
                 }).ToArray()));
 
             CreateMap<EmployeeXmlFileDto, Employee>();
+
+            CreateMap<AdminCreateDepartment, Department>()
+                .ForMember(dest => dest.MaxPeopleCount, opt => opt.MapFrom(src => src.MaxPeople));
+
+            CreateMap<Payroll, PayrollEmployeeDetails>()
+                .ForMember(dest => dest.PayrollId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+                .ForMember(dest => dest.IsPaid, opt => opt.MapFrom(src => src.PaidOn != null))
+                .ForMember(dest => dest.Received, opt => opt.MapFrom(src => src.NetPay))
+                .ForMember(dest=>dest.StartDate,opt=>opt.MapFrom(src=>src.StartDate.ToShortDateString()))
+                .ForMember(dest=>dest.EndDate,opt=>opt.MapFrom(src=>src.EndDate.ToShortDateString()));
+
         }
     }
 }

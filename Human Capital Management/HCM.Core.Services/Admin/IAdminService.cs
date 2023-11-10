@@ -11,5 +11,11 @@
 
         Task<ICollection<RoleViewModel>> GetAllRoles();
 
+        Task<string> ChangeEmployeeRole(AdminChangeRole model);
+
+        Task<AdminDepartmentsCollection> GetDepartments();
+
+        public Task<string> CreateDepartment(AdminCreateDepartment model);
+
     }
 }

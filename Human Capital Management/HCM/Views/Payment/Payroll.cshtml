@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="~/css/inputs.css" />
 
 <div class="container-fluid m-5">
-    <form id="myForm" class="flex" method="get" asp-controller="Employee" asp-action="All" asp-route-id="@Model.Page">
+    <form id="myForm" class="flex" method="get" asp-controller="Payment" asp-action="Payroll" asp-route-id="@Model.Page">
         <div class="row">
             <div class="col-md-2">
                 <label>
@@ -21,8 +21,10 @@
             </div>
 
             <div class="col-md-2">
-                <label for="departments"> <b>Departments</b></label>
-                <select>
+                <label>
+                     <b>Departments</b>
+                </label>
+                <select name="DepartmentId">
                     <option value="0">Select department</option>
                     @foreach (var department in Model.Departments)
                     {
@@ -66,7 +68,7 @@
                         </tr>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="align-items-center align-content-center">
                         @foreach (var payroll in Model.Payroll!)
                         {
                             <tr>
@@ -80,7 +82,7 @@
                                 <td>@payroll.NetPay</td>
                                 <td>@payroll.DeductionAmount</td>
                                 <td>@payroll.Deductions.Count</td>
-                                <td>@payroll.TaxRate</td>
+                                <td>@payroll.TaxRate %</td>
                                 <td>@payroll.CreatedOn.ToShortDateString()</td>
                                 @if (@payroll.PaidOn == null)
                                 {
@@ -124,7 +126,7 @@
                             continue;
                         }
                         <li class="page-item @(i == Model.Page ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="All" asp-route-id="@i" class="page-link">@i</a>
+                            <a asp-controller="Payment" asp-action="Payroll" asp-route-id="@i" class="page-link">@i</a>
                         </li>
                     }
                 }

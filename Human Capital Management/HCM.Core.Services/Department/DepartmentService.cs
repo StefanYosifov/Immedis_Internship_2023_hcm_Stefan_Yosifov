@@ -83,27 +83,35 @@
             if (!string.IsNullOrEmpty(query.Search))
             {
                 departments = departments
-                    .Where(d => d.Name.ToLower() == query.Search.ToLower());
+                    .Where(d => d.Name.ToLower().Contains(query.Search.ToLower()));
             }
 
             if (query.CountryId > 0)
             {
-                departments = departments.Where(d => d.CountryId == query.CountryId);
+                departments = departments
+                    .Where(d => d.CountryId == query.CountryId);
             }
 
             departments = query.Sort switch
             {
                 DepartmentSortSearch.AvailablePositionsAccending => departments.OrderBy(d =>
                     d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
+
                 DepartmentSortSearch.AvailablePositionsDecending => departments.OrderByDescending(d =>
                     d.MaxPeopleCount - d.Employees.Count(e => e.DepartmentId == d.Id)),
+
                 DepartmentSortSearch.CountryAccending => departments.OrderBy(d => d.Country.Name),
+
                 DepartmentSortSearch.CountryDeccending => departments.OrderByDescending(d => d.Country.Name),
+
                 DepartmentSortSearch.EmployeeCountAccending => departments.OrderBy(d =>
                     d.Employees.Count(e => e.DepartmentId == d.Id)),
+
                 DepartmentSortSearch.EmployeeCountDeccending => departments.OrderByDescending(d =>
                     d.Employees.Count(e => e.DepartmentId == d.Id)),
+
                 DepartmentSortSearch.NameAccending => departments.OrderBy(d => d.Name),
+
                 DepartmentSortSearch.NameDeccending => departments.OrderByDescending(d => d.Name)
             };
 
@@ -133,21 +141,12 @@
             }
 
             var employeesInDepartment = await GetEmployeesInCurrentDepartment(id);
-            decimal? averageSalary = 0;
 
-            foreach (var salary in employeesInDepartment.Select(ed => ed.Salary))
-            {
-                if (salary == null)
-                {
-                    continue;
-                }
-
-                averageSalary += salary.SalaryAmount;
-            }
+            decimal totalSalary = SumOfAllSalariesInDepartment(employeesInDepartment.Select(ed => ed.Salary));
 
             if (employeesInDepartment.Count > 0)
             {
-                averageSalary /= employeesInDepartment.Count;
+                totalSalary /= employeesInDepartment.Count;
             }
 
             var mappedEmployees = employeesInDepartment.Select(ed => new DepartmentEmployeesModel
@@ -160,7 +159,8 @@
                 EmployeePosition = ed.Position?.Name,
                 EmployeeSeniority = ed.Seniority?.Name,
                 EmployeeNationalityISO = ed.Nationality?.Iso
-            }).ToArray();
+            })
+                .ToArray();
 
             return new DepartmentDetailsViewModel
             {
@@ -169,7 +169,7 @@
                 DepartmentImageUrl = getDepartment.ImageUrl,
                 EmployeeCapacity = getDepartment.MaxPeopleCount,
                 CountryName = getDepartment.Country.Name,
-                AverageSalary = (int)averageSalary!,
+                AverageSalary = (int)totalSalary!,
                 EmployeesCount = employeesInDepartment.Count,
                 DepartmentEmployees = mappedEmployees,
                 AvailablePositionsCollection = await GetAvailablePositionsToAddToDepartmentById(id),
@@ -367,6 +367,22 @@
                 .Include(e => e.Nationality)
                 .Where(e => e.DepartmentId == id)
                 .ToArrayAsync();
+        }
+
+        private decimal SumOfAllSalariesInDepartment(IEnumerable<Salary?> salaries)
+        {
+            decimal averageSalary = 0;
+
+            foreach (var salary in salaries)
+            {
+                if (salary == null)
+                {
+                    continue;
+                }
+
+                averageSalary += (decimal)salary.SalaryAmount!;
+            }
+            return averageSalary;
         }
     }
 }

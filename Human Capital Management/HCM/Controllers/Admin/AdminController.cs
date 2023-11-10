@@ -1,7 +1,5 @@
 ﻿namespace HCM.Controllers.Admin
 {
-    using System.Runtime.InteropServices.ComTypes;
-
     using Common.Requests;
 
     using Microsoft.AspNetCore.Authorization;
@@ -61,6 +59,41 @@
 
             return BadRequest(response.Data);
         }
+        [HttpGet("admin/departments")]
+        public async Task<IActionResult> GetDepartments()
+        {
+            var request = new RestRequestBuilder("/api/admin/departments", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
 
+            var response = await client.ExecuteGetAsync<AdminDepartmentsCollection>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
+
+        [HttpPost("admin/departments/create")]
+        public async Task<IActionResult> CreateDepartment([FromBody]AdminCreateDepartment model)
+        {
+            var request = new RestRequestBuilder("/api/admin/departments/create", GetAuthenticationClaim())
+                .SetMethod(Method.Post)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePostAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
     }
 }

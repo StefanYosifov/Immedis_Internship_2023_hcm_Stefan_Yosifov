@@ -1,5 +1,8 @@
 ﻿namespace HCM.Core.Services.Details
 {
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+
     using Common.Constants;
     using Common.Helpers;
     using Common.Manager;
@@ -21,17 +24,20 @@
         private readonly IEmployeeManager employeeManager;
         private readonly ITaskService taskService;
         private readonly IMemoryCache cache;
+        private readonly IMapper mapper;
 
         public StatisticsService(
             ApplicationDbContext context,
             IEmployeeManager employeeManager,
             ITaskService taskService,
-            IMemoryCache cache)
+            IMemoryCache cache,
+            IMapper mapper)
         {
             this.context = context;
             this.employeeManager = employeeManager;
             this.taskService = taskService;
             this.cache = cache;
+            this.mapper = mapper;
         }
 
         public async Task<decimal?> GetAverageSalaryInDepartmentById(int id)
@@ -90,6 +96,7 @@
             var worstPerformingEmployees = await WorstPerformingEmployees(today);
             var busiestEmployees = await BusiestEmployees(today);
             var employeesBirthdays = await EmployeeBirthdays(today);
+            var tasksIssuedByMe = await TasksIssuedByMe(currentUserId);
             var upcomingTasks = await taskService.GetTasksXDaysFromNowByEmployeeId(new SearchTasksByDays()
             { DaysFromNow = 14, EmployeeId = currentUserId });
 
@@ -102,7 +109,8 @@
                 WorstPerformingEmployees = worstPerformingEmployees,
                 UpcomingTasks = upcomingTasks,
                 BusiestEmployees = busiestEmployees,
-                EmployeeBirthdays = employeesBirthdays
+                EmployeeBirthdays = employeesBirthdays,
+                TaskIssuedByMe = tasksIssuedByMe
             };
         }
 
@@ -121,7 +129,7 @@
             };
 
             var employeesBirthdays = await context.Employees
-                .Select(e=>new
+                .Select(e => new
                 {
                     e.Id,
                     e.FirstName,
@@ -179,7 +187,7 @@
         {
             const string cacheKey = "statistics_bestPerforming";
 
-            if (cache.TryGetValue(cacheKey,out ICollection<EmployeeBonusModel> cachedEmployeeBestPerforming))
+            if (cache.TryGetValue(cacheKey, out ICollection<EmployeeBonusModel> cachedEmployeeBestPerforming))
             {
                 return cachedEmployeeBestPerforming;
             }
@@ -220,7 +228,7 @@
         {
             const string cacheKey = "statistics_worstPerforming";
 
-            if (cache.TryGetValue(cacheKey,out ICollection<EmployeeDeductionModel> cachedEmployeeWorstPerforming))
+            if (cache.TryGetValue(cacheKey, out ICollection<EmployeeDeductionModel> cachedEmployeeWorstPerforming))
             {
                 return cachedEmployeeWorstPerforming;
             }
@@ -254,6 +262,15 @@
 
             cache.Set(cacheKey, worstPerformingEmployees, cacheOptions);
             return worstPerformingEmployees;
+        }
+
+        private async Task<ICollection<TaskModel>> TasksIssuedByMe(string userId)
+        {
+            return await context.Tasks
+                .Include(t => t.Employee)
+                .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
+                .Where(t => t.IssuerId == userId && t.Status.StatusName != "Completed")
+                .ToArrayAsync();
         }
     }
 }

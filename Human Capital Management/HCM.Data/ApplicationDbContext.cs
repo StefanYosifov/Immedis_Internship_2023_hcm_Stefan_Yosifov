@@ -504,6 +504,11 @@
                 }
                 else if (modifiedEntity.Entity is IDeletableEntity deletedEntity)
                 {
+                    if (modifiedEntity.State == EntityState.Added)
+                    {
+                        deletedEntity.IsDeleted = false;
+                    }
+
                     if (modifiedEntity.State == EntityState.Modified)
                     {
                         deletedEntity.DeletedOn = currentTime;

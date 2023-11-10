@@ -7,5 +7,7 @@
         Task<ICollection<CountryViewModel>> GetCountries();
 
         Task<Dictionary<int,decimal?>> GetCountriesTaxRates();
+
+        Task<bool> DoesCountryExist(int countryId);
     }
 }

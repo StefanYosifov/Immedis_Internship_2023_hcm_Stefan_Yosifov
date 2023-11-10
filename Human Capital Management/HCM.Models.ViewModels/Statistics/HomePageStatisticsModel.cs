@@ -26,6 +26,8 @@
 
         public ICollection<TaskModel> UpcomingTasks { get; set; }
 
+        public ICollection<TaskModel> TaskIssuedByMe { get; set; }
+
         public ICollection<EmployeeBonusModel> BestPerformingEmployees { get; set; }
 
         public ICollection<EmployeeDeductionModel> WorstPerformingEmployees { get; set; }

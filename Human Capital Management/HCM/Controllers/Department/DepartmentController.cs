@@ -1,9 +1,9 @@
 ﻿namespace HCM.Controllers.Department
 {
     using Common.Requests;
-
     using Microsoft.AspNetCore.Mvc;
 
+    using Models.ViewModels.Admin;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
@@ -211,5 +211,6 @@
 
             return BadRequest(response.Data);
         }
+
     }
 }

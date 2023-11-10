@@ -1,5 +1,5 @@
 ﻿<div class="tr-job-posted section-padding">
-    <div class="container">
+    <div class="container-fluid">
         <div class="job-tab text-center">
             <ul class="nav nav-tabs justify-content-center" role="tablist">
                 <li role="presentation">
@@ -14,6 +14,9 @@
                 <li role="presentation">
                     <a href="#audit-logs" aria-controls="audit-logs" role="tab" data-toggle="tab" aria-selected="false">Audit logs</a>
                 </li>
+                <li role="presentation">
+                    <a href="#departments" aria-controls="audit-logs" role="tab" data-toggle="tab" aria-selected="false">Departments</a>
+                </li>
             </ul>
             <div class="tab-content text-left">
                 <div role="tabpanel" class="tab-pane fade active show" id="employees">
@@ -23,28 +26,29 @@
                                 <h5 class="mb-0">Employees</h5>
                                 <div>
                                     <div class="form-check form-switch text-start">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">Search for HRs</label>
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchRoles">
+                                        <label class="form-check-label" for="switchRoles">Search for HRs</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover table-nowrap">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th scope="col">First name</th>
-                                            <th scope="col">Last name</th>
-                                            <th scope="col">Age</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Department</th>
-                                            <th scope="col">Position</th>
-                                            <th scope="col">Seniority</th>
-                                            <th scope="col">Role</th>
-                                        </tr>
+                                    <tr>
+                                        <th scope="col">First name</th>
+                                        <th scope="col">Last name</th>
+                                        <th scope="col">Age</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Department</th>
+                                        <th scope="col">Position</th>
+                                        <th scope="col">Seniority</th>
+                                        <th scope="col">Role</th>
+                                        <th id="changeRole" scope="col"></th>
+                                    </tr>
                                     </thead>
                                     <tbody id="employeeTable">
                                     </tbody>
-                                    <ul id="employeePages">
+                                    <ul id="employeePagagination" class="pagination">
                                     </ul>
                                 </table>
                             </div>
@@ -65,34 +69,57 @@
                     <div class="row">
                         <div class="card mb-7">
                             <div class="card-header">
-                                <h5 class="mb-0">Applications</h5>
+                                <h5 class="mb-0">Audit logs</h5>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover table-nowrap">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Company</th>
-                                            <th scope="col">Offer</th>
-                                            <th scope="col">Meeting</th>
-                                            <th></th>
-                                        </tr>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Offer</th>
+                                        <th scope="col">Meeting</th>
+                                        <th></th>
+                                    </tr>
                                     </thead>
                                     <tbody id="auditLogs">
                                     </tbody>
 
-                                    <ul id="auditPages">
+                                    <ul id="auditPages" class="pagination">
                                     </ul>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div role="tabpanel" class="tab-pane fade" id="departments">
+                    <div class="table-responsive">
+                        <button id="addRecordBtn"> Add a record </button>
+                        <table class="table table-hover table-nowrap">
+                            <thead class="table-light">
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Max people in department</th>
+                                <th scope="col">Country Name</th>
+                                <th scope="col">ImageUrl</th>
+                                <th id="" scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="departmentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="~/css/button.css"/>
+<link rel="stylesheet" href="~/css/tables.css"/>
+<link rel="stylesheet" href="~/css/inputs.css"/>
 
 <style>
     body {
@@ -121,16 +148,17 @@
 
 
 @section Scripts
-    {
+{
     <script type="text/javascript">
 
         const baseUrl = "https://localhost:7153/admin";
         const token = "Bearer " + localStorage.getItem("Authorization");
-        let page = 1;
         const table = $("#auditLogs");
         const auditPages = $("#auditPages");
+        let countries = [];
+        let employeePage = 1;
 
-        console.log(page);
+        console.log(employeePage);
 
         function Pagination(audit) {
             const threePagesFromNow = audit.page + 3;
@@ -140,13 +168,13 @@
 
             $.each(audit.auditLogs, function (index, item) {
                 table.append(`<tr>
-                                    <td>${item.id}</td>
-                                    <td>${item.entityName}</td>
-                                    <td>${item.action}</td>
-                                    <td>${item.changes}</td>
-                                    <td>${item.employeeId || ''}</td>
-                                    <td>${item.timestamp}</td>
-                                    </tr>`);
+                                                                                            <td>${item.id}</td>
+                                                                                            <td>${item.entityName}</td>
+                                                                                            <td>${item.action}</td>
+                                                                                            <td>${item.changes}</td>
+                                                                                            <td>${item.employeeId || ''}</td>
+                                                                                            <td>${item.timestamp}</td>
+                                                                                            </tr>`);
             })
 
             for (let i = audit.page - 2; i < threePagesFromNow; i++) {
@@ -157,10 +185,10 @@
                     return;
                 }
                 auditPages.append(`<li>
-                                <div class="changeAuditPage">
-                                <a class="auditPage" data-page="${i}">${i}</a>
-                                </div>
-                                </li>`);
+                                                                                        <div class="changeAuditPage">
+                                                                                        <a class="auditPage" data-page="${i}">${i}</a>
+                                                                                        </div>
+                                                                                        </li>`);
             }
         }
 
@@ -173,6 +201,8 @@
         }
 
         function LoadAudit(page) {
+            table.empty();
+
             $.ajax({
                 url: baseUrl + "/audit",
                 type: "Get",
@@ -180,75 +210,255 @@
                 data: { "page": page },
                 contentType: 'application/json',
                 success: function (data) {
-                    console.log(data);
-                    Pagination(data);
+                    $.each(data.auditLogs, function (index, item) {
+                        table.append(`<tr>
+                                        <td>${item.id}</td>
+                                        <td>${item.entityName}</td>
+                                        <td>${item.action}</td>
+                                        <td>${item.changes}</td>
+                                        <td>${item.employeeId || ''}</td>
+                                        <td>${item.timestamp}</td>
+                                        </tr>`);
+                    })
+                    PopulateAuditPagination(data.page, data.totalPages);
                 }
             });
         }
 
-        function LoadEmployees() {
+        function LoadEmployees(page, isHR) {
             const employeeTable = $("#employeeTable")
             const employeePages = $("employeePages");
+
+            employeeTable.empty();
 
             $.ajax({
                 url: baseUrl + "/employees",
                 type: "Get",
                 headers: { "Authorization": token },
-                data: { "page": page },
+                data: { "page": page, "IsHR": isHR },
                 contentType: 'application/json',
                 success: function (data) {
                     console.log(data);
 
                     $.each(data.employees, function (_, employee) {
                         employeeTable.append(`
-                                      <tr>
-                            <td>${employee.employeeFirstName}</td>
-                            <td>${employee.employeeLastName}</td>
-                            <td>${employee.employeeAge}</td>
-                            <td>${employee.employeeUserName}</td>
-                            <td>${employee.employeeDepartmentName}</td>
-                            <td>${employee.employeePositionName}</td>
-                            <td>${employee.employeeSeniority}</td>
-                            <td>
-                                <select>
-                                    <option value="0">No role</option>
-                                    ${data.roles.map(role => `
-                                        <option value="${role.id}">${role.name}</option>
-                                    `)}
-                                </select>
-                            </td>
-                        </tr>`);
+                                                                                              <tr id=${employee.employeeId}>
+                                                                                    <td>${employee.employeeFirstName}</td>
+                                                                                    <td>${employee.employeeLastName}</td>
+                                                                                    <td>${employee.employeeAge}</td>
+                                                                                    <td>${employee.employeeUserName}</td>
+                                                                                    <td>${employee.employeeDepartmentName}</td>
+                                                                                    <td>${employee.employeePositionName}</td>
+                                                                                    <td>${employee.employeeSeniority}</td>
+                                                                                    <td>
+                                                                                        <select class="roleChange">
+                                                                                            <option value="0">No role</option>
+                                                                                            ${data.roles.map(role => `
+                                                                                                <option value="${role.id}">${role.name}</option>
+                                                                                            `)}
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>`);
                     });
 
-                    const threePagesFromNow = data.page + 3;
-
-                    for (let i = data.page - 2; i < threePagesFromNow; i++) {
-                        if (i < 1) {
-                            continue;
-                        }
-                        if (i > data.totalPages) {
-                            return;
-                        }
-                        employeePages.append(`<li>
-                                        <div>
-                                        <a data-page="${i}">${i}</a>
-                                        </div>
-                                        </li>`);
-                    }
+                    PopulateEmployeePagination(data.page, data.totalPages);
+                    AddButtonToRow();
                 }
             })
+        }
+
+        function SwitchEmployeeRoles() {
+
+            console.log(`click`);
+            $("#switchRoles").on('click', function () {
+                let page = $(".page-item.active").val();
+                const isHR = $("#switchRoles").prop("checked");
+                LoadEmployees(1, isHR)
+            })
+        }
+
+        function PopulateAuditPagination(currentPage, totalPages) {
+            const paginationElement = $('#auditPages');
+            console.log(paginationElement);
+            paginationElement.empty();
+
+            // PREVIOUS
+            if (currentPage > 1) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>`);
+            }
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationElement.append(`<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                } else {
+                    paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                }
+            }
+
+            // NEXT
+            if (currentPage < totalPages) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">Next</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
+            }
+
+            paginationElement.find('a.page-link').click(function (e) {
+                e.preventDefault();
+                const clickedPage = $(this).data('page');
+                LoadAudit(clickedPage);
+            });
+
+        }
+
+        function PopulateEmployeePagination(currentPage, totalPages) {
+            const paginationElement = $('#employeePagagination');
+            paginationElement.empty();
+
+            // PREVIOUS
+            if (currentPage > 1) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>`);
+            }
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationElement.append(`<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                } else {
+                    paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                }
+            }
+
+            // NEXT
+            if (currentPage < totalPages) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage}">Next</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
+            }
+
+            paginationElement.find('a.page-link').click(function (e) {
+                e.preventDefault();
+                const clickedPage = $(this).data('page');
+                LoadAudit(clickedPage);
+            });
+        }
+
+        function AddButtonToRow() {
+            $(".roleChange").on(`change`, function () {
+                const row = $(this).closest("tr");
+                const id = row.attr("id");
+                const hasEighthTd = row.find("td:nth-child(9)").length > 0;
+
+                if (hasEighthTd) {
+                    row.find("td:nth-child(9)").remove();
+                } else {
+                    row.append(`<td><button class="btn btn-primary">Save changes</button></td>`)
+                }
+            })
+        }
+
+        function LoadDepartments() {
+            const departmentTable = $("#departmentsTableBody");
+
+            $.ajax({
+                url: baseUrl + "/departments",
+                type: "Get",
+                headers: { "Authorization": token },
+                success: function (data) {
+                    console.log('asd');
+                    console.log(data);
+                    countries = data.countries;
+                    $.each(data.departments, function (_, department) {
+                        let newRow = $("<tr>");
+
+                        newRow.append("<td>" + department.departmentId + "</td>");
+                        newRow.append("<td>" + department.departmentName + "</td>");
+                        newRow.append("<td>" + department.employeeCapacity + "</td>");
+                        newRow.append("<td>" + department.countryName + "</td>");
+                        newRow.append("<td>" + department.departmentImageUrl + "</td>");
+
+                        departmentTable.append(newRow);
+                    })
+                }
+            })
+        }
+
+        function AddNewRowToDepartmentTable() {
+            $("#addRecordBtn").on("click", function () {
+                const newRow = $("<tr>");
+                newRow.append("<td></td>");
+                newRow.append("<td><input type='text' class='form-control' name='name'></td>");
+                newRow.append("<td><input type='number' class='form-control' name='maxPeople'></td>");
+                newRow.append("<td><select class='form-control' name='countryName'>" + generateCountryOptions() + "</select></td>");
+                newRow.append("<td><input type='text' class='form-control' name='imageUrl'></td>");
+                newRow.append("<td><button class='btn btn-success btn-sm submitBtn'>Submit</button> <button class='btn btn-danger btn-sm cancelBtn'>Cancel</button></td>");
+
+                $("#departmentsTableBody").append(newRow);
+            });
+        }
+
+        function AddNewDepartment() {
+            $("#departmentsTableBody").on("click", ".submitBtn", function () {
+
+                const row = $(this).closest("tr");
+                const name = row.find("input[name='name']").val();
+                const maxPeople = row.find("input[name='maxPeople']").val();
+                const imageUrl = row.find("input[name='imageUrl']").val();
+                const countryId = row.find("select[name='countryName']").val();
+
+                const createRow = {
+                    "name": name,
+                    "maxPeople": maxPeople,
+                    "imageUrl": imageUrl,
+                    "countryId": countryId
+                };
+
+                console.log(createRow);
+
+                    $.ajax({
+                        url: baseUrl + "/departments/create",
+                        type: "Post",
+                        data: JSON.stringify(createRow),
+                        contentType: 'application/json',
+                        headers: { "Authorization": token },
+                        success: function (data) {
+                            console.log(data);
+                         }
+                     })
+
+            row.remove();
+        });
+
+        }
+
+        function CancelCreatingDepartment() {
+            $("#departmentsTableBody").on("click", ".cancelBtn", function () {
+                $(this).closest("tr").remove();
+            });
+
+        }
+
+        function generateCountryOptions() {
+            var options = "";
+            for (var i = 0; i < countries.length; i++) {
+                options += "<option value='" + countries[i].id + "'>" + countries[i].name + "</option>";
+            }
+            return options;
         }
 
         $(document).ready(function () {
             LoadAudit(1);
             LoadEmployees();
-
-            $(".auditPage").ready(function () {
-                ChangePage();
-            })
+            SwitchEmployeeRoles();
+            LoadDepartments();
+            AddNewRowToDepartmentTable();
+            AddNewDepartment();
+            CancelCreatingDepartment();
         })
 
     </script>
-        }
-
-
+}

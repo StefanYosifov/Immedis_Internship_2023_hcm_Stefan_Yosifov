@@ -45,7 +45,7 @@
             return Ok(result);
         }
 
-        [HttpGet("salary/info/{id:guid}")]
+        [HttpGet("salary/info/{id}")]
         public async Task<IActionResult> GetEmployeeSalaryInformation(string id)
         {
             try
@@ -142,10 +142,10 @@
             }
         }
 
-        [HttpGet("payroll/pagination")]
-        public async Task<IActionResult> GetPayrollPagination([FromQuery] PayRollSearchModel model)
+        [HttpGet("payroll/pagination/{id}")]
+        public async Task<IActionResult> GetPayrollPagination(int id,[FromQuery] PayRollSearchModel model)
         {
-            var result = await service.GetPayrolls(model);
+            var result = await service.GetPayrolls(id,model);
             return Ok(result);
         }
 
@@ -204,6 +204,13 @@
             {
                 return BadRequest(PaymentMessages.IssueCompletingPayroll);
             }
+        }
+
+        [HttpGet("payroll/employee/details")]
+        public async Task<IActionResult> GetPayrollByEmployeeId([FromQuery]string employeeId)
+        {
+            var result = await service.GetPayRollDetailsByEmployeeId(employeeId);
+            return Ok(result);
         }
 
     }

@@ -49,7 +49,7 @@
             return BadRequest();
         }
 
-        public async Task<IActionResult> My(int? id)
+        public IActionResult My(int? id)
         {
             return View();
         }

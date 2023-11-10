@@ -5,14 +5,7 @@
 }
 
 <div class="container-xxl">
-    <div class="card d-flex justify-content-center align-items-center my-5">
-        <h5 class="card-header-pills">Department Details</h5>
-        <div class="card-body w-auto">
-            <img src="@Model.DepartmentImageUrl" class="img-fluid" alt="Department Image">
-        </div>
-    </div>
-
-    <div class="row">
+    <div class="row mt-5">
         <div class="card">
             <div class="card-header d-flex align-items-center border-bottom">
                 <span class="avatar text-bg-primary avatar-lg fs-5">
@@ -69,7 +62,8 @@
                         <div class="modal-body p-0">
                             <fieldset id="tab011">
                                 <div class="bg-light px-3">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">My Apps</h5>
+                                    <h5 class="text-center mb-4 mt-0 pt-4">Department roles</h5>
+                                    <p>Beware, when removing a position from the department, the employees also lose their position and seniority along side it</p>
                                     <ol class="list-group list-group-numbered">
                                         @foreach (var position in Model.PositionsInDepartment)
                                         {
@@ -114,7 +108,7 @@
                                     <div class="d-flex justify-content-center">
                                         <form id="employeeForm" class="mb-4 mt-0 pt-4">
                                             <div class="custom-select">
-                                                <input type="text" id="custom-select-input" placeholder="Select an option">
+                                                <input type="text" id="custom-select-input" placeholder="Select an option" class="mb-5">
                                                 <ul class="custom-select-options">
                                                 </ul>
                                             </div>
@@ -232,7 +226,6 @@
         background-repeat: no-repeat;
     }
 
-
     .custom-select {
         position: relative;
         display: inline-block;
@@ -250,7 +243,8 @@
 
     .custom-select-options {
         position: absolute;
-        top: 100%;
+        top: 0;
+        right: 100%; 
         display: none;
         border: 1px solid #ddd;
         border-top: none;
@@ -261,6 +255,7 @@
         max-height: 150px;
         overflow-y: auto;
     }
+
 
         .custom-select-options li {
             padding: 10px;
@@ -275,7 +270,7 @@
     .card-body {
         background-color: #f8f9fa;
         border-radius: 5px;
-        padding: 0px;
+        padding: 20px;
         margin: 0px;
     }
 
@@ -296,6 +291,36 @@
             margin: 0px 0;
             font-size: 18px;
         }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+    }
+
+    .avatar {
+        background-color: #4e73df;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        font-size: 1.2rem;
+        margin-right: 10px;
+    }
+
+    .btn-primary {
+        background-color: #4e73df;
+        color: #ffffff;
+        border: none;
+        border-radius: 3px;
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
     fieldset {
         display: none;
@@ -494,11 +519,11 @@
 
                 $("#employeeFullName").text(data.fullName);
                 $("#employeeDetails").html(
-                    "<p><strong>ID:</strong> " + data.id + "</p>" +
-                    "<p><strong>Name:</strong> " + data.fullName + "</p>" +
-                    "<p><strong>Age:</strong> " + data.age + "</p>" +
-                    "<p><strong>Account Created On:</strong> " + data.accountCreatedOn + "</p>" +
-                    "<button id='addDepartment' value='" + data.id + "'>Add to department</button>"
+                    "<h6><strong>ID:</strong> " + data.id + "</h6>" +
+                    "<h6><strong>Name:</strong> " + data.fullName + "</h6>" +
+                    "<h6><strong>Age:</strong> " + data.age + "</h6>" +
+                    "<h6><strong>Account Created On:</strong> " + data.accountCreatedOn + "</h6>" +
+                    "<button class='btn btn-primary' id='addDepartment' value='" + data.id + "'>Add to department</button>"
 
                 );
             });

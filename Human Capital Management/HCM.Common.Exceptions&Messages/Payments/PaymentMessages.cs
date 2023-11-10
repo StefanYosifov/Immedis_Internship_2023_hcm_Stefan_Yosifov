@@ -27,5 +27,7 @@
 
         public const string IssueRemovingPayroll =
             "There was an issue with removing the payroll,please try again later";
+
+        public const string RemovingCompletedPayroll = "You cannot remove payroll that has already been completed";
     }
 }

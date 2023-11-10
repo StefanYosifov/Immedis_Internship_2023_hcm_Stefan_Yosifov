@@ -10,13 +10,13 @@
 
 
 <div class="container">
-    <div class="row">
+    <div class="row my-4">
         <div class="col-lg-4">
             <div class="profile-card-4 z-depth-3">
                 <div class="card">
                     <div class="card-body text-center bg-primary rounded-top">
                         <div class="user-box">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user avatar">
+                            <img style="width:199px" src="https://cdn-icons-png.flaticon.com/512/3789/3789820.png" alt="user avatar">
                         </div>
                         <h5 class="mb-1 text-white">@Model.Firstname @Model.Lastname</h5>
                         <h6 class="text-light"></h6>
@@ -93,54 +93,23 @@
                                 <div class="col-md-6">
                                     <h6>About</h6>
                                     <p>
-                                        Web Designer, UI/UX Engineer
+                                        @Model.Firstname @Model.Lastname
                                     </p>
+                                    <p>
+                                        @foreach (var position in Model.Positions)
+                                        {
+                                            <span>Working as @position.Name</span>
+                                        }
+                                        </>
                                     <h6>Hobbies</h6>
                                     <p>
                                         Indie music, skiing and hiking. I love the great outdoors.
                                     </p>
                                 </div>
-                                <div class="col-md-6">
-                                    <h6>Recent badges</h6>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">html5</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">react</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">codeply</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">angularjs</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">css3</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">jquery</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">bootstrap</a>
-                                    <a href="javascript:void();" class="badge badge-dark badge-pill">responsive-design</a>
-                                    <hr>
-                                </div>
                                 <div class="col-md-12">
-                                    <h5 class="mt-2 mb-3"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
+                                    <h5 class="mt-2 mb-3"><span class="fa fa-clock-o ion-clock float-right"></span> Recent payments</h5>
                                     <table class="table table-hover table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>Abby</strong> joined ACME Project Team in <strong>`Collaboration`</strong>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Gary</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Kensington</strong> deleted MyBoard3 in <strong>`Discussions`</strong>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>John</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Skell</strong> deleted his post Look at Why this is.. in <strong>`Discussions`</strong>
-                                                </td>
-                                            </tr>
+                                        <tbody id="payroll">
                                         </tbody>
                                     </table>
                                 </div>
@@ -246,7 +215,7 @@
                                     <label class="col-lg-3 col-form-label form-control-label"></label>
                                     <div class="col-lg-9">
                                         <input type="reset" class="btn btn-secondary" value="Cancel">
-                                        <input id="btnsubmit" class="btn btn-secondary" type="btn-primary" value="Submit" />
+                                        <input id="btnsubmit" class="btn btn-secondary" type="button" value="Submit" />
                                     </div>
                                 </div>
                             </form>
@@ -381,16 +350,16 @@
                 })
             })
         }
-        function ShowTasks() {
+        function ShowTasks(page) {
+            const tasks = $('#tasks');
             $.ajax({
                 url: tasksUrl + "/pagination",
                 type: "Get",
                 headers: { "Authorization": token },
-                data: { "EmployeeId": id, "Page": 1 },
+                data: { "EmployeeId": id, "Page": page },
                 success: function (data) {
                     console.log(data);
-
-                    const tasks = $('#tasks');
+                    tasks.empty();
                     $.each(data.tasks, function (index, task) {
                         const newRow = $('<tr>');
                         newRow.append('<td>' + task.taskName + '</td>');
@@ -434,6 +403,7 @@
             const threePagesFromNow = currentPage + 3;
             const pages = $("#pagination-list");
 
+
             if (currentPage > 1) {
                 pages.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
             } else {
@@ -460,6 +430,14 @@
             } else {
                 pages.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
             }
+
+            pages.find('a.page-link').click(function (e) {
+                e.preventDefault();
+                pages.empty();
+                let clickedPage = $(this).data('page');
+                ShowTasks(clickedPage);
+            });
+
         }
         function CreateTask() {
             $("#saveTaskBtn").click(function () {
@@ -494,11 +472,34 @@
 
             });
         }
+        function GetEmployeesPayroll(){
+
+            const payrollTable = $("#payroll");
+
+            $.ajax({
+                url: `https://localhost:7153/payroll/employee/details?employeeId=${id}`,
+                type:"Get",
+                headers: { "Authorization": token },
+                success: function (data) {
+                    $.each(data, function (_, employee) {
+                        payrollTable.append(`
+                    <tr>
+                        <td>
+                            You have received ${employee.received} for the period of ${employee.startDate} - ${employee.endDate}
+                        </td>
+                    </tr>
+                `);
+                    });
+                }
+
+            })
+        }
 
         $(document).ready(function () {
             ChangePassword();
             ShowTasks();
             CreateTask();
+            GetEmployeesPayroll();
             $("#DepartmentId").on("change", function () {
                 $("#PositionId").val('');
                 $("#SeniorityId").val('');
