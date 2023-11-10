@@ -1,0 +1,26 @@
+<Employees>
+    <Employee>
+        <ID>9dbdf3f5-9e2c-4f5e-9f61-1ea00b4a24c5</ID>
+        <Username>johndoe</Username>
+        <Email>johndoe@example.com</Email>
+        <Firstname>John</Firstname>
+        <Lastname>Doe</Lastname>
+        <BirthDate>1990-05-15</BirthDate>
+        <PhoneNumber>1234567890</PhoneNumber>
+        <NationalityId>1</NationalityId>
+        <GenderId>2</GenderId>
+        <PasswordHash>$2a$12$uPVLPRS9p3sI8R3ZC6nw3OTI5IOLEpA//65ZtUrpDlTCk6tESjQuG</PasswordHash>
+    </Employee>
+    <Employee>
+        <ID>ccf6f05a-72ca-4ae5-88d2-9e19615519ce</ID>
+        <Username>janedoe</Username>
+        <Email>janedoe@example.com</Email>
+        <Firstname>Jane</Firstname>
+        <Lastname>Doe</Lastname>
+        <BirthDate>1985-08-20</BirthDate>
+        <PhoneNumber>9876543210</PhoneNumber>
+        <NationalityId>2</NationalityId>
+        <GenderId>1</GenderId>
+        <PasswordHash>$2a$12$uPVLPRS9p3sI8R3ZC6nw3OTI5IOLEpA//65ZtUrpDlTCk6tESjQuG</PasswordHash>
+    </Employee>
+</Employees>
