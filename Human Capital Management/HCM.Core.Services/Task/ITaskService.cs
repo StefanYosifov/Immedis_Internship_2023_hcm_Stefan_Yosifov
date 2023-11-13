@@ -23,5 +23,10 @@
 
         Task<string> MarkAsCompleted(int id);
 
+        Task<EmployeeTasksPagination> TasksIssuedByMe(int page);
+
+        Task<int> GetStatusIdFromName(string type);
+
+
     }
 }

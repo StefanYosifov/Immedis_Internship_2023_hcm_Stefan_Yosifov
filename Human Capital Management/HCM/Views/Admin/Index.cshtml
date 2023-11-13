@@ -1,23 +1,18 @@
 ﻿<div class="tr-job-posted section-padding">
     <div class="container-fluid">
         <div class="job-tab text-center">
-            <ul class="nav nav-tabs justify-content-center" role="tablist">
-                <li role="presentation">
-                    <a class="show" href="#employees" aria-controls="employees" role="tab" data-toggle="tab" aria-selected="true">Employees</a>
+            <ul class="nav nav-tabs justify-content-center mt-5" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="employees-tab" data-bs-toggle="tab" href="#employees" role="tab" aria-controls="employees" aria-selected="true">Employees</a>
                 </li>
-                <li role="presentation">
-                    <a href="#recent-jobs" aria-controls="recent-jobs" role="tab" data-toggle="tab" aria-selected="false">Roles</a>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="audit-logs-tab" data-bs-toggle="tab" href="#audit-logs" role="tab" aria-controls="audit-logs" aria-selected="false">Audit logs</a>
                 </li>
-                <li role="presentation">
-                    <a href="#popular-jobs" aria-controls="popular-jobs" role="tab" data-toggle="tab" aria-selected="false">Positions</a>
-                </li>
-                <li role="presentation">
-                    <a href="#audit-logs" aria-controls="audit-logs" role="tab" data-toggle="tab" aria-selected="false">Audit logs</a>
-                </li>
-                <li role="presentation">
-                    <a href="#departments" aria-controls="audit-logs" role="tab" data-toggle="tab" aria-selected="false">Departments</a>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="departments-tab" data-bs-toggle="tab" href="#departments" role="tab" aria-controls="departments" aria-selected="false">Departments</a>
                 </li>
             </ul>
+
             <div class="tab-content text-left">
                 <div role="tabpanel" class="tab-pane fade active show" id="employees">
                     <div class="row">
@@ -26,7 +21,7 @@
                                 <h5 class="mb-0">Employees</h5>
                                 <div>
                                     <div class="form-check form-switch text-start">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="switchRoles">
+                                        <input class="form-check-input" type="checkbox" role="                      ch" id="switchRoles">
                                         <label class="form-check-label" for="switchRoles">Search for HRs</label>
                                     </div>
                                 </div>
@@ -75,11 +70,11 @@
                                 <table class="table table-hover table-nowrap">
                                     <thead class="table-light">
                                     <tr>
-                                        <th scope="col">Name</th>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Affected Entity</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">Change log</th>
                                         <th scope="col">Date</th>
-                                        <th scope="col">Company</th>
-                                        <th scope="col">Offer</th>
-                                        <th scope="col">Meeting</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -150,15 +145,12 @@
 @section Scripts
 {
     <script type="text/javascript">
-
         const baseUrl = "https://localhost:7153/admin";
         const token = "Bearer " + localStorage.getItem("Authorization");
         const table = $("#auditLogs");
         const auditPages = $("#auditPages");
         let countries = [];
         let employeePage = 1;
-
-        console.log(employeePage);
 
         function Pagination(audit) {
             const threePagesFromNow = audit.page + 3;
@@ -240,25 +232,29 @@
                 success: function (data) {
                     console.log(data);
 
+
                     $.each(data.employees, function (_, employee) {
+                        const employeeRoleId = employee.roleId == null ? 0 : 1;
                         employeeTable.append(`
-                                                                                              <tr id=${employee.employeeId}>
-                                                                                    <td>${employee.employeeFirstName}</td>
-                                                                                    <td>${employee.employeeLastName}</td>
-                                                                                    <td>${employee.employeeAge}</td>
-                                                                                    <td>${employee.employeeUserName}</td>
-                                                                                    <td>${employee.employeeDepartmentName}</td>
-                                                                                    <td>${employee.employeePositionName}</td>
-                                                                                    <td>${employee.employeeSeniority}</td>
-                                                                                    <td>
-                                                                                        <select class="roleChange">
-                                                                                            <option value="0">No role</option>
-                                                                                            ${data.roles.map(role => `
-                                                                                                <option value="${role.id}">${role.name}</option>
-                                                                                            `)}
-                                                                                        </select>
-                                                                                    </td>
-                                                                                </tr>`);
+                <tr id=${employee.employeeId}>
+                    <td>${employee.employeeFirstName}</td>
+                    <td>${employee.employeeLastName}</td>
+                    <td>${employee.employeeAge}</td>
+                    <td>${employee.employeeUserName}</td>
+                    <td>${employee.employeeDepartmentName}</td>
+                    <td>${employee.employeePositionName}</td>
+                    <td>${employee.employeeSeniority}</td>
+                    <td>
+                        <select class="roleChange">
+                            <option value="0" ${employeeRoleId === 0 ? 'selected' : ''}>No role</option>
+                            ${data.roles.map(role => `
+                                <option value="${role.id}" ${employeeRoleId === role.id ? 'selected' : ''}>
+                                    ${role.name}
+                                </option>
+                            `)}
+                        </select>
+                    </td>
+                </tr>`);
                     });
 
                     PopulateEmployeePagination(data.page, data.totalPages);
@@ -356,7 +352,29 @@
                 if (hasEighthTd) {
                     row.find("td:nth-child(9)").remove();
                 } else {
-                    row.append(`<td><button class="btn btn-primary">Save changes</button></td>`)
+                    row.append(`<td><button class="btn btn-primary saveChangesBtn">Save changes</button></td>`)
+
+                    $(".saveChangesBtn").on("click", function () {
+                        const selectedRoleId = row.find(".roleChange").val();
+                        $.ajax({
+                            url: baseUrl+"/roles/change",
+                            type: 'Put', 
+                            headers:{'Authorization':token},
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                employeeId: id,
+                                roleId: selectedRoleId
+                            }),
+                            success: function (response) {
+                                toastr.success(response);
+                                console.log(response);
+                            },
+                            error: function (error) {
+                                toastr.error(error.responseText);
+                            }
+                        });
+                    });
+
                 }
             })
         }

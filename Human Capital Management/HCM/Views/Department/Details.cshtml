@@ -2,11 +2,33 @@
 
 @{
     ViewData["Title"] = "Department Details";
+    Layout = "_Layout";
 }
 
-<div class="container-xxl">
-    <div class="row mt-5">
-        <div class="card">
+<div>
+    <div class="d-flex p-2 border shadow mt-md-4">
+        <ul class="nav nav-pills">
+            <li class="nav-item min" onclick="showTab('tab1')">
+                <a class="nav-link" href="#">Details</a>
+            </li>
+            <li class="nav-item" onclick="showTab('tab2')">
+                <a class="nav-link" href="#">Employees</a>
+            </li>
+            <li class="nav-item" onclick="showTab('tab3')">
+                <a class="nav-link" href="#">Manage positions</a>
+            </li>
+            <li class="nav-item" onclick="showTab('tab4')">
+                <a class="nav-link" href="#">Add employees</a>
+            </li>
+            <li class="nav-item" onclick="showTab('tab5')">
+                <a class="nav-link" href="#">Edit details</a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="row mt-lg-5 h-100 mx-3">
+        <div class="card" id="tab1">
             <div class="card-header d-flex align-items-center border-bottom">
                 <span class="avatar text-bg-primary avatar-lg fs-5">
                     @if (Model.DepartmentName.Length > 3)
@@ -19,246 +41,247 @@
                     }
                 </span>
                 <div class="ms-3">
-                    <h6 class="mb-0 fs-sm">@Model.DepartmentName</h6>
+                    <h6 class="mb-0 fs-5">@Model.DepartmentName</h6>
                     <span class="text-muted fs-sm">@Model.CountryName</span>
                 </div>
-                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="btn">
+                <button class="btn text-muted ms-auto" data-toggle="modal" data-target="#myModal" type="button">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
             </div>
             <div class="card-body">
-                <h6 class="mb-2">
-                    <small><strong>ID:</strong> @Model.DepartmentId</small>
-                </h6>
-                <h6 class="mb-2">
-                    <small><strong>Average Salary:</strong> @Model.AverageSalary</small>
-                </h6>
-                <h6 class="mb-2">
-                    <small><strong>Employee Count:</strong> @Model.EmployeesCount</small>
-                </h6>
-                <h6 class="mb-2">
-                    <small><strong>Total Positions:</strong> @Model.EmployeeCapacity</small>
-                </h6>
+                <div class="mb-3">
+                    <h6 class="mb-0">
+                        <small><strong>ID:</strong> @Model.DepartmentId</small>
+                    </h6>
+                </div>
+                <div class="mb-3">
+                    <h6 class="mb-0">
+                        <small><strong>Average Salary:</strong> @Model.AverageSalary</small>
+                    </h6>
+                </div>
+                <div class="mb-3">
+                    <h6 class="mb-0">
+                        <small><strong>Employee Count:</strong> @Model.EmployeesCount</small>
+                    </h6>
+                </div>
+                <div class="mb-3">
+                    <h6 class="mb-0">
+                        <small><strong>Total Positions:</strong> @Model.EmployeeCapacity</small>
+                    </h6>
+                </div>
+                <div class="mb-3">
+                    <h6 class="mb-0">
+                        <small><strong>Average Age:</strong> @Model.AverageAge.ToString("F")</small>
+                    </h6>
+                </div>
             </div>
-
         </div>
-
-        <div class="row">
-            <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
-                <div role="document" class="modal-dialog modal-dialog-centered modal-lg ms-lg-5">
-                    <div class="modal-content">
-                        <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-5 border-0">
-                            <div class="tabs" id="tab01">
-                                <h6 class="text-muted">Positions</h6>
-                            </div>
-                            <div class="tabs" id="tab03">
-                                <h6 class="text-muted">Add Employees</h6>
-                            </div>
-                            <div class="tabs" id="tab04">
-                                <h6 class="text-muted">Edit</h6>
-                            </div>
-                        </div>
-                        <div class="line"></div>
-                        <div class="modal-body p-0">
-                            <fieldset id="tab011">
-                                <div class="bg-light px-3">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Department roles</h5>
-                                    <p>Beware, when removing a position from the department, the employees also lose their position and seniority along side it</p>
-                                    <ol class="list-group list-group-numbered">
-                                        @foreach (var position in Model.PositionsInDepartment)
-                                        {
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                    <div>@position.PositionName</div>
-                                                    <p class="mb-0 fs-6 text-muted">
-                                                        <strong>Id: </strong>
-                                                        <span>@position.PositionId</span>
-                                                        <i class="fa-solid fa-trash me-3" style="position: absolute; right: 0; cursor: pointer;"></i>
-                                                    </p>
-                                                </div>
-                                                <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
-                                            </li>
-                                        }
-                                    </ol>
-                                </div>
-                                <div class="px-3">
-                                    <h6 class="pt-3 pb-3 mb-4 border-bottom"><span class="fa fa-android"></span> Available positions to add to the department</h6>
-                                    @foreach (var position in Model.AvailablePositionsCollection)
+        <div class="card" id="tab2" style="display: none;">
+            <div class="shadow mb-4 mt-4 me-5 border rounded">
+                <div class="py-3">
+                    <h4 class="m-0 font-weight-bold text-primary">Employees</h4>
+                </div>
+                <div class="mx-auto">
+                    <div class="table-responsive custom-table">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Age</th>
+                                    <th>Nationality</th>
+                                    <th>Gender</th>
+                                    <th>Position</th>
+                                    <th>Seniority</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.DepartmentEmployees != null && Model.DepartmentEmployees.Any())
+                                {
+                                    foreach (var employee in Model.DepartmentEmployees)
                                     {
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <h6 class="text-primary pb-2">
-                                                    <a href="">@position.Name</a> <span class="text-secondary">- Available for @Model.DepartmentName</span>
-                                                </h6>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h6 class="text-primary pb-2">
-                                                    <a class="add-icon" data-position-id="@position.Id" href="#">
-                                                        <i class="fa-solid fa-plus pointer-event"></i>
-                                                    </a>
-                                                </h6>
-                                            </div>
-                                        </div>
+                                        <tr>
+                                            <td>@employee.EmployeeFullName</td>
+                                            <td>@employee.EmployeeAge</td>
+                                            <td>@employee.EmployeeNationalityISO</td>
+                                            <td>@employee.EmployeeGender</td>
+                                            <td>@employee.EmployeePosition</td>
+                                            <td>@employee.EmployeeSeniority</td>
+                                            <td>
+                                                <button class="btn btn-primary edit-button">Edit</button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-danger delete-button" value="@employee.EmployeeId">Delete</button>
+                                            </td>
+                                        </tr>
                                     }
-                                </div>
-                            </fieldset>
-                            <fieldset id="tab031">
-                                <div class="bg-light align-content-center align-items-center">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Add Employees</h5>
-                                    <div class="d-flex justify-content-center">
-                                        <form id="employeeForm" class="mb-4 mt-0 pt-4">
-                                            <div class="custom-select">
-                                                <input type="text" id="custom-select-input" placeholder="Select an option" class="mb-5">
-                                                <ul class="custom-select-options">
-                                                </ul>
-                                            </div>
-                                            <div class="card shadow mb-4 mt-5">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <p id="employeeDetails"></p>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <fieldset id="tab041">
-                                <div class="bg-light">
-                                    <h5 class="text-center mb-4 mt-0 pt-4">Details</h5>
-                                    <form id="detailsEdit" class="m-5 p-5">
-                                        <div class="form-group">
-                                            <div class="property">
-                                                <label for="Name">Department Name</label>
-                                                <input value="@Model.DepartmentName" type="text" name="Name" class="form-control" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="property">
-                                                <label for="MaxPeopleCount">Employee Capacity</label>
-                                                <input value="@Model.EmployeeCapacity" type="number" name="MaxPeopleCount" class="form-control" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="property">
-                                                <label for="ImageURL">Department Image URL</label>
-                                                <input value="@Model.DepartmentImageUrl" type="text" name="ImageURL" class="form-control" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="property">
-                                                <label for="CountryId">Country Name</label>
-                                                <select name="CountryId" class="form-control">
-                                                    @foreach (var country in Model.Countries)
-                                                    {
-                                                        <option value="@country.Id">@country.Name</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </form>
-                                </div>
-                            </fieldset>
-                        </div>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">No employees available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <h2>Department Employees</h2>
-    <div class="card shadow mb-4 mt-5 me-5">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Employees</h6>
+        <div class="card" id="tab3" style="display: none;">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div class="bg-light p-4 mb-4 d-flex justify-content-center align-items-center my-2 rounded" style="width: 750px;">
+                    <div>
+                        <h5 class="mb-4 mt-0 pt-4">Department roles</h5>
+                        <p>Beware, when removing a position from the department, the employees also lose their position and seniority alongside it</p>
+                        <ol class="list-group list-group-numbered">
+                            @foreach (var position in Model.PositionsInDepartment)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fs-6">@position.PositionName</div>
+                                        <p class="mb-0 fs-6 text-muted">
+                                            <strong>Id: </strong>
+                                            <span>@position.PositionId</span>
+                                            <i class="fa-solid fa-trash ms-3" style="cursor: pointer;"></i>
+                                        </p>
+                                    </div>
+                                    <span class="badge bg-primary">@position.EmployeesWithPositionCount</span>
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+                <div class="bg-light p-4 d-flex justify-content-center align-items-center my-2 rounded" style="width: 750px;">
+                    <div>
+                        <h5 class="pt-3 pb-3 mb-4 border-bottom">
+                            <i class="fa fa-android me-2"></i> Available positions to add to the department
+                        </h5>
+                        @foreach (var position in Model.AvailablePositionsCollection)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-md-10">
+                                    <h6 class="text-primary">
+                                        <a href="#" class="text-decoration-none">@position.Name</a>
+                                        <span class="text-secondary"> - Available for @Model.DepartmentName</span>
+                                    </h6>
+                                </div>
+                                <div class="col-md-2">
+                                    <h6 class="text-primary">
+                                        <a class="add-icon" data-position-id="@position.Id" href="#">
+                                            <i class="fa-solid fa-plus pointer-event"></i>
+                                        </a>
+                                    </h6>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
-        <table class="table px-2">
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Age</th>
-                    <th>Nationality</th>
-                    <th>Gender</th>
-                    <th>Position</th>
-                    <th>Seniority</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.DepartmentEmployees != null)
-                {
-                    foreach (var employee in Model.DepartmentEmployees)
-                    {
-                        <tr>
-                            <td>@employee.EmployeeFullName</td>
-                            <td>@employee.EmployeeAge</td>
-                            <td>@employee.EmployeeNationalityISO</td>
-                            <td>@employee.EmployeeGender</td>
-                            <td>@employee.EmployeePosition</td>
-                            <td>@employee.EmployeeSeniority</td>
-                            <td>
-                                <button class="btn-primary edit-button">Edit</button>
-                            </td>
-                            <td>
-                                <button class="btn-primary  delete-button" value="@employee.EmployeeId">Delete</button>
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
+        <div class="card" id="tab4" style="display: none">
+            <div class="form-group">
+                <h4 class="text-center mb-4 mt-0 pt-4">Add Employees</h4>
+                <div class="d-flex justify-content-center">
+                    <form id="employeeForm" class="mb-4 mt-0 pt-4">
+                        <div class="custom-select">
+                            <input type="text" id="custom-select-input" placeholder="Select an option" class="mb-5">
+                            <ul class="custom-select-options">
+                            </ul>
+                        </div>
+                        <div class="shadow mb-4 mt-5">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary" id="employeeFullName">Click on the dropdown to select an employee</h6>
+                            </div>
+                            <div class="card-body">
+                                <p id="employeeDetails"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card" id="tab5" style="display: none">
+            <div class="card-body container">
+                <div class="bg-light row d-flex justify-content-center align-items-center">
+                    <h5 class="text-center mb-4 mt-0 pt-4">Details</h5>
+                    <div class="col-md-4 ml-5">
+                        <div class="p-5">
+                            <img src="@Model.DepartmentImageUrl" class="w-100 h-100 rounded-1" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <form id="detailsEdit" class="m-5 p-5">
+                            <div class="form-group">
+                                <label class="form-label" for="Name">Department Name</label>
+                                <input value="@Model.DepartmentName" type="text" name="Name" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="MaxPeopleCount">Employee Capacity</label>
+                                <input value="@Model.EmployeeCapacity" type="number" name="MaxPeopleCount" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="ImageURL">Department Image URL</label>
+                                <input value="@Model.DepartmentImageUrl" type="text" name="ImageURL" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="CountryId">Country Name</label>
+                                <select name="CountryId" class="form-control">
+                                    @foreach (var country in Model.Countries)
+                                    {
+                                        <option value="@country.Id">@country.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary my-2">Submit</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+
 <style>
-
-    body {
-        color: #252525;
-        overflow-x: hidden;
-        height: 100%;
-        background-color: #f8f9fc;
-        background-repeat: no-repeat;
-    }
-
     .custom-select {
         position: relative;
         display: inline-block;
-        width: 200px;
         border: 1px solid #ddd;
         border-radius: 4px;
     }
 
     #custom-select-input {
-        width: 100%;
-        padding: 10px;
+        width: 200%;
+        padding: 8px;
         border: 1px solid #ddd;
         border-radius: 5px;
     }
 
     .custom-select-options {
         position: absolute;
-        top: 0;
-        right: 100%; 
+        top: -50%;
+        right: 100%;
         display: none;
         border: 1px solid #ddd;
         border-top: none;
         list-style: none;
-        padding: 0;
+        padding: 5%;
         margin: 0;
         background-color: #f8f9fc;
-        max-height: 150px;
+        max-height: 400px;
         overflow-y: auto;
     }
 
 
         .custom-select-options li {
-            padding: 10px;
+            padding: 2px;
             cursor: pointer;
             border-bottom: 1px solid #ddd;
         }
@@ -267,37 +290,12 @@
                 background-color: #f8f9fc;
             }
 
-    .card-body {
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        padding: 20px;
-        margin: 0px;
+
+    .card-body h6 {
+        margin: 0px 0;
+        font-size: 18px;
     }
 
-        .card-body p {
-            margin: 0;
-            padding: 0px 0;
-            font-size: 16.5px;
-            color: #252525;
-        }
-
-            .card-body p strong {
-                font-weight: bold;
-                margin-right: 10px;
-            }
-
-
-        .card-body h6 {
-            margin: 0px 0;
-            font-size: 18px;
-        }
-
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        align-items: center;
-    }
 
     .avatar {
         background-color: #4e73df;
@@ -329,15 +327,6 @@
         fieldset.show {
             display: block;
         }
-
-    select:focus, input:focus {
-        -moz-box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-        box-shadow: none !important;
-        border: 1px solid #4e73df !important;
-        outline-width: 0 !important;
-        font-weight: 400;
-    }
 
     button:focus {
         -moz-box-shadow: none !important;
@@ -388,7 +377,7 @@
         font-size: 14px;
     }
 
-    input[type="text"], input[type="number"], select {
+    input[type="text"], input[type="number"], {
         width: 50%;
         padding: 5px;
         border: 1px solid #ddd;
@@ -412,17 +401,15 @@
     }
 </style>
 
+
+
 @if (false)
 {
     <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
 }
 
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
 @section Scripts
     {
-
     <script type="text/javascript">
 
         const baseUrl = "https://localhost:7153";
@@ -430,6 +417,11 @@
         var currentUrl = window.location.pathname;
         var departmentId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
         const token = "Bearer " + localStorage.getItem("Authorization");
+
+        function showTab(tabId) {
+            $('.card').hide();
+            $('#' + tabId).show();
+        }
 
         function DetailsEdit() {
             $("#detailsEdit").submit(function (e) {
@@ -451,21 +443,10 @@
                     headers: { "Authorization": token },
                     contentType: 'application/json',
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
                     },
-                    error: function (xhr, status, error) {
-
+                    error: function (error) {
+                        toastr.error(error.responseText);
                     }
                 });
             });
@@ -485,19 +466,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ departmentId: departmentId, employeeId: employeeId }),
                     success: function (data) {
-                        console.log(data);
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
                         row.remove();
                     }
                 })
@@ -546,18 +515,10 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ EmployeeId: employeeId, DepartmentId: departmentId }),
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(jqXHR.responseText);
                     }
                 })
             })
@@ -578,20 +539,9 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    Toastify({
-                        text: error,
-                        duration: 3000,
-                        newWindow: true,
-                        close: true,
-                        gravity: "top",
-                        position: "right",
-                        stopOnFocus: true,
-                        style: {
-                            background: "linear-gradient(to right, #00b09b, #96c93d)",
-                        },
-                    }).showToast();
+
                 }
-            });
+            })
         }
 
         function AsyncSearch() {
@@ -626,11 +576,11 @@
                     let currentPosition = positionCell.text();
                     let currentSeniority = seniorityCell.text();
 
-                    let availablePositions = @Html.Raw(Json.Serialize(Model.AvailablePositionsCollection));
+                    let availablePositions = @Html.Raw(Json.Serialize(Model.PositionsInDepartment));
 
                     var positionDropdown = '<select>';
                     for (let i = 0; i < availablePositions.length; i++) {
-                        let option = '<option value="' + availablePositions[i].id + '">' + availablePositions[i].name + '</option>';
+                        let option = '<option value="' + availablePositions[i].positionId + '">' + availablePositions[i].positionName + '</option>';
                         if (availablePositions[i].name === currentPosition) {
                             option = option.replace('value="', 'value="' + currentPosition + '" selected="selected"');
                         }
@@ -639,11 +589,12 @@
                     positionDropdown += '</select>';
 
                     positionCell.html(positionDropdown);
-                    var seniorityDropdown = '<select>';
+                    let seniorityDropdown = '<select>';
 
                     positionCell.find('select').change(function () {
-                        var selectedValue = $(this).val();
+                        let selectedValue = $(this).val();
 
+                        console.log(selectedValue);
                         $.ajax({
                             url: 'https://localhost:7153/departments/seniorities/' + selectedValue,
                             type: "GET",
@@ -703,18 +654,12 @@
                         contentType: 'application/json',
                         data: JSON.stringify(model),
                         success: function (data) {
-                            Toastify({
-                                text: data,
-                                duration: 3000,
-                                newWindow: true,
-                                close: true,
-                                gravity: "top",
-                                position: "right",
-                                stopOnFocus: true,
-                                style: {
-                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
-                                },
-                            }).showToast();
+                           toastr.success(data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(jqXHR);
+                            console.log(textStatus);
+                            console.log(errorThrown);
                         }
                     });
                 }
@@ -756,9 +701,9 @@
 
         function AddToDepartmentPositions() {
             $(".add-icon").on("click", function (e) {
-                var currData = $(this).data();
-                var positionId = $(this).data("position-id");
-
+                const currData = $(this).data();
+                const positionId = $(this).data("position-id");
+                const currentRow = $(this).closest(".row");
                 $.ajax({
                     url: url + "/positions/add",
                     type: 'post',
@@ -766,22 +711,12 @@
                     headers: { "Authorization": token },
                     contentType: 'application/json',
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
-                        console.log(data);
+                        toastr.success(data);
+                       currentRow.remove();
                     },
-                    error: function (error) {
-                        console.error(error);
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        toastr.error(error);
                     }
                 });
             });
@@ -790,10 +725,8 @@
         function RemovePositionFromDepartment() {
             $(".fa-trash").on("click", function () {
 
-                var positionId = $(this).closest("p").find("span").text();
-                console.log(positionId);
-
-                console.log({ positionId: positionId, departmentId });
+                const listItem = $(this).closest("li");
+                const positionId = $(this).closest("p").find("span").text();
 
                 $.ajax({
                     url: url + "/positions/remove",
@@ -802,19 +735,8 @@
                     headers: { "Authorization": token },
                     contentType: 'application/json',
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
-                        console.log(data);
+                       toastr.success(data);
+                        listItem.remove();
                     },
                 })
 
@@ -856,6 +778,7 @@
             AddToDepartmentPositions();
             RemovePositionFromDepartment();
             ChangeEdit();
+            showTab('tab1')
         });
     </script>
 

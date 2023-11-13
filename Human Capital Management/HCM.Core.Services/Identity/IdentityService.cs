@@ -93,6 +93,12 @@
             return "You have successfully change your password";
         }
 
+        public bool ConfirmPassword(string password, Employee employee)
+        {
+           return BCrypt
+                .Verify(password, employee.PasswordHash);
+        }
+
         private Response GetResponse(JwtSecurityToken token, Employee user)
         {
             var response = new Response

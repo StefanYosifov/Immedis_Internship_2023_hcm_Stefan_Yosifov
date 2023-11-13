@@ -40,6 +40,7 @@
         public virtual DbSet<PositionSeniority> PositionSeniorities { get; set; } = null!;
         public virtual DbSet<Priority> Priorities { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<EmployeeRoles> EmployeeRoles { get; set; }
         public virtual DbSet<Salary> Salaries { get; set; } = null!;
         public virtual DbSet<Seniority> Seniorities { get; set; } = null!;
         public virtual DbSet<Status> Statuses { get; set; } = null!;

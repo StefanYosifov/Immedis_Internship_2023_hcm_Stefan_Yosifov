@@ -50,7 +50,7 @@
             IEmployeeManager employeeManager,
             IDepartmentService departmentService,
             ICountryService countryService,
-            IHttpContextAccessor httpContextAccessor, 
+            IHttpContextAccessor httpContextAccessor,
             ITaskService taskService)
         {
             this.context = context;
@@ -69,10 +69,9 @@
 
             if (!string.IsNullOrEmpty(query.SearchEmployeeName))
             {
-                var wildcard = $"%{query.SearchEmployeeName.ToLower()}%";
-
                 employeeTable = employeeTable
-                    .Where(c => EF.Functions.Like(c.Username.ToLower(), wildcard));
+                    .Where(e => e.FirstName != null && (e.Username.ToLower().Contains(query.SearchEmployeeName.ToLower())
+                                                      || e.FirstName.ToLower().Contains(query.SearchEmployeeName)));
             }
 
             if (query.GenderId > 0)
@@ -112,7 +111,8 @@
 
             var mappedTable = new EmployeeTableModel();
 
-            var employeesData = employeeTable.ProjectTo<EmployeeTableDataModel>(mapper.ConfigurationProvider);
+            var employeesData = employeeTable
+                .ProjectTo<EmployeeTableDataModel>(mapper.ConfigurationProvider);
 
             var pagination = await Pagination<EmployeeTableDataModel>
                 .CreateAsync(employeesData, page, ValidationConstants.PaginationConstants.DefaultItemsPerPage);
@@ -197,7 +197,6 @@
         {
             var currentUserId = employeeManager.GetUserId();
 
-
             if (employeeId != currentUserId && employeeManager.IsInRole(RolesEnum.HR) == false)
             {
                 throw new EmployeeServiceExceptions(EmployeeMessages.NoAccess);
@@ -232,7 +231,27 @@
                 throw new EmployeeServiceExceptions(EmployeeMessages.NotFound);
             }
 
-            context.Entry(findEmployee).CurrentValues.SetValues(model);
+            if (model.DepartmentId != null && model.DepartmentId > 0)
+            {
+                var doesDepartmentHaveCapacityForOneMoreEmployee =
+                    await departmentService.DoesDepartmentHaveCapacity((int)model.DepartmentId);
+
+                if (doesDepartmentHaveCapacityForOneMoreEmployee == false)
+                {
+                    throw new EmployeeServiceExceptions(DepartmentMessages.Department.DepartmentIsFull);
+                }
+            }
+
+            findEmployee.FirstName = model.Firstname;
+            findEmployee.LastName = model.Lastname;
+            findEmployee.Email = model.Email;
+            findEmployee.PhoneNumber = model.PhoneNumber;
+            findEmployee.BirthDate = model.BirthDate;
+            findEmployee.NationalityId = model.NationalityId;
+            findEmployee.DepartmentId = model.DepartmentId;
+            findEmployee.PositionId = model.PositionId;
+            findEmployee.SeniorityId = model.SeniorityId;
+
             await context.SaveChangesAsync();
             return EmployeeMessages.Success.EmployeeEdited;
         }
@@ -287,6 +306,8 @@
 
             employee.PositionId = model.PositionId;
             employee.SeniorityId = model.SeniorityId;
+
+            await context.SaveChangesAsync();
             return EmployeeMessages.Success.EmployeePositionSeniorityEdited;
         }
 

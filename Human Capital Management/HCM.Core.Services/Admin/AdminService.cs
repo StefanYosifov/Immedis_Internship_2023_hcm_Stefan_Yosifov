@@ -7,14 +7,13 @@
     using Common.Helpers;
     using Countries;
     using Data;
+    using Data.Models;
     using Microsoft.EntityFrameworkCore;
     using Models.ViewModels.Admin;
     using Models.ViewModels.Roles;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-
-    using Data.Models;
 
     internal class AdminService : IAdminService
     {
@@ -100,14 +99,42 @@
                 .ToArrayAsync();
         }
 
-        public Task<string> ChangeEmployeeRole(AdminChangeRole model)
+        public async Task<string> ChangeEmployeeRole(AdminChangeRole model)
         {
+            var employeeRoles = await context.EmployeeRoles.ToArrayAsync();
+
+
             if (model.RoleId > 0)
             {
+                var getEmployeeRole = await context.EmployeeRoles
+                    .FirstOrDefaultAsync(r => r.EmployeeId == model.EmployeeId && r.RoleId == model.RoleId);
 
+                if (getEmployeeRole != null)
+                {
+                    throw new AdminServiceExceptions(AdminMessages.EmployeeIsAlreadyInRole);
+                }
+
+                var addEmployeeToRole = new EmployeeRoles()
+                {
+                    EmployeeId = model.EmployeeId,
+                    RoleId = model.RoleId,
+                };
+
+                await context.EmployeeRoles.AddAsync(addEmployeeToRole);
             }
+            else
+            {
+                var getEmployeeRoles=await context.EmployeeRoles
+                    .Include(e=>e.Role)
+                    .FirstOrDefaultAsync(r=>r.EmployeeId==model.EmployeeId && r.Role.Name=="HR");
 
-            throw new NotImplementedException();
+                if (getEmployeeRoles != null)
+                {
+                    context.Remove(getEmployeeRoles);
+                }
+            }
+            await context.SaveChangesAsync();
+            return AdminMessages.SuccessfullyAddedToRole;
         }
 
         public async Task<AdminDepartmentsCollection> GetDepartments()

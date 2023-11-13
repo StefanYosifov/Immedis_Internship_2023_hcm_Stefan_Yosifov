@@ -1,5 +1,7 @@
 ﻿namespace HCM.Core.Services.Payments
 {
+    using Common;
+
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
     using Models.ViewModels.Payments.Payroll;
@@ -31,7 +33,10 @@
         Task<string> CompletePayrollById(int payrollId);
 
         Task<string> RemovePayrollById(int payrollId);
-
+        
         Task<ICollection<PayrollEmployeeDetails>> GetPayRollDetailsByEmployeeId(string employeeId);
+
+        Task<Result> CompletePayrollsByDepartmentId(PayrollPayByDepartmentId model);
+
     }
 }

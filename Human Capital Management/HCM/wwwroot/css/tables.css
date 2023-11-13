@@ -10,6 +10,13 @@ h1, h6 {
     color: #4e73df;
 }
 
+table {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
 thead {
     background: #4e73df;
     color: #f8f9fc;
@@ -25,4 +32,8 @@ th {
     padding: 0;
     justify-content: center;
     margin-top: 20px;
+}
+
+.custom-table {
+    margin-bottom: 0; 
 }

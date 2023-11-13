@@ -6,6 +6,14 @@
         {
             public const string NotFound = "Could not find the department";
             public const string EmployeeNotFound = "Employee cannot be found in the department";
+
+            public const string DepartmentIsFull =
+                "Department is full. Consider increasing the max capacity or remove some people";
+
+            public const string SuccessfullyAddedAnEmployee = "You have successfully added {0} to the department";
+
+            public const string CannotHaveLessCapacityThanEmployees =
+                "You cannot change the capacity below the employee count, consider removing some employees first";
         }
 
         public static class Position

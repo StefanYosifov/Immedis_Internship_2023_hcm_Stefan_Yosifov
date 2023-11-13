@@ -4,27 +4,21 @@
 <link rel="stylesheet" href="~/css/inputs.css" />
 
 <div class="container-fluid m-5">
-    <form id="myForm" class="flex" method="get" asp-controller="Payment" asp-action="Payroll" asp-route-id="@Model.Page">
+    <form id="myForm" class="form-inline" method="get" asp-controller="Payment" asp-action="Payroll" asp-route-id="@Model.Page">
         <div class="row">
-            <div class="col-md-2">
-                <label>
-                    <b>Start Date</b>
-                </label>
-                <input type="date" name="startDate" class="form-control bg-light border-0 small" />
+            <div class="col-md-3 mb-2">
+                <label for="startDate" class="form-label"><b>Start Date</b></label>
+                <input type="date" name="startDate" class="form-control" />
             </div>
 
-            <div class="col-md-2">
-                <label>
-                    <b>End Date</b>
-                </label>
-                <input type="date" name="endDate" class="form-control bg-light border-0 small" />
+            <div class="col-md-3 mb-2">
+                <label for="endDate" class="form-label"><b>End Date</b></label>
+                <input type="date" name="endDate" class="form-control" />
             </div>
 
-            <div class="col-md-2">
-                <label>
-                     <b>Departments</b>
-                </label>
-                <select name="DepartmentId">
+            <div class="col-md-3 mb-2">
+                <label for="DepartmentId" class="form-label"><b>Departments</b></label>
+                <select name="DepartmentId" class="form-select">
                     <option value="0">Select department</option>
                     @foreach (var department in Model.Departments)
                     {
@@ -32,17 +26,19 @@
                     }
                 </select>
             </div>
-            <div class="col-md-2">
-                <button>Submit</button>
+
+            <div class="col-md-3 mt-4">
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </form>
 
+
     <div class="card shadow mb-4 mt-5 me-5">
         <div class="card-header py-3 justify-content-lg-around">
-            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                Open Modal
+            <h6 class="m-0 font-weight-bold text-primary">Payroll Table</h6>
+            <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModal">
+                Create payroll
             </button>
         </div>
         <div class="card-body">
@@ -153,13 +149,16 @@
                 <div class="modal-body">
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-                            <p>You are about to run payroll, it's going to automatically create a new payroll for the month. All bonuses and deduction will be counted towards current one, these are just calculation. If you wish to pay off salaries go to the other page</p>
+                            <p>
+                                You are about to run payroll, bare in mind this is not a finalized payment, you will be provided the ability to pay on another occasion.
+                                If you wish to pay off salaries go to the other page
+                            </p>
                             <form id="createPayroll">
                                 <div class="form-group">
                                     <label for="disableDates">Disable Dates:</label>
                                     <input type="checkbox" id="disableDates" name="DisableDates" />
                                 </div>
-                                <small> Automatically create a payroll since the date, till end of this month</small>
+                                <small> Automatically create a payroll since the date of the previous payroll, till end of this month</small>
                                 <div class="form-group">
                                     <label for="startDate">Start Date:</label>
                                     <input type="date" id="startDate" name="startDate" class="form-control dates" />
@@ -209,7 +208,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -279,10 +277,9 @@
         }
 
         function UnpaidPayrolls() {
-
             $.ajax({
                 url: url + "/unpaid",
-                type: "Get",
+                type: "GET",
                 headers: { "Authorization": token },
                 contentType: "application/json",
                 success: function (response) {
@@ -292,36 +289,81 @@
                         const departmentName = item.departmentName;
                         const totalPayment = item.totalPayment;
                         const employeeCount = item.employeeCount;
+
                         const html = `
-                                                                                    <ul class="list-group mb-3">
-                                                                                        <li class="list-group-item">
-                                                                                            <div class="row align-items-center">
-                                                                                                <div class="col-md-3 text-center">
-                                                                                                    <img class="avatar" src="${departmentImageUrl}" alt="Department Image" width="50" height="50">
-                                                                                                </div>
-                                                                                                <div class="col-md-6 text-center">
-                                                                                                    <h6>${departmentName}</h6>
-                                                                                                    Total Payment: ${totalPayment}<br>
-                                                                                                    Employee Count: ${employeeCount}
-                                                                                                </div>
-                                                                                                <div class="col-md-3 text-center">
-                                                                                                    <button type="button" class="btn btn-sm btn-primary">Pay</button>
-                                                                                                </div>
+                                                                            <ul class="list-group mb-3">
+                                                                                <li class="list-group-item">
+                                                                                    <div class="row align-items-center">
+                                                                                        <div class="col-md-3 text-center">
+                                                                                            <img class="avatar" src="${departmentImageUrl}" alt="Department Image" width="50" height="50">
+                                                                                        </div>
+                                                                                        <div class="col-md-6 text-center">
+                                                                                            <h6>${departmentName}</h6>
+                                                                                            Total Payment: ${totalPayment}<br>
+                                                                                            Employee Count: ${employeeCount}
+                                                                                        </div>
+                                                                                        <div class="col-md-3 text-center">
+                                                                                            <button type="button" class="btn btn-sm btn-primary pay-button" value='${item.departmentId}'>Pay</button>
+                                                                                            <div class="payment-section" style="display: none;">
+                                                                                                <input type="password" class="form-control" placeholder="Confirm your password">
+                                                                                                <button type="button" class="btn btn-sm btn-primary submit-payment">Submit</button>
                                                                                             </div>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                    `;
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            </ul>
+                                                                        `;
 
                         $('#unpaidSalaries').append(html);
                     });
-                }
 
-            })
+                    attachEventHandlers();
+                }
+            });
         }
+
+        function attachEventHandlers() {
+            $('.pay-button').click(function () {
+                const row = $(this).closest('.row');
+                const selectedId = $(this).attr('value');
+
+                $(this).closest('.row').find('.payment-section').toggle();
+            });
+
+            $('.submit-payment').click(function () {
+                const departmentId = $(this).closest('.row').find('.pay-button').attr('value');
+                const passwordValue = $(this).closest('.row').find('.form-control').val();
+
+                console.log(`${departmentId} ${passwordValue}`);
+
+                const data = {
+                    "departmentId": departmentId,
+                    "password": passwordValue
+                };
+
+                $.ajax({
+                    url: url + "/complete/byDepartmentId",
+                    type: "Put",
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        console.log(response);
+                        toastr.success(response);
+                    },
+                    error: function (error) {
+                        toastr.error(error.responseText);
+                    }
+                });
+            });
+
+        };
 
         function SendConfirmationCompleteRequest(id) {
             $.ajax({
-                url: url + "/complete/" + id,
+                url: url + "/complete/single/" + id,
                 type: "Put",
                 headers: { "Authorization": token },
                 success: function (response) {
@@ -332,7 +374,6 @@
                 }
             })
         }
-
 
         function SendConfirmationRemoveRequest(id) {
             $.ajax({
@@ -366,10 +407,12 @@
             });
         }
 
+        function PayDepartmentSalaries() {
+
+        }
 
         $(document).ready(function () {
             $("#disableDates").on("change", function () {
-                console.log("hi");
                 if ($(this).is(":checked")) {
                     $("#startDate").prop("disabled", true);
                     $("#startDate").val('');
@@ -386,6 +429,7 @@
             Confirmations();
         });
 
+
     </script>
 
-}
+    }

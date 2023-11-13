@@ -17,6 +17,7 @@
 
     using Models.ViewModels.Roles;
     using Models.ViewModels.Tasks;
+    using Models.ViewModels.Tasks.Enums;
     using Models.ViewModels.Tasks.Priority;
     using Models.ViewModels.Tasks.Status;
 
@@ -183,7 +184,9 @@
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
                 .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
-                .Where(t => t.DueDate >= searchUntil && t.EmployeeId == model.EmployeeId)
+                .Where(t => t.DueDate <= searchUntil && t.EmployeeId == model.EmployeeId && t.Status.StatusName.ToLower() == TaskTypes.OnGoing.ToString().ToLower())
+                .OrderBy(t => t.DueDate)
+                .Take(5)
                 .ToArrayAsync();
         }
 
@@ -197,6 +200,7 @@
             }
 
             var task = mapper.Map<Task>(model);
+            task.StatusId = await GetStatusIdFromName(TaskTypes.OnGoing.ToString());
             task.IssuerId = employeeManager.GetUserId();
 
             await context.Tasks.AddAsync(task);
@@ -222,17 +226,58 @@
             }
 
             var newStatus = await GetCompletedTaskId();
+
+            if (findTask.StatusId == newStatus)
+            {
+                throw new TaskServiceExceptions(TaskMessages.AlreadyCompleted);
+            }
+
+
             findTask.StatusId = newStatus;
             await context.SaveChangesAsync();
 
             return TaskMessages.SuccessfullyCompletedThisTask;
         }
 
+        public async Task<EmployeeTasksPagination> TasksIssuedByMe(int page)
+        {
+            var getUserId = employeeManager.GetUserId();
+
+            var getOngoingTasks = await GetStatusIdFromName(TaskTypes.OnGoing.ToString());
+
+            var tasks = context.Tasks
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
+                .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
+                .Where(t => t.Status.Id == getOngoingTasks && t.IssuerId == getUserId);
+
+            var paginatedTasks = await Pagination<TaskModel>.CreateAsync(tasks, page,
+                ValidationConstants.PaginationConstants.TasksItemPerPage);
+
+            return new EmployeeTasksPagination()
+            {
+                Page = page,
+                Tasks = paginatedTasks,
+                TotalPages = paginatedTasks.TotalPages
+            };
+        }
+
+        public async Task<int> GetStatusIdFromName(string type)
+        {
+            var status = await context.Statuses
+                .Select(s => new
+                {
+                    s.Id,
+                    s.StatusName
+                }).FirstOrDefaultAsync(s => s.StatusName == type);
+
+            return status!.Id;
+        }
 
         private async Task<int> GetCompletedTaskId()
         {
             return context.Statuses
-                .Where(s => s.StatusName == "Completed")
+                .Where(s => s.StatusName == TaskTypes.Completed.ToString())
                 .Select(s => s.Id)
                 .SingleOrDefault();
         }

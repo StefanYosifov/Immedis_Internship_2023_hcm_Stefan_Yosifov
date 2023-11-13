@@ -1,5 +1,6 @@
 ﻿namespace HCM.API.Controllers.Payments
 {
+    using Common;
     using Common.Exceptions_Messages.Payments;
 
     using Core.Services.Department;
@@ -166,11 +167,19 @@
         [HttpGet("payroll/unpaid")]
         public async Task<IActionResult> GetUnpaidPayrolls()
         {
-            var result = await service.GetAllUnpaidSalaries();
-            return Ok(result);
+            try
+            {
+                var result = await service.GetAllUnpaidSalaries();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        [HttpPut("payroll/complete/{id}")]
+        [HttpPut("payroll/complete/single/{id}")]
         public async Task<IActionResult> CompletePayroll(int id)
         {
             try
@@ -207,9 +216,16 @@
         }
 
         [HttpGet("payroll/employee/details")]
-        public async Task<IActionResult> GetPayrollByEmployeeId([FromQuery]string employeeId)
+        public async Task<IActionResult> GetPayrollByEmployeeId([FromQuery] string employeeId)
         {
             var result = await service.GetPayRollDetailsByEmployeeId(employeeId);
+            return Ok(result);
+        }
+
+        [HttpPut("payroll/complete/byDepartmentId")]
+        public async Task<IActionResult> CompletePayrollByDepartmentId([FromBody]PayrollPayByDepartmentId model)
+        {
+            var result = await service.CompletePayrollsByDepartmentId(model);
             return Ok(result);
         }
 

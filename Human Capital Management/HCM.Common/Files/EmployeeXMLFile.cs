@@ -5,6 +5,8 @@
     using System.Text;
     using System.Xml.Serialization;
 
+    using Common.Files;
+
     internal class EmployeeXMLFile : IEmployeeCreateFile
     {
 
@@ -19,7 +21,7 @@
             StringReader reader = new StringReader(data);
             EmployeesXMLFileDTO employeesDto = (EmployeesXMLFileDTO)serializer.Deserialize(reader);
 
-            foreach (var employeedDto in employeesDto.Employees) //Reduntant nesting I believe
+            foreach (var employeedDto in employeesDto.Employees) //Redundant nesting I believe
             {
                 var employee=new Employee()
                 {

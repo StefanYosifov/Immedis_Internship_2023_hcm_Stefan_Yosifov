@@ -28,6 +28,8 @@
 
         public int AverageSalary { get; set; }
 
+        public double AverageAge { get; set; }
+
         public ICollection<CountryViewModel> Countries { get; set; }
 
         public ICollection<DepartmentEmployeesModel?>? DepartmentEmployees { get; set; }

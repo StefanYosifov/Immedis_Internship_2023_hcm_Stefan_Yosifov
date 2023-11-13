@@ -18,10 +18,10 @@
 
         [Required] public int NationalityId { get; set; }
 
-        [Required] public int? DepartmentId { get; set; }
+ public int? DepartmentId { get; set; }
 
-        [Required] public int? PositionId { get; set; }
+ public int? PositionId { get; set; }
 
-        [Required] public int? SeniorityId { get; set; }
+ public int? SeniorityId { get; set; }
     }
 }

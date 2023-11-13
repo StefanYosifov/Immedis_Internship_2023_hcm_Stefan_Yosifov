@@ -1,30 +1,32 @@
 ﻿<div class="m-3">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <form id="query" class="d-flex">
-                <div class="form-group">
+            <form id="query" class="d-flex align-items-center">
+                <div class="form-group mb-2">
                     <label for="textInput" class="mr-2">Search for Department:</label>
                     <input name="Search" type="text" class="form-control" id="textInput" placeholder="Enter text">
                 </div>
-                <div class="form-group mx-3">
+
+                <div class="form-group mx-3 mb-2">
                     <label for="countries" class="mr-2">Select an option:</label>
                     <select id="countries" name="CountryId" class="form-control" id="selectOption1">
                         <option value="0">Choose an option</option>
                     </select>
                 </div>
-                <div class="form-group mx-3">
+
+                <div class="form-group mx-3 mb-2">
                     <label for="sort" class="mr-2">Select an option:</label>
                     <select id="sort" name="Sort" class="form-control" id="selectOption2">
                     </select>
                 </div>
-                <div class="form-group mx-3">
-                    <a id="formSearch" class="btn btn-dark">Search</a>
+
+                <div class="form-group mx-3 mb-2">
+                    <button id="formSearch" type="button" class="btn btn-primary">Search</button>
                 </div>
             </form>
+
         </div>
     </nav>
-
-
     <div class="container mt-4">
         <div id="departmentContainer" class="row">
         </div>
@@ -83,14 +85,12 @@
 @section Scripts
     {
     <script type="text/javascript">
-
         let token = "Bearer " + localStorage.getItem("Authorization");
         let container = $('#departmentContainer');
 
         const countries = $("#countries");
         const sort = $("#sort");
         const search = $("#formSearch");
-
 
         function FillDepartmentContainer(departments) {
             container.empty();

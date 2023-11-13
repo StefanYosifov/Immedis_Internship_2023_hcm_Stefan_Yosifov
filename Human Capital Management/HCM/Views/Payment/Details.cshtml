@@ -103,8 +103,8 @@
                         <thead>
                             <tr>
                                 <th>BonusId</th>
-                                <th>Bonus Amount</th>
                                 <th>Bonus Reason</th>
+                                <th>Bonus Amount</th>
                             </tr>
                         </thead>
                         <tbody id="bonusTableBody">
@@ -117,8 +117,8 @@
                         <thead>
                             <tr>
                                 <th>BonusId</th>
-                                <th>Bonus Amount</th>
                                 <th>Bonus Reason</th>
+                                <th>Bonus Amount</th>
                             </tr>
                         </thead>
                         <tbody id="deductionTableBody">
@@ -386,7 +386,7 @@
                 console.log(data.deductions[i]);
                 row.append($("<td>").text(data.deductions[i].deductionId));
                 row.append($("<td>").text(data.deductions[i].deductionReason.deductionReason));
-                row.append($("<td>").text(data.bonuses[i].deductionAmount));
+                row.append($("<td>").text(data.deductions[i].deductionAmount));
                 deductionTable.append(row);
             }
         }
@@ -437,18 +437,7 @@
                         "SalaryAmount": salary,
                     }),
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                      toastr.success(data);
                     }
                 });
             });
@@ -475,18 +464,7 @@
                         "ReasonId": reasonId
                     }),
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
                     }
                 })
             })
@@ -516,18 +494,7 @@
                         "ReasonId": reasonId
                     }),
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
                     }
                 })
             });

@@ -1,7 +1,6 @@
 ﻿namespace HCM.Core.Services.Details
 {
     using AutoMapper;
-    using AutoMapper.QueryableExtensions;
 
     using Common.Constants;
     using Common.Helpers;
@@ -96,9 +95,9 @@
             var worstPerformingEmployees = await WorstPerformingEmployees(today);
             var busiestEmployees = await BusiestEmployees(today);
             var employeesBirthdays = await EmployeeBirthdays(today);
-            var tasksIssuedByMe = await TasksIssuedByMe(currentUserId);
+            var tasksIssuedByMe = await taskService.TasksIssuedByMe(1);
             var upcomingTasks = await taskService.GetTasksXDaysFromNowByEmployeeId(new SearchTasksByDays()
-            { DaysFromNow = 14, EmployeeId = currentUserId });
+            { DaysFromNow = 30, EmployeeId = currentUserId });
 
             return new HomePageStatisticsModel
             {
@@ -264,13 +263,5 @@
             return worstPerformingEmployees;
         }
 
-        private async Task<ICollection<TaskModel>> TasksIssuedByMe(string userId)
-        {
-            return await context.Tasks
-                .Include(t => t.Employee)
-                .ProjectTo<TaskModel>(mapper.ConfigurationProvider)
-                .Where(t => t.IssuerId == userId && t.Status.StatusName != "Completed")
-                .ToArrayAsync();
-        }
     }
 }

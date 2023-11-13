@@ -1,26 +1,20 @@
 ﻿namespace HCM.Core.Services.Department
 {
-    using System.Runtime.InteropServices;
-
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-
     using Common.Exceptions_Messages.Departments;
     using Common.Exceptions_Messages.Employees;
     using Common.Helpers;
-
     using Countries;
-
     using Data;
     using Data.Models;
-
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Caching.Memory;
-
     using Models.ViewModels.Departments;
     using Models.ViewModels.Departments.Enums;
     using Models.ViewModels.Positions;
     using Models.ViewModels.Seniorities;
+    using System.Runtime.InteropServices;
 
     internal class DepartmentService : IDepartmentService
     {
@@ -149,17 +143,18 @@
                 totalSalary /= employeesInDepartment.Count;
             }
 
-            var mappedEmployees = employeesInDepartment.Select(ed => new DepartmentEmployeesModel
-            {
-                EmployeeId = ed.Id,
-                EmployeeAge = DateCalculator.CalculateAge(ed.BirthDate),
-                EmployeeFirstname = ed.FirstName,
-                EmployeeLastname = ed.LastName,
-                EmployeeGender = ed.Gender?.Name,
-                EmployeePosition = ed.Position?.Name,
-                EmployeeSeniority = ed.Seniority?.Name,
-                EmployeeNationalityISO = ed.Nationality?.Iso
-            })
+            var mappedEmployees = employeesInDepartment
+                .Select(ed => new DepartmentEmployeesModel
+                {
+                    EmployeeId = ed.Id,
+                    EmployeeAge = DateCalculator.CalculateAge(ed.BirthDate),
+                    EmployeeFirstname = ed.FirstName,
+                    EmployeeLastname = ed.LastName,
+                    EmployeeGender = ed.Gender?.Name,
+                    EmployeePosition = ed.Position?.Name,
+                    EmployeeSeniority = ed.Seniority?.Name,
+                    EmployeeNationalityISO = ed.Nationality?.Iso
+                })
                 .ToArray();
 
             return new DepartmentDetailsViewModel
@@ -172,6 +167,7 @@
                 AverageSalary = (int)totalSalary!,
                 EmployeesCount = employeesInDepartment.Count,
                 DepartmentEmployees = mappedEmployees,
+                AverageAge = mappedEmployees.Average(e=>e.EmployeeAge),
                 AvailablePositionsCollection = await GetAvailablePositionsToAddToDepartmentById(id),
                 PositionsInDepartment = await GetPositionsInTheDepartmentById(id),
                 Countries = await countryService.GetCountries()
@@ -283,19 +279,25 @@
                 throw new InvalidOleVariantTypeException("Employee must not be in Department");
             }
 
-            var doesDepartmentExist = await context.Departments
-                .Select(d => d.Id)
-                .AnyAsync(x => x == model.DepartmentId);
+            var findDepartment = await context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(d => d.Id == model.DepartmentId);
 
-            if (doesDepartmentExist == false)
+            if (findDepartment == null)
             {
                 throw new InvalidOperationException("Department does not exist");
+            }
+
+            if (findDepartment.Employees.Count >= findDepartment.MaxPeopleCount)
+            {
+                throw new DepartmentServiceExceptions(DepartmentMessages.Department.DepartmentIsFull);
             }
 
             findEmployee.DepartmentId = model.DepartmentId;
             await context.SaveChangesAsync();
 
-            return "You have successfully added the employee to the department";
+            return string.Format(DepartmentMessages.Department.SuccessfullyAddedAnEmployee,
+                $"{findEmployee.FirstName} {findEmployee.LastName}");
         }
 
         public async Task<string> RemoveEmployeeFromDepartmentById(DepartmentRemoveEmployee model)
@@ -339,11 +341,19 @@
 
         public async Task<string> EditDepartmentDetails(DepartmentEditDetails model)
         {
-            var findDepartment = await context.Departments.FindAsync(model.DepartmentId);
+            var findDepartment = await context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(d => d.Id == model.DepartmentId);
 
             if (findDepartment == null)
             {
                 throw new DepartmentServiceExceptions(DepartmentMessages.Department.NotFound);
+            }
+
+            if (model.MaxPeopleCount < findDepartment.Employees.Count)
+            {
+                throw new DepartmentServiceExceptions(DepartmentMessages.Department
+                    .CannotHaveLessCapacityThanEmployees);
             }
 
             findDepartment.CountryId = model.CountryId;
@@ -353,6 +363,47 @@
 
             await context.SaveChangesAsync();
             return DepartmentMessages.Success.SuccessfullyEditedDepartmentData;
+        }
+
+        public async Task<bool> DoesDepartmentExist(int id)
+        {
+            return await context.Departments
+                .Select(d => d.Id)
+                .AnyAsync(x => x == id);
+        }
+
+        public async Task<bool> DoesPositionExist(int id)
+        {
+            return await context.Positions
+                .Select(p => p.Id)
+                .AnyAsync(x => x == id);
+        }
+
+        public async Task<bool> DoesSeniorityExist(int id)
+        {
+            return await context.Positions
+                .Select(s => s.Id)
+                .AnyAsync(x => x == id);
+        }
+
+        public async Task<bool> DoesDepartmentHaveCapacity(int id)
+        {
+            var department = await context.Departments
+                .Include(d=>d.Employees)
+                .Select(d => new
+                {
+                    d.Id,
+                    d.MaxPeopleCount,
+                    d.Employees.Count
+                })
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (department!.Count + 1 > department.MaxPeopleCount)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private async Task<ICollection<Employee>> GetEmployeesInCurrentDepartment(int id)

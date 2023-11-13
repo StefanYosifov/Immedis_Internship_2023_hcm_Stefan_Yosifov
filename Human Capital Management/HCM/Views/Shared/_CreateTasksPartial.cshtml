@@ -32,17 +32,6 @@
                         }
                     </select>
                 </div>
-
-                <div class="my-2">
-                    <label for="status">Status:</label>
-                    <select id="status" name="status">
-                        @foreach (var status in Model.Statuses)
-                        {
-                            <option value="@status.Id">@status.StatusName</option>
-                        }
-                    </select>
-                </div>
-
                 <button type="button" id="saveTaskBtn">Save Task</button>
             </form>
         </div>

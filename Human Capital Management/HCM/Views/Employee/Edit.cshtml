@@ -96,12 +96,12 @@
                                         @Model.Firstname @Model.Lastname
                                     </p>
                                     <p>
-                                        @foreach (var position in Model.Positions)
+                                        @foreach (var position in Model.Positions.Where(p=>p.Id==Model.PositionId))
                                         {
                                             <span>Working as @position.Name</span>
                                         }
                                         </>
-                                    <h6>Hobbies</h6>
+                                        <h6>Hobbies</h6>
                                     <p>
                                         Indie music, skiing and hiking. I love the great outdoors.
                                     </p>
@@ -128,6 +128,7 @@
                                         <th>Priority</th>
                                         <th>Status</th>
                                         <th>Mark as complete</th>
+                                        <th>View</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tasks" class="">
@@ -139,7 +140,11 @@
 
                         </div>
                         <div class="tab-pane" id="edit">
-                            <form id="editForm">
+                            @if (Model.LastModifiedOn != null)
+                            {
+                                <p>Last modified on : @Model.LastModifiedOn</p>
+                            }
+                            <form id="editForm" method="post">
                                 <div class="form-group row my-2">
                                     <label class="col-lg-3 col-form-label form-control-label">Firstname</label>
                                     <div class="col-lg-9">
@@ -242,24 +247,54 @@
                                                 <input name="confirmNewPassword" type="password" class="form-control" id="confirmNewPassword" />
                                             </div>
 
-                                            <input id="changePassword" type="button" value="Submit" />
+                                            <input class="btn btn-primary" id="changePassword" type="button" value="Submit" />
                                         </form>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <<div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel">Task Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="taskDetails">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
 <style>
-    td {
+    #messages td {
         font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 185px;
+    }
+
+   #messages table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
     }
 </style>
 
@@ -274,7 +309,6 @@
 <link rel="stylesheet" href="~/css/inputs.css" />
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script type="module" src="~/js/abstractAjax.js"></script>
 
 @section Scripts
     {
@@ -312,37 +346,13 @@
                     contentType: 'application/json',
                     headers: { "Authorization": token },
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
-
+                        toastr.success(data)
                         let newPassword = $("#newPassword").val("");
                         let confirmNewPassword = $("#confirmNewPassword").val("");
                         let oldPassword = $("#oldPassword").val("");
                     },
                     error: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #90b09b, #96c93d)",
-                            },
-                        }).showToast();
-
+                        toastr.error(data.responseText);
                         let newPassword = $("#newPassword").val("");
                         let confirmNewPassword = $("#confirmNewPassword").val("");
                         let oldPassword = $("#oldPassword").val("");
@@ -377,20 +387,29 @@
                             const completeButton = $(`<td><button value="${task.id}">Complete</button></td>`);
 
                             completeButton.click(function () {
+                                let button = $(this);
+
                                 $.ajax({
                                     url: tasksUrl + "/complete",
                                     type: "Put",
                                     headers: { "Authorization": token },
-                                    data: JSON.stringify({ id: task.id }),
+                                    data: JSON.stringify(task.id),
                                     contentType: 'application/json',
                                     success: function (data) {
-
+                                        toastr.success(data);
+                                        button.text("Completed already :)");
+                                    },
+                                    error: function (error) {
+                                        toastr.error(error.responseText);
                                     }
                                 })
                             });
 
                             newRow.append(completeButton);
                         }
+                        const viewButton = $(`<td><button class="viewButton" data-toggle="modal" data-target="#taskModal" data-task='${JSON.stringify(task)}'>View</button></td>`);
+                        newRow.append(viewButton);
+
                         tasks.append(newRow);
                     });
 
@@ -443,20 +462,17 @@
             $("#saveTaskBtn").click(function () {
                 console.log(`click`);
 
-                var taskName = $("#taskName").val();
-                var description = $("#description").val();
-                var dueDate = $("#dueDate").val();
-                var priority = $("#priority option:selected").val();
-                var status = $("#status option:selected").val();
+                const taskName = $("#taskName").val();
+                const description = $("#description").val();
+                const dueDate = $("#dueDate").val();
+                const priority = $("#priority option:selected").val();
 
-
-                var data = {
+                const data = {
                     employeeId: id,
                     taskName: taskName,
                     description: description,
                     dueDate: dueDate,
                     priorityId: priority,
-                    statusId: status
                 };
 
                 $.ajax({
@@ -466,33 +482,81 @@
                     data: JSON.stringify(data),
                     contentType: 'application/json',
                     success: function (data) {
-
+                        toastr.success(data);
+                        $('#myModal').modal('toggle');
+                    },
+                    error: function (data) {
+                        if (data.status < 500) {
+                            toastr.error(data.responseText);
+                        }
+                        else {
+                            toastr.error("Something went wrong");
+                        }
                     }
                 })
 
             });
         }
-        function GetEmployeesPayroll(){
-
+        function GetEmployeesPayroll() {
             const payrollTable = $("#payroll");
-
             $.ajax({
                 url: `https://localhost:7153/payroll/employee/details?employeeId=${id}`,
-                type:"Get",
+                type: "Get",
                 headers: { "Authorization": token },
                 success: function (data) {
                     $.each(data, function (_, employee) {
                         payrollTable.append(`
-                    <tr>
-                        <td>
-                            You have received ${employee.received} for the period of ${employee.startDate} - ${employee.endDate}
-                        </td>
-                    </tr>
-                `);
+                                            <tr>
+                                                <td>
+                                                    You have received ${employee.received} for the period of ${employee.startDate} - ${employee.endDate}
+                                                </td>
+                                            </tr>
+                                        `);
                     });
                 }
 
             })
+        }
+        function ShowTask() {
+            $(document).on('click', '.viewButton', function () {
+                const taskData = $(this).data('task');
+                populateModal(taskData);
+            });
+        }
+
+        function populateModal(taskData) {
+            const taskDetailsHtml = `
+                            <div class="container">
+                        <h5 class="mt-3">Task Details</h5>
+                        <hr class="mb-4">
+                        <dl class="row">
+                                     <dt class="col-sm-3">Task Name</dt>
+                            <dd class="col-sm-9 text-wrap" style="word-wrap: break-word;">${taskData.taskName}</dd>
+
+                            <dt class="col-sm-3">Description</dt>
+                            <dd class="col-sm-9 text-wrap" style="word-wrap: break-word;">${taskData.description}</dd>
+
+                            <dt class="col-sm-3">Due Date</dt>
+                            <dd class="col-sm-9">${taskData.dueDate.split('T')[0]}</dd>
+
+                            <dt class="col-sm-3">Employee ID</dt>
+                            <dd class="col-sm-9">${taskData.employeeId}</dd>
+
+                            <dt class="col-sm-3">Issuer ID</dt>
+                            <dd class="col-sm-9">${taskData.issuerId}</dd>
+
+                            <dt class="col-sm-3">Priority</dt>
+                            <dd class="col-sm-9">${taskData.priority.priorityName}</dd>
+
+                            <dt class="col-sm-3">Status</dt>
+                            <dd class="col-sm-9">${taskData.status.statusName}</dd>
+                        </dl>
+                    </div>
+                `;
+
+            $('#taskDetails').html(taskDetailsHtml);
+
+            $('#taskModal').modal('show');
         }
 
         $(document).ready(function () {
@@ -500,6 +564,7 @@
             ShowTasks();
             CreateTask();
             GetEmployeesPayroll();
+            ShowTask();
             $("#DepartmentId").on("change", function () {
                 $("#PositionId").val('');
                 $("#SeniorityId").val('');
@@ -521,7 +586,6 @@
                     }
                 });
             });
-
             $("#PositionId").on("change", function () {
                 $("#SeniorityId").val('');
 
@@ -542,8 +606,6 @@
                     }
                 });
             });
-
-
             $("#btnsubmit").click(function (e) {
                 var formData = $("#editForm").serialize();
                 let url = "https://localhost:7153/employees/edit/" + id;
@@ -554,18 +616,7 @@
                     data: formData,
                     headers: { "Authorization": token },
                     success: function (data) {
-                        Toastify({
-                            text: data,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
-                            stopOnFocus: true,
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                        }).showToast();
+                        toastr.success(data);
                     },
                     error: function (xhr, status, error) {
 

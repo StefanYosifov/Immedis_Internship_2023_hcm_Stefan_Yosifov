@@ -31,5 +31,13 @@
         Task<string> RemoveEmployeeFromDepartmentById(DepartmentRemoveEmployee model);
 
         Task<string> EditDepartmentDetails(DepartmentEditDetails model);
+
+        Task<bool> DoesDepartmentExist(int id);
+
+        Task<bool> DoesPositionExist(int id);
+
+        Task<bool> DoesSeniorityExist(int id);
+
+        Task<bool> DoesDepartmentHaveCapacity(int id);
     }
 }

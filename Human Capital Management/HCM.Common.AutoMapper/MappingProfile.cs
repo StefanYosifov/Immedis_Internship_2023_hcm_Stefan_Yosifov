@@ -2,6 +2,8 @@
 {
     using Data.Models;
 
+    using Files;
+
     using global::AutoMapper;
 
     using Helpers;
@@ -10,7 +12,6 @@
     using Models.ViewModels.Countries;
     using Models.ViewModels.Departments;
     using Models.ViewModels.Employees;
-    using Models.ViewModels.Files;
     using Models.ViewModels.Genders;
     using Models.ViewModels.Payments;
     using Models.ViewModels.Payments.Bonuses;
@@ -56,7 +57,8 @@
                 .ForMember(dest => dest.EmployeeFirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.EmployeeLastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.EmployeeDepartmentName, opt => opt.MapFrom(src => src.Department!.Name))
-                .ForMember(dest => dest.EmployeePositionName, opt => opt.MapFrom(src => src.Position!.Name));
+                .ForMember(dest => dest.EmployeePositionName, opt => opt.MapFrom(src => src.Position!.Name))
+                .ForMember(dest => dest.EmployeeSeniority, opt => opt.MapFrom(src => src.Seniority.Name));
 
             CreateMap<Employee, EmployeeGetEditModel>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
@@ -68,11 +70,12 @@
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
                 .ForMember(dest => dest.SeniorityId, opt => opt.MapFrom(src => src.SeniorityId))
+                .ForMember(dest => dest.LastModifiedOn, opt => opt.MapFrom(src => src.ModifiedOn))
                 .ForMember(dest => dest.Tasks, opt => opt.Ignore());
 
             CreateMap<Department, DepartmentGetAllModel>()
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.DepartmentCountry, opt => opt.MapFrom(src => src.Country.Name))
+                .ForMember(dest => dest.DepartmentCountry, opt => opt.MapFrom(src => src.Country!.Name))
                 .ForMember(dest => dest.DepartmentEmployeeCount, opt => opt
                     .MapFrom(src => src.Employees.Count(e => e.DepartmentId == src.Id)))
                 .ForMember(dest => dest.DepartmentImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
@@ -150,7 +153,6 @@
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.DueDate))
                 .ForMember(dest => dest.PriorityId, opt => opt.MapFrom(src => src.PriorityId))
-                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => src.StatusId))
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId));
 
             CreateMap<AuditLog, AuditLogs>()
@@ -201,8 +203,8 @@
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                 .ForMember(dest => dest.IsPaid, opt => opt.MapFrom(src => src.PaidOn != null))
                 .ForMember(dest => dest.Received, opt => opt.MapFrom(src => src.NetPay))
-                .ForMember(dest=>dest.StartDate,opt=>opt.MapFrom(src=>src.StartDate.ToShortDateString()))
-                .ForMember(dest=>dest.EndDate,opt=>opt.MapFrom(src=>src.EndDate.ToShortDateString()));
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToShortDateString()))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToShortDateString()));
 
         }
     }

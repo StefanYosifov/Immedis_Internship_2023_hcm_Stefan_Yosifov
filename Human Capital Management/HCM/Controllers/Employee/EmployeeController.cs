@@ -159,7 +159,7 @@ namespace HCM.Controllers.Employee
         [HttpPut("employees/edit/{employeeId}")]
         public async Task<IActionResult> Edit(string employeeId, EmployeeSendEditModel model)
         {
-            var request = new RestRequestBuilder($"/employees/edit/{employeeId}",
+            var request = new RestRequestBuilder($"/api/employees/edit/{employeeId}",
                     GetAuthenticationClaim())
                 .SetMethod(Method.Put)
                 .AddAuthentication()

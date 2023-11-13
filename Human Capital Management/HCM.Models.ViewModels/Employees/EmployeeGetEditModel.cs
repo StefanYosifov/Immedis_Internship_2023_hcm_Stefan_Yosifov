@@ -29,6 +29,8 @@
         public int DepartmentId { get; set; }
         public int PositionId { get; set; }
         public int SeniorityId { get; set; }
+
+        public DateTime? LastModifiedOn { get; set; }
         public SearchTaskOptionsModel Tasks { get; set; }
         public ICollection<CountryViewModel> Nationalities { get; set; }
 

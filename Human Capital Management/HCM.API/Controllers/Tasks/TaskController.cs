@@ -74,5 +74,12 @@
                 return BadRequest(TaskMessages.InvalidRequest);
             }
         }
+
+        [HttpGet("issuedByMe/{page}")]
+        public async Task<IActionResult> GetTaskIssuedByMe(int page)
+        {
+            var result = await service.TasksIssuedByMe(page);
+            return Ok(result);
+        }
     }
 }

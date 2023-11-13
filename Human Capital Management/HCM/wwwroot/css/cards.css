@@ -1,0 +1,13 @@
+﻿
+
+.card {
+    background-color: #ddd;
+    padding: 0px;
+    margin:0px;
+}
+
+
+.card, .card-body, .card-header {
+    margin: 0px auto;
+
+}

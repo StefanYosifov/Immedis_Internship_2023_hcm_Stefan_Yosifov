@@ -43,7 +43,7 @@
 
             if (response.IsSuccessful)
             {
-                return PartialView(response.Data);
+                //return PartialView(response.Data);
             }
 
             return BadRequest();
@@ -111,5 +111,22 @@
             return BadRequest(response.Data);
         }
 
+        [HttpGet("tasks/issuedByMe/{page}")]
+        public async Task<IActionResult> TasksIssuedByMe(int page)
+        {
+            var request = new RestRequestBuilder($"/api/tasks/issuedByMe/{page}", GetAuthenticationClaim())
+                .SetMethod(Method.Get)
+                .AddAuthentication()
+                .Build();
+
+            var response= await client.ExecuteGetAsync<EmployeeTasksPagination>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
     }
 }

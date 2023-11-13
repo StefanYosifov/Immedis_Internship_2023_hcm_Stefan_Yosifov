@@ -60,5 +60,19 @@
             }
         }
 
+        [HttpPut("roles/change")]
+        public async Task<IActionResult> ChangeRole([FromBody]AdminChangeRole model)
+        {
+            try
+            {
+                var result = await service.ChangeEmployeeRole(model);
+                return Ok(result);
+            }
+            catch (AdminServiceExceptions e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }

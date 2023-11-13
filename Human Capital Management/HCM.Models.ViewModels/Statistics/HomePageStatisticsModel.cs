@@ -22,12 +22,10 @@
 
         public int NumberOfNewEmployeesThisMonth { get; set; }
 
+
+        public EmployeeTasksPagination TaskIssuedByMe { get; set; }
         public ICollection<EmployeeBirthdayModel> EmployeeBirthdays { get; set; }
-
         public ICollection<TaskModel> UpcomingTasks { get; set; }
-
-        public ICollection<TaskModel> TaskIssuedByMe { get; set; }
-
         public ICollection<EmployeeBonusModel> BestPerformingEmployees { get; set; }
 
         public ICollection<EmployeeDeductionModel> WorstPerformingEmployees { get; set; }

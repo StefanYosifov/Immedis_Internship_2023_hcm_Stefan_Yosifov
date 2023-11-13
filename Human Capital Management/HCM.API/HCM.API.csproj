@@ -4,6 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>..\HCM</DockerfileContext>
+    <DockerComposeProjectPath>..\HCM\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>57996773-e057-4205-9b8c-97b0fe6629d0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -10,5 +10,9 @@
 
         public const string SuccessfullyCreatedDepartment = "Successfully created department";
 
+        public const string EmployeeIsAlreadyInRole = "This employee already has that role";
+
+        public const string SuccessfullyAddedToRole = "You have successfully added the employee to the role";
+
     }
 }

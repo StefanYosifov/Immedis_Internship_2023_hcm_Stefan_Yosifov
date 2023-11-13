@@ -1,4 +1,4 @@
-﻿namespace HCM.Models.ViewModels.Files
+﻿namespace HCM.Common.Files
 {
     using System.Xml.Serialization;
 

@@ -1,5 +1,6 @@
 ﻿namespace HCM.Controllers.Payments
 {
+    using Common;
     using Common.Requests;
     using Microsoft.AspNetCore.Mvc;
     using Models.ViewModels.Payments;
@@ -261,10 +262,10 @@
             return BadRequest(response.Data);
         }
 
-        [HttpPut("payments/payroll/complete/{id}")]
+        [HttpPut("payments/payroll/complete/single/{id}")]
         public async Task<IActionResult> CompletePayroll(int id)
         {
-            var request = new RestRequestBuilder($"/api/payments/payroll/complete/{id}", GetAuthenticationClaim())
+            var request = new RestRequestBuilder($"/api/payments/payroll/complete/single/{id}", GetAuthenticationClaim())
                 .SetMethod(Method.Put)
                 .AddAuthentication()
                 .Build();
@@ -315,6 +316,26 @@
             }
 
             return BadRequest(response.Data);
+        }
+
+        [HttpPut("payroll/complete/byDepartmentId")]
+        public async Task<IActionResult> CompletePayrollByDepartmentId([FromBody]PayrollPayByDepartmentId model)
+        {
+            var request =
+                new RestRequestBuilder($"/api/payments/payroll/complete/byDepartmentId", GetAuthenticationClaim())
+                    .SetMethod(Method.Post)
+                    .AddBody(model)
+                    .AddAuthentication()
+                    .Build();
+
+            var response = await client.ExecutePutAsync<Result>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data!.Message);
+            }
+
+            return BadRequest(response.Data.Error.ErrorMessage);
         }
     }
 }

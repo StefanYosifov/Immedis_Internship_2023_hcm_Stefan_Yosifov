@@ -1,19 +1,17 @@
 ﻿namespace HCM.Models.ViewModels.Tasks
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class CreateTaskModel
     {
+        [Required] public string EmployeeId { get; set; } = null!;
 
-        public string EmployeeId { get; set; } = null!;
+        [Required] public string TaskName { get; set; } = null!;
 
-        public string TaskName { get; set; }
+        [Required] public string Description { get; set; } = null!;
 
-        public string Description { get; set; } = null!;
+        [Required] public DateTime DueDate { get; set; }
 
-        public DateTime DueDate { get; set; }
-
-        public int PriorityId { get; set; }
-
-        public int StatusId { get; set; }
-
+        [Required] public int PriorityId { get; set; }
     }
 }

@@ -1,4 +1,9 @@
-﻿@{
+﻿@using HCM.Common.Constants
+@{
+    var elementsPerPages = ValidationConstants.PaginationConstants.TasksItemPerPage;
+}
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -13,8 +18,6 @@
             </div>
         </div>
     </header>
-
-
     <main class="py-6 bg-surface-secondary mt-2">
         <div class="container-fluid">
             <div class="row g-6 mb-6 my-5">
@@ -167,9 +170,10 @@
                                 <th scope="col">Employee name</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Issuer name</th>
-                                <th scope="col">Duedate</th>
+                                <th scope="col">Due date</th>
                                 <th scope="col">Status name</th>
                                 <th scope="col">Priority name</th>
+                                <th scope="col">Complete</th>
                                 </thead>
                                 <tbody id="upcomingTasks">
                                 </tbody>
@@ -204,15 +208,15 @@
                 <h6 class="mb-0">Tasks issued by me</h6>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover table-nowrap">
+                <table id="tasksIssuedByMe" class="table table-hover table-nowrap">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Issued By</th>
                             <th scope="col">Date</th>
                             <th scope="col">Task name</th>
-                            <th scope="col">Offer</th>
-                            <th scope="col">Meeting</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Type</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -221,12 +225,16 @@
                 </table>
             </div>
             <div class="card-footer border-0 py-5">
-                <span class="text-muted text-sm">Showing 10 items out of 250 results found</span>
+                <span id="taskPagesText" class="text-muted text-sm"></span>
+                <ul id="tasksPages" class="pagination">
+                </ul>
             </div>
         </div>
     </main>
-</div>
 
+    <div class="modal" id="viewTaskModal">
+    </div>
+</div>
 
 <style>
 
@@ -254,13 +262,194 @@
 
 @section Scripts
     {
+    <script type="text/javascript" src="~/js/urlConstants.js"></script>
     <script type="text/javascript">
-
         const token = "Bearer " + localStorage.getItem("Authorization");
         const baseUrl = "https://localhost:7153";
         const statisticsUrl = `${baseUrl}/statistics`;
+        const tasksUrl = `${baseUrl}/tasks`;
+
+        function LoadDeductions(data) {
+            const deductionTable = $("#deductionTable");
+            deductionTable.empty();
+
+            $.each(data.worstPerformingEmployees, function (_, employee) {
+                deductionTable.append(`
+                                                                      <tr>
+                                                                        <td>${employee.employeeName}</td>
+                                                                        <td>${employee.deductionAmount}</td>
+                                                                        <td>${employee.deductionCount}</td>
+                                                                      </tr>`);
+            });
+        }
+
+        function LoadBonuses(data) {
+            const bonusTableBody = $("#bonusTableBody");
+            bonusTableBody.empty();
+
+            $.each(data.bestPerformingEmployees, function (index, employee) {
+                bonusTableBody.append(`
+                                                                      <tr>
+                                                                        <td>${employee.employeeName}</td>
+                                                                        <td>${employee.bonusAmount}</td>
+                                                                        <td>${employee.bonusesCount}</td>
+                                                                      </tr>`);
+            });
+        }
+
+        function LoadBirthdaysThisMonth(data) {
+            const employeeBirthdays = $("#employeeBirthdays");
+            employeeBirthdays.empty();
+
+            $.each(data.employeeBirthdays, function (_, employee) {
+                employeeBirthdays.append(`
+                                                                      <tr>
+                                                                        <td>${employee.employeeName}</td>
+                                                                        <td>${employee.birthDate}</td>
+                                                                        <td>${employee.age} -> ${employee.age + 1}</td>
+                                                                      </tr>`);
+            });
+        }
+
+        function LoadUpcomingTasks(data) {
+            const upcomingTasks = $("#upcomingTasks");
+            upcomingTasks.empty();
+
+            $.each(data.upcomingTasks, function (_, employee) {
+                console.log(employee)
+                upcomingTasks.append(`
+                                                                      <tr>
+                                                                        <td>${employee.taskName}</td>
+                                                                        <td>${employee.description}</td>
+                                                                        <td>${employee.employeeName}</td>
+                                                                        <td>${employee.issuerName}</td>
+                                                                        <td>${employee.dueDate.split('T')[0]}</td>
+                                                                        <td>${employee.status.statusName}</td>
+                                                                        <td>${employee.priority.priorityName}</td>
+                                                                        <td>${employee.id ? `<a href="#" class="checkmark-link" data-id="${employee.id}"><i class="fa-solid fa-check" style="color: green;"></i></a>` : ''}</td>
+                                                                                                      </tr>`);
+            });
+        }
+
+        function CompleteTask() {
+            $(document).on('click', '.checkmark-link', function (e) {
+                e.preventDefault();
+
+                const id = $(this).data('id');
+                console.log(id);
+
+                $.ajax({
+                    url: tasksUrl + "/complete",
+                    type: "Put",
+                    headers: { "Authorization": token },
+                    data: JSON.stringify(id),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        toastr.success(data);
+                        $(this).closest('tr').remove();
+                        LoadData();
+                    },
+                    error: function (error) {
+                        toastr.error(error.responseText);
+                    }
+                });
+            })
+                    };
+
+        function ChangeTaskIssuedByMePages(page) {
+            $("#tasksIssuedByMe > tbody").html("");
+            $.ajax({
+                url: `${tasksUrl}/issuedByMe/${page}`,
+                type: "Get",
+                headers: { "Authorization": token },
+                success: function (data) {
+                    LoadTasksIssuedByMe(data);
+                }
+            });
+        }
+
+        function LoadTasksIssuedByMe(tasks) {
+            console.log("Clearing content of #tasksByMe");
+            $("#tasksByMe").empty();
+
+            $.each(tasks.tasks, function (_, task) {
+                const rowHtml = `
+                                                            <tr>
+                                                                <td>
+                                                                    <a class="text-heading font-semibold" href="#">
+                                                                        ${task.employeeName}
+                                                                    </a>
+                                                                </td>
+                                                                         <td>
+                                                                            <a class="text-heading font-semibold" href="#">
+                                                                                ${task.issuerName}
+                                                                            </a>
+                                                                        </td>
+                                                                <td>
+                                                                    ${task.dueDate.split('T')[0]}
+                                                                </td>
+                                                                <td>
+                                                                    <a class="text-heading font-semibold" href="#">
+                                                                        ${task.taskName}
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                            ${task.priority.priorityName}
+                                                                </td>
+                                                                <td>
+                                                                                ${task.status.statusName}
+                                                                </td>
+                                                            </tr>
+                                                        `;
+                $("#taskByMe").append(rowHtml);
+            });
+
+
+            let spanText = $("#taskPagesText");
+            spanText.val(`Showing ${tasks.tasks.length} tasks out of ${tasks.tasks * tasks.totalPages}`)
+            LoadTasksIssuedByMePagination(tasks.page, tasks.totalPages);
+        }
+
+        function LoadTasksIssuedByMePagination(currentPage, totalPages) {
+            const paginationElement = $('#tasksPages');
+            console.log(paginationElement);
+            paginationElement.empty();
+
+            // PREVIOUS
+            if (currentPage > 1) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>`);
+            }
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationElement.append(`<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                } else {
+                    paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+                }
+            }
+
+            // NEXT
+            if (currentPage < totalPages) {
+                paginationElement.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">Next</a></li>`);
+            } else {
+                paginationElement.append(`<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>`);
+            }
+
+            paginationElement.find('a.page-link').click(function (e) {
+                e.preventDefault();
+                const clickedPage = $(this).data('page');
+                ChangeTaskIssuedByMePages(clickedPage);
+            });
+        }
 
         function LoadData() {
+            const departmentNum = $("#departmentNumbers");
+            const employeeNum = $("#employeeNumbers");
+            const newEmployeeNum = $("#newEmployees");
+
             $.ajax({
                 url: statisticsUrl + "/home",
                 type: "Get",
@@ -269,112 +458,63 @@
                 success: function (data) {
                     console.log(data);
 
-                    const departmentNum = $("#departmentNumbers");
-                    const employeeNum = $("#employeeNumbers");
-                    const newEmployeeNum = $("#newEmployees");
-
                     departmentNum.text(data.numberOfDepartments);
                     employeeNum.text(data.numberOfEmployees);
                     newEmployeeNum.text(data.numberOfNewEmployeesThisMonth);
 
-                    const bonusTableBody = $("#bonusTableBody");
-
-                    $.each(data.bestPerformingEmployees, function (index, employee) {
-                        bonusTableBody.append(`
-                                  <tr>
-                                    <td>${employee.employeeName}</td>
-                                    <td>${employee.bonusAmount}</td>
-                                    <td>${employee.bonusesCount}</td>
-                                  </tr>`);
-                    });
-
-                    const deductionTable = $("#deductionTable");
-
-                    $.each(data.worstPerformingEmployees, function (_, employee) {
-                        deductionTable.append(`
-                                  <tr>
-                                    <td>${employee.employeeName}</td>
-                                    <td>${employee.deductionAmount}</td>
-                                    <td>${employee.deductionCount}</td>
-                                  </tr>`);
-                    });
-
-                    const employeeBirthdays = $("#employeeBirthdays");
-
-                    $.each(data.employeeBirthdays, function (_, employee) {
-                        employeeBirthdays.append(`
-                                  <tr>
-                                    <td>${employee.employeeName}</td>
-                                    <td>${employee.birthDate}</td>
-                                    <td>${employee.age} -> ${employee.age + 1}</td>
-                                  </tr>`);
-                    });
-
-                    const upcomingTasks = $("#upcomingTasks");
-
-                    $.each(data.upcomingTasks, function (_, employee) {
-                        console.log(employee)
-                        upcomingTasks.append(`
-                                  <tr>
-                                    <td>${employee.taskName}</td>
-                                    <td>${employee.description}</td>
-                                    <td>${employee.employeeName}</td>
-                                    <td>${employee.issuerName}</td>
-                                    <td>${employee.dueDate}</td>
-                                    <td>${employee.status.statusName}</td>
-                                    <td>${employee.priority.priorityName}</td>
-                                  </tr>`);
-                    });
-
-                    const tasksByMe = $("#tasksByMe");
-
-                    $.each(data.taskIssuedByMe, function (_, task) {
-                        console.log(task);
-                        var rowHtml = `
-                        <tr>
-                            <td>
-                                <a class="text-heading font-semibold" href="#">
-                                    ${task.employeeName}
-                                </a>
-                            </td>
-                                     <td>
-                                        <a class="text-heading font-semibold" href="#">
-                                            ${task.issuerName}
-                                        </a>
-                                    </td>
-                            <td>
-                                ${task.dueDate}
-                            </td>
-                            <td>
-                                <a class="text-heading font-semibold" href="#">
-                                    ${task.taskName}
-                                </a>
-                            </td>
-                            <td>
-                                ${task.priority.priorityName}
-                            </td>
-                            <td>
-                                    ${task.status.statusName}
-                            </td>
-                            <td class="text-end">
-                                <a href="#" class="btn btn-sm btn-neutral">View</a>
-                                <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-
-                        // Use the correct ID in the selector
-                        $("#taskByMe").append(rowHtml);
-                    });
-
+                    LoadDeductions(data);
+                    LoadBonuses(data);
+                    LoadBirthdaysThisMonth(data);
+                    LoadUpcomingTasks(data);
                 }
+            });
+        }
+
+        function LoadInitialTasksIssuedByMe(data) {
+            console.log(data);
+            const tasksByMe = $("#tasksByMe");
+
+            $.each(data.taskIssuedByMe, function (_, task) {
+                console.log(task);
+                const rowHtml = `
+                                        <tr>
+                                            <td>
+                                                <a class="text-heading font-semibold" href="#">
+                                                    ${task.employeeName}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="text-heading font-semibold" href="#">
+                                                    ${task.issuerName}
+                                                </a>
+                                            </td>
+                                            <td>
+                                               ${task.dueDate.split('T')[0]}
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-neutral" onclick="openViewTaskModal(${JSON.stringify(task)})">View</a>
+                                            </td>
+                                            <td>
+                                                ${task.priority.priorityName}
+                                            </td>
+                                            <td>
+                                                ${task.status.statusName}
+                                            </td>
+                                            <td class="text-end">
+                                                <button type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover" onclick="deleteTask('${task.id}')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                $("#taskByMe").append(rowHtml);
             });
         }
 
         $(document).ready(function () {
             LoadData();
+            ChangeTaskIssuedByMePages();
+            CompleteTask();
         })
     </script>
     }

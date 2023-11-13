@@ -8,8 +8,6 @@
         {
             var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
 
-            Console.WriteLine(valueProviderResult);
-
             return Task.FromResult(valueProviderResult);
         }
     }

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HCM.Common.Constants\HCM.Common.Constants.csproj" />
+    <ProjectReference Include="..\HCM.Common.Exceptions&amp;Messages\HCM.Common.Exceptions&amp;Messages.csproj" />
     <ProjectReference Include="..\HCM.Data\HCM.Data.csproj" />
   </ItemGroup>
 

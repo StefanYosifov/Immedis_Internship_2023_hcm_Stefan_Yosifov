@@ -11,39 +11,45 @@
             <div class="row">
                 <form id="filterForm">
                     <div class="row">
-                        <div class="col">
-                            <label>Look up user:</label>
-                            <input class="input" name="Search" placeholder="Search..." type="search">
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Look up user:</label>
+                            <input class="form-control" name="Search" placeholder="Search..." type="search">
                         </div>
-                        <div class="col">
+
+                        <div class="col-md-2 mb-2">
                             <div class="form-group">
-                                <label for="departmentDropDown">Department:</label>
+                                <label for="departmentDropDown" class="form-label">Department:</label>
                                 <select name="DepartmentId" class="form-control" id="departmentDropDown"></select>
                             </div>
                         </div>
-                        <div class="col">
+
+                        <div class="col-md-2 mb-2">
                             <div class="form-group">
-                                <label for="positionDropDown">Position:</label>
+                                <label for="positionDropDown" class="form-label">Position:</label>
                                 <select name="PositionId" class="form-control" id="positionDropDown"></select>
                             </div>
                         </div>
-                        <div class="col">
+
+                        <div class="col-md-2 mb-2">
                             <div class="form-group">
-                                <label for="seniorityDropDown">Seniority:</label>
+                                <label for="seniorityDropDown" class="form-label">Seniority:</label>
                                 <select name="SeniorityId" class="form-control" id="seniorityDropDown"></select>
                             </div>
                         </div>
-                        <div class="col">
+
+                        <div class="col-md-2 mb-2">
                             <div class="form-group">
-                                <label for="sortDropDown">Sort:</label>
+                                <label for="sortDropDown" class="form-label">Sort:</label>
                                 <select name="Sort" class="form-control" id="sortDropDown"></select>
                             </div>
                         </div>
-                        <div class="col">
-                            <button id="search" class="btn btn-outline-dark">Search</button>
+
+                        <div class="col-md-2 mb-2">
+                            <button id="search" class="btn btn-outline-dark btn-block">Search</button>
                         </div>
                     </div>
                 </form>
+
             </div>
         </div>
         <table class="table">
@@ -169,8 +175,8 @@
                 contentType: 'application/json',
                 headers: { "Authorization": token },
                 success: function (data) {
-                    let options = "";
-                    console.log(data);
+
+                    let options = "<option value='0'> Select an option</option>";
                     for (let i = 0; i < data.departments.length; i++) {
                         options += '<option value="' + data.departments[i].departmentId + '">' + data.departments[i].name + '</option>';
                     }
@@ -197,7 +203,7 @@
                     data: {},
                     success: function (data) {
                         console.log(data);
-                        let arguments = "";
+                        let arguments = "<option value='0'> Select an option</option>";
                         for (let i = 0; i < data.length; i++) {
                             arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
                         }
@@ -209,7 +215,6 @@
         function FillSeniorityDropDown() {
             $("#positionDropDown").on('change', function () {
                 selectedPositionId = $('#positionDropDown').find(":selected").val();
-                console.log(selectedPositionId);
                 $.ajax({
                     type: "GET",
                     url: "https://localhost:7153/departments/seniorities/" + selectedPositionId,
@@ -218,7 +223,7 @@
                     success: function (data) {
                         console.log(data);
                         console.log(data.Countries);
-                        let arguments = "";
+                        let arguments = "<option value='0'> Select an option</option>";
                         for (let i = 0; i < data.length; i++) {
                             console.log(data[i].name);
                             arguments += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
@@ -230,17 +235,14 @@
         }
 
         function fetchData(page) {
-
             const query = window.location.search;
             console.log(query);
-
             $.ajax({
                 url: baseUrl + "/salary/all/" + page,
                 method: 'Get',
                 headers: { "Authorization": token },
                 data: query,
                 success: function (response) {
-                    console.log(response);
                     populateTable(response.employees);
                     PopulatePagination(response.pageNumber + 1, response.totalPages);
                 },
@@ -258,8 +260,9 @@
                 const seniorityValue = $("select[name='SeniorityId']").val();
                 const sortValue = $("select[name='Sort']").val();
 
+                console.log(searchValue);
 
-                const queryString = `search=${searchValue}&DepartmentId=${departmentValue}&PositionId=${positionValue}&SeniorityId=${seniorityValue}&Sort=${sortValue}`;
+                const queryString = `Search=${searchValue}&DepartmentId=${departmentValue}&PositionId=${positionValue}&SeniorityId=${seniorityValue}&Sort=${sortValue}`;
 
                 const stateObj = { query: queryString };
                 window.history.pushState(stateObj, "Search Results", "?" + queryString);
@@ -273,12 +276,11 @@
                 } else if (genderId === 2) {
                     return '<i class="fa-solid fa-venus"></i>';
                 }
-                return 'Unspecified'; // Return empty string if genderId is neither 1 nor 2
+                return 'Unspecified'; 
             }
 
             $('#table-body').empty();
             data.forEach(item => {
-                console.log(item);
                 $('#table-body').append(
                     `<tr>
                                                             <td>${item.employeeId}</td>

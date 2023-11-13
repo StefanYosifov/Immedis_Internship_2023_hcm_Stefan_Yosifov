@@ -13,5 +13,7 @@
 
         public const string NoAccess = "You do not have access to this action";
 
+        public const string AlreadyCompleted = "You have already completed this task";
+
     }
 }

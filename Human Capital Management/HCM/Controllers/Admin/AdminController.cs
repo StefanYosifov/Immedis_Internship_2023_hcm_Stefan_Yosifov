@@ -95,5 +95,24 @@
 
             return BadRequest(response.Data);
         }
+
+        [HttpPut("admin/roles/change")]
+        public async Task<IActionResult> ChangeRole([FromBody] AdminChangeRole model)
+        {
+            var request=new RestRequestBuilder("/api/admin/roles/change",GetAuthenticationClaim())
+                .SetMethod(Method.Put)
+                .AddBody(model)
+                .AddAuthentication()
+                .Build();
+
+            var response = await client.ExecutePutAsync<string>(request);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest(response.Data);
+        }
     }
 }
